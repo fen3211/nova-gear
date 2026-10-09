@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOVA Gear — Editorial E-Commerce Bug Fix Case Study</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100dvh;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #0E0F12;
+      color: #F3F0E7;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* Solid App Shell layout with CSS Grid */
+    .app-shell {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100dvh;
+      height: 100vh;
+      width: 100vw;
+      min-height: 0;
+    }
+
+    /* Top Showcase Bar */
+    .showcase-header {
+      background-color: #17181D;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .case-badge {
+      background-color: rgba(199, 255, 61, 0.12);
+      color: #C7FF3D;
+      border: 1px solid rgba(199, 255, 61, 0.25);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Mode Switcher Buttons */
+    .mode-switcher {
+      display: inline-flex;
+      background-color: #0E0F12;
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-mode {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.85rem;
+      border: none;
+      background: none;
+      color: #8E93A0;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-mode[aria-pressed="true"].mode-after {
+      background-color: #C7FF3D;
+      color: #111111;
+    }
+
+    .btn-mode[aria-pressed="true"].mode-before {
+      background-color: #FF5353;
+      color: #FFFFFF;
+    }
+
+    /* Viewport Presets */
+    .viewport-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-vp {
+      background-color: #202228;
+      color: #A0A5B5;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-vp:hover, .btn-vp.active {
+      background-color: #2F323C;
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Actions */
+    .header-actions-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-direct {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #C7FF3D;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      background-color: rgba(199, 255, 61, 0.1);
+      border: 1px solid rgba(199, 255, 61, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-direct:hover {
+      background-color: #C7FF3D;
+      color: #111111;
+    }
+
+    /* Main Preview Stage (Fill 100% available vertical room) */
+    .preview-stage {
+      position: relative;
+      background-color: #08080A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      height: 100%;
+      min-height: 0;
+      width: 100%;
+    }
+
+    .preview-frame-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .preview-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: #F3F0E7;
+      transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+    }
+
+    .preview-frame-container.framed {
+      padding: 1rem 0;
+    }
+
+    .preview-frame-container.framed .preview-frame {
+      height: 100%;
+      max-height: 94vh;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Floating Status Indicator */
+    .status-pill {
+      position: absolute;
+      bottom: 1rem;
+      left: 1.25rem;
+      background-color: rgba(23, 24, 29, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 50;
+      pointer-events: none;
+      max-width: calc(100vw - 2.5rem);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.green { background-color: #C7FF3D; box-shadow: 0 0 8px #C7FF3D; }
+    .status-dot.red { background-color: #FF5353; box-shadow: 0 0 8px #FF5353; }
+
+    /* Responsive adjustments for showcase bar */
+    @media (max-width: 900px) {
+      .showcase-header {
+        padding: 0.5rem 0.75rem;
+      }
+      .brand-title {
+        font-size: 0.95rem;
+      }
+      .viewport-controls {
+        display: none; /* Hide device frames on tablet/mobile screens */
+      }
+      .status-pill {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Top Showcase Navigation Bar -->
+    <header class="showcase-header" role="banner">
+      <div class="brand-meta">
+        <h1 class="brand-title">
+          NOVA GEAR <span style="font-weight: 400; opacity: 0.5;">// CASE STUDY</span>
+        </h1>
+        <span class="case-badge">HTML / CSS / JS FIX</span>
+      </div>
+
+      <!-- Toggle BEFORE vs AFTER with ARIA attributes -->
+      <div class="mode-switcher" role="group" aria-label="Version Switcher">
+        <button type="button" class="btn-mode mode-after" id="btn-after" aria-pressed="true">
+          <span aria-hidden="true">✓</span> AFTER (FIXED)
+        </button>
+        <button type="button" class="btn-mode mode-before" id="btn-before" aria-pressed="false">
+          <span aria-hidden="true">✕</span> BEFORE (BUGS)
+        </button>
+      </div>
+
+      <!-- Viewport Presets -->
+      <div class="viewport-controls" role="group" aria-label="Preview Viewport Width">
+        <button type="button" class="btn-vp active" data-width="100%">100% DESKTOP</button>
+        <button type="button" class="btn-vp" data-width="768px">768px TABLET</button>
+        <button type="button" class="btn-vp" data-width="390px">390px MOBILE</button>
+      </div>
+
+      <!-- Direct Link -->
+      <div class="header-actions-group">
+        <a href="after/index.html" target="_blank" class="btn-direct" id="btn-direct-link">
+          OPEN DIRECTLY <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Interactive Sandbox Preview -->
+    <main class="preview-stage">
+      <div class="preview-frame-container" id="frame-container">
+        <iframe src="after/index.html" class="preview-frame" id="site-frame" title="NOVA Gear Preview Frame"></iframe>
+      </div>
+
+      <div class="status-pill" id="status-pill" aria-live="polite">
+        <span class="status-dot green" id="status-dot"></span>
+        <span id="status-text">Viewing: AFTER — Corrected responsive layout, verified JS and accessibility</span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const frame = document.getElementById('site-frame');
+      const frameContainer = document.getElementById('frame-container');
+      const btnAfter = document.getElementById('btn-after');
+      const btnBefore = document.getElementById('btn-before');
+      const directLink = document.getElementById('btn-direct-link');
+      const statusText = document.getElementById('status-text');
+      const statusDot = document.getElementById('status-dot');
+      const vpButtons = document.querySelectorAll('.btn-vp');
+
+      function setMode(mode) {
+        if (mode === 'after') {
+          frame.src = 'after/index.html';
+          btnAfter.setAttribute('aria-pressed', 'true');
+          btnBefore.setAttribute('aria-pressed', 'false');
+          directLink.href = 'after/index.html';
+          statusText.textContent = 'Viewing: AFTER — Corrected responsive layout, verified JS and accessibility';
+          statusDot.className = 'status-dot green';
+        } else {
+          frame.src = 'before/index.html';
+          btnAfter.setAttribute('aria-pressed', 'false');
+          btnBefore.setAttribute('aria-pressed', 'true');
+          directLink.href = 'before/index.html';
+          statusText.textContent = 'Viewing: BEFORE — Demonstrating 18 client-grade frontend bugs';
+          statusDot.className = 'status-dot red';
+        }
+      }
+
+      btnAfter.addEventListener('click', () => setMode('after'));
+      btnBefore.addEventListener('click', () => setMode('before'));
+
+      vpButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          vpButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const width = btn.getAttribute('data-width');
+          frameContainer.style.width = width;
+          if (width === '100%') {
+            frameContainer.classList.remove('framed');
+          } else {
+            frameContainer.classList.add('framed');
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

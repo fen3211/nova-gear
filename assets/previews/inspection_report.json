@@ -1,0 +1,111 @@
+{
+  "status": "success",
+  "all_safe": true,
+  "models": [
+    {
+      "id": "charger",
+      "title": "Flux 100W GaN Fast Charger",
+      "description": "Unified parametric chassis, flush front plate, real recessed USB-C/A ports with internal gold contacts, foldable prongs, PBT micro-bump",
+      "file": "charger-flux.png",
+      "preview_file": "preview_charger_flux.png",
+      "dimensions": "1000x1000",
+      "alpha_inspection": {
+        "width": 1000,
+        "height": 1000,
+        "threshold": 8,
+        "clipped_edges": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "total_clipped": 0,
+        "is_safe": true
+      }
+    },
+    {
+      "id": "mat",
+      "title": "NovaDesk XL Desk Mat",
+      "description": "Rounded contour, discrete perimeter saddle stitches, full-grain leather badge, turned brass rivet, refined merino wool felt normal map",
+      "file": "mat-novadesk.png",
+      "preview_file": "preview_mat_novadesk.png",
+      "dimensions": "1600x663",
+      "alpha_inspection": {
+        "width": 1600,
+        "height": 663,
+        "threshold": 8,
+        "clipped_edges": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "total_clipped": 0,
+        "is_safe": true
+      }
+    },
+    {
+      "id": "light",
+      "title": "Beam RGB Monitor Light Bar",
+      "description": "Brushed 6063 aluminum tube, micro-prismatic optical diffuser, rotary control dial with diamond knurling, mirror chamfer ring, obsidian touch faceplate with upright glyph",
+      "file": "light-beam.png",
+      "preview_file": "preview_light_beam.png",
+      "dimensions": "1600x1000",
+      "alpha_inspection": {
+        "width": 1600,
+        "height": 1000,
+        "threshold": 8,
+        "clipped_edges": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "total_clipped": 0,
+        "is_safe": true
+      }
+    },
+    {
+      "id": "k75_assembled",
+      "title": "NovaKeys K75 (Hero Assembled View)",
+      "description": "Full 75% ANSI layout, sculpted Cherry profile keycaps with authentic crisp legends, knurled brass rotary volume knob, acid lime accents, space grey CNC chassis",
+      "file": "keyboard-k75.png",
+      "preview_file": "preview_keyboard_assembled.png",
+      "dimensions": "1600x1200",
+      "alpha_inspection": {
+        "width": 1600,
+        "height": 1200,
+        "threshold": 8,
+        "clipped_edges": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "total_clipped": 0,
+        "is_safe": true
+      }
+    },
+    {
+      "id": "k75_exploded",
+      "title": "NovaKeys K75 (Exploded Structural View)",
+      "description": "8 internal layers (CNC bottom chassis, PVD brass weight, silicone pad, ENIG PCB with hot-swap sockets, Poron foam, FR4 plate with switch cutouts, switches, keycaps)",
+      "file": "exploded-k75.png",
+      "preview_file": "preview_keyboard_exploded.png",
+      "dimensions": "1600x1600",
+      "alpha_inspection": {
+        "width": 1600,
+        "height": 1600,
+        "threshold": 8,
+        "clipped_edges": {
+          "top": 0,
+          "bottom": 0,
+          "left": 0,
+          "right": 0
+        },
+        "total_clipped": 0,
+        "is_safe": true
+      }
+    }
+  ]
+}

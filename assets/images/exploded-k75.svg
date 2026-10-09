@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" fill="none" width="100%" height="100%">
+  <defs>
+    <linearGradient id="layer-al-top" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3D404A" />
+      <stop offset="100%" stop-color="#1A1C20" />
+    </linearGradient>
+    <linearGradient id="layer-plate" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#555A68" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#24262D" stop-opacity="0.9" />
+    </linearGradient>
+    <linearGradient id="layer-pcb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#171A21" />
+      <stop offset="100%" stop-color="#0E1015" />
+    </linearGradient>
+    <linearGradient id="brass-bar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E5C775" />
+      <stop offset="50%" stop-color="#B28C30" />
+      <stop offset="100%" stop-color="#FCE19B" />
+    </linearGradient>
+    <linearGradient id="line-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C7FF3D" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#5D7CFF" stop-opacity="0.8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Exploded Stack Isometric/Perspective Layers -->
+  <g transform="translate(180, 40)">
+    
+    <!-- LAYER 1 (TOP): CNC 6063 Aluminum Top Frame -->
+    <g transform="translate(0, 0)">
+      <!-- Projection Callout Lines -->
+      <line x1="560" y1="50" x2="680" y2="40" stroke="#C7FF3D" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="680" cy="40" r="3" fill="#C7FF3D" />
+      <text x="695" y="44" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12">01 // CNC 6063 TOP HOUSING</text>
+
+      <!-- Frame Body -->
+      <polygon points="50,60 550,20 620,100 120,140" fill="url(#layer-al-top)" stroke="#606677" stroke-width="2" />
+      <polygon points="90,75 510,40 570,105 150,135" fill="#111215" stroke="#333742" stroke-width="1.5" />
+      <!-- Top Bezel Label -->
+      <text x="310" y="55" fill="#8E95A5" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="9" letter-spacing="2">NOVA ARCHITECTURE</text>
+    </g>
+
+    <!-- LAYER 2: FR4 Flex-Cut Plate with Gasket Mounts -->
+    <g transform="translate(0, 110)">
+      <line x1="560" y1="50" x2="680" y2="40" stroke="#5D7CFF" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="680" cy="40" r="3" fill="#5D7CFF" />
+      <text x="695" y="44" fill="#5D7CFF" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12">02 // FR4 GASKET-MOUNTED PLATE</text>
+
+      <polygon points="55,60 545,20 615,100 125,140" fill="url(#layer-plate)" stroke="#5D7CFF" stroke-width="1.5" />
+      <!-- Switch cutouts hint -->
+      <circle cx="160" cy="98" r="4" fill="#C7FF3D" />
+      <circle cx="210" cy="92" r="4" fill="#C7FF3D" />
+      <circle cx="260" cy="86" r="4" fill="#C7FF3D" />
+      <circle cx="310" cy="80" r="4" fill="#C7FF3D" />
+      <circle cx="360" cy="74" r="4" fill="#C7FF3D" />
+      <circle cx="410" cy="68" r="4" fill="#C7FF3D" />
+      <circle cx="460" cy="62" r="4" fill="#C7FF3D" />
+      <circle cx="510" cy="56" r="4" fill="#C7FF3D" />
+      <!-- Poron Gasket Tabs along edges -->
+      <rect x="70" y="56" width="16" height="5" fill="#111111" rx="2" transform="rotate(-5)" />
+      <rect x="525" y="22" width="16" height="5" fill="#111111" rx="2" transform="rotate(-5)" />
+    </g>
+
+    <!-- LAYER 3: Hot-Swap PCB with South-Facing RGB & IXPE Foam -->
+    <g transform="translate(0, 220)">
+      <line x1="560" y1="50" x2="680" y2="40" stroke="#FF6B35" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="680" cy="40" r="3" fill="#FF6B35" />
+      <text x="695" y="44" fill="#FF6B35" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12">03 // HOT-SWAP 8KHZ PCB</text>
+
+      <polygon points="50,60 550,20 620,100 120,140" fill="url(#layer-pcb)" stroke="#FF6B35" stroke-width="1.5" />
+      <!-- Circuit Traces Lines -->
+      <line x1="120" y1="100" x2="300" y2="75" stroke="#383D4A" stroke-width="1.5" />
+      <line x1="300" y1="75" x2="450" y2="60" stroke="#383D4A" stroke-width="1.5" />
+      <line x1="220" y1="120" x2="400" y2="95" stroke="#383D4A" stroke-width="1.5" />
+      <!-- Microcontroller / MCU IC -->
+      <rect x="320" y="70" width="22" height="18" fill="#202229" stroke="#5D7CFF" stroke-width="1" transform="rotate(-5)" />
+      <circle cx="540" cy="50" r="6" fill="#C7FF3D" />
+    </g>
+
+    <!-- LAYER 4: Custom Acoustic Poron Acoustic Foam Layer -->
+    <g transform="translate(0, 320)">
+      <line x1="560" y1="50" x2="680" y2="40" stroke="#FFF066" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="680" cy="40" r="3" fill="#FFF066" />
+      <text x="695" y="44" fill="#FFF066" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12">04 // MULTI-STAGE ACOUSTIC PORON</text>
+
+      <polygon points="55,60 545,20 615,100 125,140" fill="#1C1E24" stroke="#444955" stroke-width="1.5" stroke-dasharray="4 3" />
+    </g>
+
+    <!-- LAYER 5 (BASE): CNC Aluminum Bottom Chassis & Brass Weight -->
+    <g transform="translate(0, 420)">
+      <line x1="560" y1="50" x2="680" y2="40" stroke="#E5C775" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="680" cy="40" r="3" fill="#E5C775" />
+      <text x="695" y="44" fill="#E5C775" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12">05 // MIRROR-POLISHED BRASS WEIGHT</text>
+
+      <!-- Solid Heavy Bottom Chassis -->
+      <polygon points="50,60 550,20 620,100 120,140" fill="url(#layer-al-top)" stroke="#606677" stroke-width="2" />
+      <!-- Chassis Depth Rim -->
+      <polygon points="50,60 120,140 120,165 50,85" fill="#141517" stroke="#333742" stroke-width="1.5" />
+      <polygon points="120,140 620,100 620,125 120,165" fill="#1F2025" stroke="#333742" stroke-width="1.5" />
+
+      <!-- Recessed Brass Weight Inset -->
+      <polygon points="180,95 440,65 480,105 220,135" fill="url(#brass-bar)" stroke="#FFF2B2" stroke-width="1.5" />
+      <text x="330" y="105" fill="#141517" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="12" letter-spacing="4" text-anchor="middle">NOVA LABS // 1,850G</text>
+    </g>
+
+    <!-- Vertical Assembly Axis Dotted Lines -->
+    <line x1="50" y1="60" x2="50" y2="480" stroke="url(#line-glow)" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.7" />
+    <line x1="550" y1="20" x2="550" y2="440" stroke="url(#line-glow)" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.7" />
+    <line x1="620" y1="100" x2="620" y2="520" stroke="url(#line-glow)" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.7" />
+    <line x1="120" y1="140" x2="120" y2="560" stroke="url(#line-glow)" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.7" />
+  </g>
+</svg>

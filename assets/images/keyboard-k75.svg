@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" fill="none" width="100%" height="100%">
+  <defs>
+    <filter id="kb-shadow" x="-8%" y="-8%" width="120%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="32" flood-color="#111111" flood-opacity="0.22" />
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#111111" flood-opacity="0.14" />
+    </filter>
+    <linearGradient id="case-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2A2B2E" />
+      <stop offset="50%" stop-color="#1D1E21" />
+      <stop offset="100%" stop-color="#141517" />
+    </linearGradient>
+    <linearGradient id="accent-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D6FF59" />
+      <stop offset="100%" stop-color="#B2F81E" />
+    </linearGradient>
+    <linearGradient id="accent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B95FF" />
+      <stop offset="100%" stop-color="#4B6DF5" />
+    </linearGradient>
+    <linearGradient id="key-light" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E5E2D9" />
+    </linearGradient>
+    <linearGradient id="key-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3B3D42" />
+      <stop offset="100%" stop-color="#26272B" />
+    </linearGradient>
+    <linearGradient id="brass-knob" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2D080" />
+      <stop offset="50%" stop-color="#C29A38" />
+      <stop offset="100%" stop-color="#7A5D19" />
+    </linearGradient>
+  </defs>
+
+  <!-- Transform group for subtle dynamic perspective angle -->
+  <g transform="translate(450, 260) rotate(-4.5) translate(-450, -260)" filter="url(#kb-shadow)">
+    <!-- Base Chamfered Aluminum Enclosure -->
+    <rect x="50" y="40" width="800" height="420" rx="28" fill="url(#case-grad)" stroke="#4A4C52" stroke-width="2" />
+    <!-- Inner Bezel Inset -->
+    <rect x="68" y="58" width="764" height="384" rx="18" fill="#18191B" stroke="#0E0F10" stroke-width="2" />
+
+    <!-- Rotary Media Knob with knurling -->
+    <g transform="translate(775, 95)">
+      <circle cx="0" cy="0" r="24" fill="#0E0F10" />
+      <circle cx="0" cy="0" r="20" fill="url(#brass-knob)" stroke="#F2D080" stroke-width="1.5" />
+      <line x1="0" y1="-14" x2="0" y2="-4" stroke="#141517" stroke-width="3" stroke-linecap="round" />
+      <circle cx="0" cy="0" r="6" fill="#141517" />
+    </g>
+
+    <!-- Status Pill LEDs -->
+    <circle cx="700" cy="95" r="3.5" fill="#C7FF3D" />
+    <circle cx="714" cy="95" r="3.5" fill="#5D7CFF" />
+    <circle cx="728" cy="95" r="3.5" fill="#FFFFFF" opacity="0.4" />
+
+    <!-- Keycap Matrix Area (75% compact enthusiast layout) -->
+    <!-- Row 1: Function Keys -->
+    <!-- Esc (Acid Green) -->
+    <rect x="80" y="74" width="44" height="42" rx="7" fill="url(#accent-green)" />
+    <text x="102" y="100" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12" text-anchor="middle">ESC</text>
+
+    <!-- F1 - F4 -->
+    <g transform="translate(136, 74)">
+      <rect x="0" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="46" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="92" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="138" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <text x="20" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F1</text>
+      <text x="66" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F2</text>
+      <text x="112" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F3</text>
+      <text x="158" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F4</text>
+    </g>
+
+    <!-- F5 - F8 -->
+    <g transform="translate(330, 74)">
+      <rect x="0" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="46" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="92" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="138" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <text x="20" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F5</text>
+      <text x="66" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F6</text>
+      <text x="112" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F7</text>
+      <text x="158" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F8</text>
+    </g>
+
+    <!-- F9 - F12 + DEL -->
+    <g transform="translate(524, 74)">
+      <rect x="0" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="46" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="92" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <rect x="138" y="0" width="40" height="42" rx="7" fill="url(#key-dark)" />
+      <text x="20" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F9</text>
+      <text x="66" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F10</text>
+      <text x="112" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F11</text>
+      <text x="158" y="26" fill="#9CA3AF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">F12</text>
+    </g>
+
+    <!-- Row 2: Numbers & Navigation -->
+    <!-- Number Row 14 keys + Page Up -->
+    <g transform="translate(80, 130)">
+      <!-- Tilde -->
+      <rect x="0" y="0" width="40" height="46" rx="7" fill="url(#key-light)" />
+      <text x="20" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">~</text>
+      <!-- 1..0, -, = -->
+      <g id="nums">
+        <rect x="45" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="65" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">1</text>
+        <rect x="90" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="110" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">2</text>
+        <rect x="135" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="155" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">3</text>
+        <rect x="180" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="200" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">4</text>
+        <rect x="225" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="245" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">5</text>
+        <rect x="270" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="290" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">6</text>
+        <rect x="315" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="335" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">7</text>
+        <rect x="360" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="380" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">8</text>
+        <rect x="405" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="425" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">9</text>
+        <rect x="450" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="470" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">0</text>
+        <rect x="495" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="515" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">-</text>
+        <rect x="540" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="560" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">=</text>
+      </g>
+      <!-- Backspace (Dark key) -->
+      <rect x="585" y="0" width="75" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="622" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">BACK</text>
+      <!-- Del -->
+      <rect x="670" y="0" width="48" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="694" y="28" fill="#D6FF59" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" text-anchor="middle">DEL</text>
+    </g>
+
+    <!-- Row 3: Tab & QWERTY & Page Down -->
+    <g transform="translate(80, 186)">
+      <!-- Tab -->
+      <rect x="0" y="0" width="60" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="30" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">TAB</text>
+      <!-- Q W E R T Y U I O P [ ] \ -->
+      <g transform="translate(65, 0)">
+        <rect x="0" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="20" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">Q</text>
+        <rect x="45" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="65" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">W</text>
+        <rect x="90" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="110" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">E</text>
+        <rect x="135" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="155" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">R</text>
+        <rect x="180" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="200" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">T</text>
+        <rect x="225" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="245" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">Y</text>
+        <rect x="270" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="290" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">U</text>
+        <rect x="315" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="335" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">I</text>
+        <rect x="360" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="380" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">O</text>
+        <rect x="405" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="425" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">P</text>
+        <rect x="450" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="470" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">[</text>
+        <rect x="495" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="515" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">]</text>
+        <rect x="540" y="0" width="55" height="46" rx="7" fill="url(#key-dark)" /><text x="567" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="12" text-anchor="middle">\</text>
+      </g>
+      <!-- Home -->
+      <rect x="670" y="0" width="48" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="694" y="28" fill="#E5E2D9" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">PGUP</text>
+    </g>
+
+    <!-- Row 4: Caps & ASDF & Enter & End -->
+    <g transform="translate(80, 242)">
+      <!-- Caps -->
+      <rect x="0" y="0" width="75" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="37" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">CAPS</text>
+      <circle cx="15" cy="15" r="2.5" fill="#C7FF3D" />
+
+      <!-- ASDFGHJKL;' -->
+      <g transform="translate(80, 0)">
+        <rect x="0" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="20" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">A</text>
+        <rect x="45" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="65" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">S</text>
+        <rect x="90" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="110" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">D</text>
+        <rect x="135" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="155" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">F</text>
+        <rect x="180" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="200" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">G</text>
+        <rect x="225" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="245" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">H</text>
+        <rect x="270" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="290" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">J</text>
+        <rect x="315" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="335" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">K</text>
+        <rect x="360" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="380" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">L</text>
+        <rect x="405" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="425" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">;</text>
+        <rect x="450" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="470" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">'</text>
+      </g>
+      <!-- Enter (Acid Green Accent) -->
+      <rect x="585" y="0" width="75" height="46" rx="7" fill="url(#accent-green)" />
+      <text x="622" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12" text-anchor="middle">ENTER</text>
+      <!-- PgDn -->
+      <rect x="670" y="0" width="48" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="694" y="28" fill="#E5E2D9" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">PGDN</text>
+    </g>
+
+    <!-- Row 5: Shift & ZXCV & Up Arrow -->
+    <g transform="translate(80, 298)">
+      <!-- L Shift -->
+      <rect x="0" y="0" width="98" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="49" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">SHIFT</text>
+      <!-- ZXCVBNM,./ -->
+      <g transform="translate(103, 0)">
+        <rect x="0" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="20" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">Z</text>
+        <rect x="45" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="65" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">X</text>
+        <rect x="90" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="110" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">C</text>
+        <rect x="135" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="155" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">V</text>
+        <rect x="180" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="200" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">B</text>
+        <rect x="225" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="245" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">N</text>
+        <rect x="270" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="290" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">M</text>
+        <rect x="315" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="335" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">,</text>
+        <rect x="360" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="380" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">.</text>
+        <rect x="405" y="0" width="40" height="46" rx="7" fill="url(#key-light)" /><text x="425" y="28" fill="#111111" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="13" text-anchor="middle">/</text>
+      </g>
+      <!-- R Shift -->
+      <rect x="558" y="0" width="60" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="588" y="28" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">SHIFT</text>
+      <!-- UP Arrow -->
+      <rect x="624" y="0" width="40" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="644" y="28" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="14" text-anchor="middle">↑</text>
+      <!-- END -->
+      <rect x="670" y="0" width="48" height="46" rx="7" fill="url(#key-dark)" />
+      <text x="694" y="28" fill="#E5E2D9" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">END</text>
+    </g>
+
+    <!-- Row 6: Bottom Modifiers, Spacebar, Arrows -->
+    <g transform="translate(80, 354)">
+      <!-- Ctrl -->
+      <rect x="0" y="0" width="55" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="27" y="30" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">CTRL</text>
+      <!-- Win -->
+      <rect x="60" y="0" width="50" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="85" y="30" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">WIN</text>
+      <!-- Alt -->
+      <rect x="115" y="0" width="50" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="140" y="30" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">ALT</text>
+
+      <!-- Spacebar (Electric Blue / Crisp Minimal) -->
+      <rect x="170" y="0" width="280" height="48" rx="7" fill="url(#accent-blue)" stroke="#3958DE" stroke-width="1.5" />
+      <line x1="280" y1="24" x2="340" y2="24" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+
+      <!-- Alt, Fn, Ctrl -->
+      <rect x="455" y="0" width="48" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="479" y="30" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="11" text-anchor="middle">ALT</text>
+      <rect x="508" y="0" width="48" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="532" y="30" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" text-anchor="middle">FN</text>
+
+      <!-- Left, Down, Right Arrows -->
+      <rect x="578" y="0" width="40" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="598" y="30" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="14" text-anchor="middle">←</text>
+      <rect x="624" y="0" width="40" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="644" y="30" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="14" text-anchor="middle">↓</text>
+      <rect x="670" y="0" width="48" height="48" rx="7" fill="url(#key-dark)" />
+      <text x="694" y="30" fill="#C7FF3D" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="14" text-anchor="middle">→</text>
+    </g>
+
+    <!-- Subtle Brand Wordmark on Bottom Bezel -->
+    <text x="450" y="432" fill="#5A5E66" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" letter-spacing="4" text-anchor="middle">NOVA K75 // SERIES 01</text>
+  </g>
+</svg>

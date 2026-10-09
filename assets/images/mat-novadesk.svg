@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none" width="100%" height="100%">
+  <defs>
+    <filter id="mat-shadow" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#111111" flood-opacity="0.2" />
+    </filter>
+    <linearGradient id="mat-surface" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#343740" />
+      <stop offset="100%" stop-color="#212328" />
+    </linearGradient>
+    <linearGradient id="coral-tag" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B57" />
+      <stop offset="100%" stop-color="#DE422C" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(300, 300) rotate(-7) translate(-300, -300)" filter="url(#mat-shadow)">
+    <!-- Main Felt/Leather XL Desk Mat Surface -->
+    <rect x="80" y="160" width="440" height="280" rx="20" fill="url(#mat-surface)" stroke="#4A4E5C" stroke-width="2" />
+    <!-- Fine Perimeter Micro-Stitching -->
+    <rect x="88" y="168" width="424" height="264" rx="14" fill="none" stroke="#606677" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6" />
+
+    <!-- Stylized Top Toolbar / Cable Magnetic Channel -->
+    <rect x="110" y="185" width="220" height="12" rx="6" fill="#17181C" />
+    <circle cx="125" cy="191" r="3.5" fill="#5D7CFF" />
+    <circle cx="145" cy="191" r="3.5" fill="#C7FF3D" />
+
+    <!-- Keyboard Placement Zone Silhouetted Indication -->
+    <rect x="120" y="230" width="230" height="130" rx="10" fill="#282B33" stroke="#3A3E4A" stroke-width="1" opacity="0.8" />
+    <!-- Mouse Gliding Zone Silhouette -->
+    <circle cx="410" cy="295" r="55" fill="#282B33" stroke="#3A3E4A" stroke-width="1" opacity="0.8" />
+
+    <!-- Premium Full-grain Leather Clip / Tag with Copper Rivet -->
+    <g transform="translate(450, 150)">
+      <rect x="0" y="0" width="40" height="30" rx="6" fill="url(#coral-tag)" />
+      <circle cx="20" cy="12" r="3.5" fill="#F8E5BA" stroke="#A88234" stroke-width="1" />
+      <text x="20" y="24" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="7" text-anchor="middle">NOVA</text>
+    </g>
+
+    <text x="300" y="415" fill="#8A90A0" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" letter-spacing="3" text-anchor="middle">NOVADESK // 900 × 400 MM</text>
+  </g>
+</svg>
