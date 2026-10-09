@@ -682,6 +682,8 @@ ul, ol {
 .card-visual-stage {
   position: relative;
   display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 100%;
   place-items: center;
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -701,8 +703,9 @@ ul, ol {
 }
 
 .card-visual-stage.scale-keyboard {
-  width: 96%;
-  max-height: 250px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 240px;
   aspect-ratio: 1600 / 1200;
 }
 
@@ -717,6 +720,8 @@ ul, ol {
   grid-area: 1 / 1;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   pointer-events: none;
   border-radius: 0;
@@ -966,143 +971,112 @@ ul, ol {
 .story-section {
   background-color: var(--dark-bg);
   color: var(--dark-text);
-  padding-top: clamp(5rem, 9vw, 8rem);
-  padding-bottom: clamp(5rem, 9vw, 8rem);
+  padding: 0;
   border-bottom: 1px solid var(--dark-border);
+  position: relative;
+}
+
+/* 10.1 INTERACTIVE SCROLL-DRIVEN 3D BREAKDOWN PIPELINE */
+.story-scroll-track {
+  position: relative;
+  height: 180vh;
+}
+
+.story-sticky-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
-.story-header {
-  margin-bottom: 3rem;
-}
-
-.story-visual-canvas {
-  position: relative;
-  width: 100%;
-  margin: 1.5rem 0 3.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3.5rem;
-}
-
-.story-exploded-view {
-  width: 100%;
-  max-width: 980px;
-  display: flex;
-  justify-content: center;
-}
-
-.story-exploded-img {
-  width: 100%;
-  max-width: 980px;
-  height: auto;
-  border-radius: 14px;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
-}
-
-/* 10.1 NOVA KEYS K75 INTERACTIVE ASSEMBLY ANIMATION */
-.assembly-stage-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 920px;
+.story-sticky-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 2.5rem 1rem 1.5rem;
+  box-sizing: border-box;
 }
 
-.story-assembly-video {
+.story-sticky-content .story-header {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.story-breakdown-stage {
+  position: relative;
   width: 100%;
+  max-width: 780px;
+  max-height: calc(100vh - 220px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.story-scroll-canvas {
+  width: 100%;
+  height: 100%;
   max-width: 760px;
-  height: auto;
+  max-height: 760px;
   aspect-ratio: 1 / 1;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 24px 50px rgba(0, 0, 0, 0.85));
 }
 
-.story-assembly-img-fallback {
-  width: 100%;
-  max-width: 760px;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
-}
-
-.story-assembly-static-fallback {
+.story-scroll-fallback {
   display: none;
   width: 100%;
   max-width: 760px;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 24px 50px rgba(0, 0, 0, 0.85));
 }
 
-.assembly-ctrl-btn {
-  position: absolute;
-  bottom: 1rem;
-  right: 1.25rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1rem;
-  background-color: rgba(22, 24, 29, 0.88);
-  color: var(--dark-text);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 9999px;
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
-  z-index: 5;
-}
-
-.assembly-ctrl-btn:hover {
-  background-color: rgba(35, 38, 45, 0.96);
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-  transform: translateY(-1px);
-}
-
-.assembly-ctrl-btn:focus-visible {
-  outline: 2px solid var(--accent-green);
-  outline-offset: 3px;
-}
-
-.assembly-ctrl-btn:active {
-  transform: translateY(1px);
+.story-details-container {
+  padding-top: clamp(4rem, 6vw, 6rem);
+  padding-bottom: clamp(5rem, 8vw, 7rem);
 }
 
 @media (max-width: 768px) {
-  .assembly-ctrl-btn {
-    bottom: 0.5rem;
-    right: 0.5rem;
-    padding: 0.45rem 0.8rem;
-    font-size: 0.7rem;
+  .story-scroll-track {
+    height: 160vh;
+  }
+  .story-sticky-content {
+    padding: 1.5rem 0.5rem 1rem;
+  }
+  .story-sticky-content .story-header {
+    margin-bottom: 0.75rem;
+  }
+  .story-breakdown-stage {
+    max-width: 380px;
+    max-height: calc(100vh - 180px);
   }
 }
 
-/* Reduced motion preference: display assembled keyboard still, hide video */
+/* Reduced motion preference: display static assembled keyboard view */
 @media (prefers-reduced-motion: reduce) {
-  .story-assembly-video,
-  .story-assembly-img-fallback {
+  .story-scroll-track {
+    height: auto !important;
+  }
+  .story-sticky-stage {
+    position: relative !important;
+    height: auto !important;
+    padding: 4rem 1rem;
+  }
+  .story-scroll-canvas {
     display: none !important;
   }
-  .story-assembly-static-fallback {
+  .story-scroll-fallback {
     display: block !important;
-  }
-  .assembly-ctrl-btn {
-    display: none !important;
   }
 }
 

@@ -1186,64 +1186,88 @@
   }
 
   /* --------------------------------------------------------------------------
-     NOVA KEYS K75 INTERACTIVE ASSEMBLY ANIMATION (INTERSECTION OBSERVER & TOGGLE)
+     NOVA KEYS K75 SCROLL-DRIVEN 3D BREAKDOWN PIPELINE
      -------------------------------------------------------------------------- */
-  function initK75AssemblyAnimation() {
-    const video = document.getElementById('k75AssemblyVideo');
-    const toggleBtn = document.getElementById('k75AnimToggleBtn');
-    const container = document.getElementById('k75AssemblyContainer');
+  function initK75ScrollBreakdown() {
+    const canvas = document.getElementById('k75ScrollCanvas');
+    const track = document.getElementById('k75ScrollTrack');
+    if (!canvas || !track) return;
 
-    if (!video) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    let userPaused = false;
-    const pauseIcon = toggleBtn ? toggleBtn.querySelector('.ctrl-icon-pause') : null;
-    const playIcon = toggleBtn ? toggleBtn.querySelector('.ctrl-icon-play') : null;
-    const btnText = toggleBtn ? toggleBtn.querySelector('.ctrl-btn-text') : null;
+    const TOTAL_FRAMES = 57;
+    const frames = [];
+    let currentFrameIndex = -1;
+    let ticking = false;
 
-    function updateBtnUI(isPaused) {
-      if (!toggleBtn) return;
-      toggleBtn.setAttribute('aria-pressed', isPaused ? 'true' : 'false');
-      toggleBtn.setAttribute('aria-label', isPaused ? 'Play 3D assembly animation' : 'Pause 3D assembly animation');
-      toggleBtn.setAttribute('title', isPaused ? 'Play animation' : 'Pause animation');
-      if (pauseIcon) pauseIcon.style.display = isPaused ? 'none' : 'inline-block';
-      if (playIcon) playIcon.style.display = isPaused ? 'inline-block' : 'none';
-      if (btnText) btnText.textContent = isPaused ? 'PLAY' : 'PAUSE';
+    // Check prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      return; // Static fallback image is rendered via CSS
     }
 
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        if (video.paused) {
-          userPaused = false;
-          video.play().catch(() => {});
-          updateBtnUI(false);
-        } else {
-          userPaused = true;
-          video.pause();
-          updateBtnUI(true);
+    function renderFrame(index) {
+      if (index < 0 || index >= TOTAL_FRAMES) return;
+      const img = frames[index];
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentFrameIndex = index;
+        canvas.dataset.frameIndex = String(index);
+      }
+    }
+
+    // Preload all 57 optimized WebP scrub frames
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image();
+      const padIndex = String(i).padStart(2, '0');
+      img.src = `../assets/frames_scrub/k75_scrub_${padIndex}.webp`;
+      img.onload = () => {
+        // As soon as the first frame (fully assembled) is ready, draw it if nothing drawn yet
+        if (i === 0 && currentFrameIndex === -1) {
+          renderFrame(0);
+        } else if (i === currentFrameIndex) {
+          renderFrame(i);
         }
-      });
+      };
+      frames.push(img);
     }
 
-    // IntersectionObserver pauses playback when scrolled out of view to conserve GPU & battery
-    if ('IntersectionObserver' in window && container) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            if (!userPaused && video.paused) {
-              video.play().catch(() => {});
-              updateBtnUI(false);
-            }
-          } else {
-            if (!video.paused) {
-              video.pause();
-            }
-          }
-        });
-      }, {
-        threshold: 0.15
-      });
-      observer.observe(container);
+    function updateScrollBreakdown() {
+      const trackRect = track.getBoundingClientRect();
+      const scrollHeight = trackRect.height - window.innerHeight;
+      if (scrollHeight <= 0) return;
+
+      // Calculate progress: 0 when track top reaches top of viewport, 1 when scroll reaches end
+      const rawProgress = -trackRect.top / scrollHeight;
+      const progress = Math.max(0, Math.min(1, rawProgress));
+      canvas.dataset.progress = progress.toFixed(3);
+
+      // Calculate target frame: 0 (fully assembled) to 56 (fully exploded)
+      const targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progress * (TOTAL_FRAMES - 1))));
+
+      if (targetFrame !== currentFrameIndex) {
+        renderFrame(targetFrame);
+      }
     }
+
+    function onScrollOrResize() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateScrollBreakdown();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+    // Initial render
+    renderFrame(0);
+    updateScrollBreakdown();
   }
 
   /* --------------------------------------------------------------------------
@@ -1259,6 +1283,6 @@
     initReviewsSlider();
     initNewsletter();
     initParallax();
-    initK75AssemblyAnimation();
+    initK75ScrollBreakdown();
   });
 })();

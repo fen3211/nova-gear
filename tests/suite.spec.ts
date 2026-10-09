@@ -10,6 +10,9 @@ const ROOT_URL = `${BASE_URL}/index.html`;
 const SCREENSHOTS_DIR = path.resolve(__dirname, '../test-results/screenshots');
 fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
 
+const REVIEW_DIR = path.resolve(__dirname, '../review');
+fs.mkdirSync(REVIEW_DIR, { recursive: true });
+
 test.describe('NOVA GEAR Master DTC Verification Suite', () => {
 
   test('01: Showcase Switcher & BEFORE/AFTER defect contrast', async ({ page }) => {
@@ -44,8 +47,7 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
       'mat-novadesk-isolated.webp',
       'mat-novadesk-shadow.webp',
       'light-beam-isolated.webp',
-      'light-beam-shadow.webp',
-      'exploded-k75.png'
+      'light-beam-shadow.webp'
     ];
 
     for (const imgName of expectedImages) {
@@ -608,71 +610,186 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     }
   });
 
-  test('14: NOVA Keys K75 Interactive Assembly Animation Suite', async ({ page }) => {
+  test('14: NovaKeys K75 Flagship Card Strict Anti-Collision & Geometry Verification', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+    // Verify on all 4 required viewports: 390px, 768px, 1440px, 1920px
+    for (const vpWidth of [390, 768, 1440, 1920]) {
+      await page.setViewportSize({ width: vpWidth, height: 900 });
+      await page.goto(AFTER_URL);
+      await page.waitForLoadState('networkidle');
+
+      const card = page.locator('.card-theme-k75');
+      await expect(card).toBeVisible();
+      await card.scrollIntoViewIfNeeded();
+
+      // Dismiss promo modal if visible
+      const promoClose = page.locator('.btn-close-promo');
+      if (await promoClose.isVisible()) {
+        await promoClose.click();
+      }
+
+      // Check bounding box measurements directly in-browser
+      const metrics = await page.evaluate(() => {
+        const c = document.querySelector('.card-theme-k75') as HTMLElement;
+        const stage = c.querySelector('.card-visual-stage') as HTMLElement;
+        const img = c.querySelector('.card-product-layer') as HTMLElement;
+        const shadow = c.querySelector('.card-shadow-layer') as HTMLElement;
+        const title = c.querySelector('.product-card-title') as HTMLElement;
+        const desc = c.querySelector('.product-card-desc') as HTMLElement;
+        const specs = c.querySelector('.card-specs-list') as HTMLElement;
+        const action = c.querySelector('.card-action-bar') as HTMLElement;
+
+        const stageRect = stage.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+        const titleRect = title.getBoundingClientRect();
+        const descRect = desc.getBoundingClientRect();
+        const specsRect = specs.getBoundingClientRect();
+        const actionRect = action.getBoundingClientRect();
+
+        // Calculate visual shadow bottom (rendered at 76.5% of 1200 height within contain box)
+        const ratio = 1600 / 1200;
+        let drawnW = imgRect.width;
+        let drawnH = imgRect.height;
+        if (drawnW / drawnH > ratio) {
+          drawnW = drawnH * ratio;
+        } else {
+          drawnH = drawnW / ratio;
+        }
+        const topOffset = (imgRect.height - drawnH) / 2;
+        const shadowVisualBottom = imgRect.top + topOffset + drawnH * (918 / 1200);
+
+        return {
+          gapStageToTitle: titleRect.top - stageRect.bottom,
+          gapImgToTitle: titleRect.top - imgRect.bottom,
+          gapShadowVisualToTitle: titleRect.top - shadowVisualBottom,
+          // Collision overlaps: positive value means overlap (collision)
+          titleOverlap: Math.max(0, imgRect.bottom - titleRect.top),
+          descOverlap: Math.max(0, imgRect.bottom - descRect.top),
+          specsOverlap: Math.max(0, imgRect.bottom - specsRect.top),
+          actionOverlap: Math.max(0, imgRect.bottom - actionRect.top)
+        };
+      });
+
+      // Strict requirements: minimum 24px visual gap between bottom of render/stage and title
+      expect(metrics.gapImgToTitle, `K75 image must have at least 24px gap to title at ${vpWidth}px`).toBeGreaterThanOrEqual(24);
+      expect(metrics.gapStageToTitle, `K75 stage must have at least 24px gap to title at ${vpWidth}px`).toBeGreaterThanOrEqual(24);
+      expect(metrics.gapShadowVisualToTitle, `K75 visual shadow must have at least 24px gap to title at ${vpWidth}px`).toBeGreaterThanOrEqual(24);
+
+      // Zero overlap with any textual or interactive elements
+      expect(metrics.titleOverlap, `K75 image must never overlap title at ${vpWidth}px`).toBe(0);
+      expect(metrics.descOverlap, `K75 image must never overlap description at ${vpWidth}px`).toBe(0);
+      expect(metrics.specsOverlap, `K75 image must never overlap specs at ${vpWidth}px`).toBe(0);
+      expect(metrics.actionOverlap, `K75 image must never overlap action buttons at ${vpWidth}px`).toBe(0);
+
+      // Capture desktop and mobile verification screenshots for review
+      if (vpWidth === 1440) {
+        await card.screenshot({
+          path: path.join(REVIEW_DIR, 'card_k75_desktop_1440.png')
+        });
+      } else if (vpWidth === 390) {
+        await card.screenshot({
+          path: path.join(REVIEW_DIR, 'card_k75_mobile_390.png')
+        });
+      }
+    }
+  });
+
+  test('15: NovaKeys K75 Scroll-Driven 3D Breakdown Pipeline & Reduced Motion', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(AFTER_URL);
     await page.waitForLoadState('networkidle');
 
-    // 1. Locate story visual container & video
-    const container = page.locator('#k75AssemblyContainer');
-    await expect(container).toBeVisible();
-    await container.scrollIntoViewIfNeeded();
-
-    const video = page.locator('#k75AssemblyVideo');
-    await expect(video).toBeAttached();
-
-    // Verify source
-    const source = video.locator('source[src*="k75_assembly.webm"]');
-    await expect(source).toBeAttached();
-
-    // 2. Verify controls: Play / Pause toggle
-    const toggleBtn = page.locator('#k75AnimToggleBtn');
-    await expect(toggleBtn).toBeVisible();
-    await expect(toggleBtn).toHaveAttribute('aria-label', /Pause/i);
-
-    // Click pause
-    await toggleBtn.click();
-    await expect(toggleBtn).toHaveAttribute('aria-label', /Play/i);
-    await expect(toggleBtn).toHaveAttribute('aria-pressed', 'true');
-
-    // Click play again
-    await toggleBtn.click();
-    await expect(toggleBtn).toHaveAttribute('aria-label', /Pause/i);
-    await expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
-
-    // 3. Take verification screenshots of the story assembly section
-    await page.setViewportSize({ width: 1440, height: 900 });
+    // Dismiss promo modal if open
     const promoClose = page.locator('.btn-close-promo');
     if (await promoClose.isVisible()) {
       await promoClose.click();
     }
-    await container.scrollIntoViewIfNeeded();
+
+    // 1. Locate scroll track and sticky stage
+    const track = page.locator('#k75ScrollTrack');
+    await expect(track).toBeAttached();
+
+    const canvas = page.locator('#k75ScrollCanvas');
+    await expect(canvas).toBeVisible();
+
+    // 2. Initial state: progress = 0.000, fully assembled (frame 0)
+    const trackBox = await track.boundingBox();
+    expect(trackBox).not.toBeNull();
+    await page.evaluate((y) => window.scrollTo(0, y), trackBox!.y);
     await page.waitForTimeout(300);
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, 'k75_assembly_desktop.png'),
-      fullPage: false
+
+    const initialFrame = await canvas.getAttribute('data-frame-index');
+    const initialProgress = await canvas.getAttribute('data-progress');
+    expect(Number(initialFrame)).toBe(0);
+    expect(Number(initialProgress)).toBeLessThanOrEqual(0.05);
+
+    // Save initial fully assembled screenshot
+    await canvas.screenshot({
+      path: path.join(REVIEW_DIR, 'story_k75_01_assembled.png')
     });
 
-    // Mobile verification
+    // 3. Scroll down midway through track (progress ~ 0.5): details expanding
+    const scrollTravel = trackBox!.height - 900;
+    await page.evaluate((y) => window.scrollTo(0, y), trackBox!.y + scrollTravel * 0.5);
+    await page.waitForTimeout(300);
+
+    const midFrame = await canvas.getAttribute('data-frame-index');
+    const midProgress = await canvas.getAttribute('data-progress');
+    expect(Number(midFrame)).toBeGreaterThan(10);
+    expect(Number(midFrame)).toBeLessThan(56);
+    expect(Number(midProgress)).toBeGreaterThan(0.2);
+
+    // Verify stop on current frame (no autoplay/animation loop while scroll is paused)
+    const frameAtPause1 = await canvas.getAttribute('data-frame-index');
+    await page.waitForTimeout(500);
+    const frameAtPause2 = await canvas.getAttribute('data-frame-index');
+    expect(frameAtPause1, 'Animation must freeze on current frame when scroll stops (no autoplay)').toBe(frameAtPause2);
+
+    // Save midway breakdown screenshot
+    await canvas.screenshot({
+      path: path.join(REVIEW_DIR, 'story_k75_02_mid_breakdown.png')
+    });
+
+    // 4. Scroll to end of track (progress = 1.000): full exploded view (frame 56)
+    await page.evaluate((y) => window.scrollTo(0, y), trackBox!.y + scrollTravel);
+    await page.waitForTimeout(300);
+
+    const endFrame = await canvas.getAttribute('data-frame-index');
+    const endProgress = await canvas.getAttribute('data-progress');
+    expect(Number(endFrame)).toBe(56);
+    expect(Number(endProgress)).toBeCloseTo(1.0, 1);
+
+    // Save final exploded view screenshot
+    await canvas.screenshot({
+      path: path.join(REVIEW_DIR, 'story_k75_03_exploded.png')
+    });
+
+    // 5. Scroll UP: details assemble back in reverse order
+    await page.evaluate((y) => window.scrollTo(0, y), trackBox!.y + scrollTravel * 0.3);
+    await page.waitForTimeout(300);
+
+    const upFrame = await canvas.getAttribute('data-frame-index');
+    expect(Number(upFrame)).toBeLessThan(56);
+
+    // 6. Mobile verification at 390px
     await page.setViewportSize({ width: 390, height: 844 });
-    if (await promoClose.isVisible()) {
-      await promoClose.click();
-    }
-    await container.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await track.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
-    await page.screenshot({
-      path: path.join(SCREENSHOTS_DIR, 'k75_assembly_mobile.png'),
-      fullPage: false
+    await canvas.screenshot({
+      path: path.join(REVIEW_DIR, 'story_k75_mobile_390.png')
     });
 
-    // 4. Emulate prefers-reduced-motion: reduce
+    // 7. Verify prefers-reduced-motion fallback
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.waitForTimeout(200);
 
-    const videoVisible = await video.isVisible();
-    expect(videoVisible).toBe(false);
+    const isCanvasVisible = await canvas.isVisible();
+    expect(isCanvasVisible, 'Canvas must be hidden when reduced motion is preferred').toBe(false);
 
-    const staticFallback = page.locator('.story-assembly-static-fallback');
-    await expect(staticFallback).toBeVisible();
+    const fallbackImg = page.locator('.story-scroll-fallback');
+    await expect(fallbackImg).toBeVisible();
   });
 
 });
