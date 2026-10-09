@@ -608,4 +608,72 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     }
   });
 
+  test('14: NOVA Keys K75 Interactive Assembly Animation Suite', async ({ page }) => {
+    await page.goto(AFTER_URL);
+    await page.waitForLoadState('networkidle');
+
+    // 1. Locate story visual container & video
+    const container = page.locator('#k75AssemblyContainer');
+    await expect(container).toBeVisible();
+    await container.scrollIntoViewIfNeeded();
+
+    const video = page.locator('#k75AssemblyVideo');
+    await expect(video).toBeAttached();
+
+    // Verify source
+    const source = video.locator('source[src*="k75_assembly.webm"]');
+    await expect(source).toBeAttached();
+
+    // 2. Verify controls: Play / Pause toggle
+    const toggleBtn = page.locator('#k75AnimToggleBtn');
+    await expect(toggleBtn).toBeVisible();
+    await expect(toggleBtn).toHaveAttribute('aria-label', /Pause/i);
+
+    // Click pause
+    await toggleBtn.click();
+    await expect(toggleBtn).toHaveAttribute('aria-label', /Play/i);
+    await expect(toggleBtn).toHaveAttribute('aria-pressed', 'true');
+
+    // Click play again
+    await toggleBtn.click();
+    await expect(toggleBtn).toHaveAttribute('aria-label', /Pause/i);
+    await expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
+
+    // 3. Take verification screenshots of the story assembly section
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const promoClose = page.locator('.btn-close-promo');
+    if (await promoClose.isVisible()) {
+      await promoClose.click();
+    }
+    await container.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, 'k75_assembly_desktop.png'),
+      fullPage: false
+    });
+
+    // Mobile verification
+    await page.setViewportSize({ width: 390, height: 844 });
+    if (await promoClose.isVisible()) {
+      await promoClose.click();
+    }
+    await container.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: path.join(SCREENSHOTS_DIR, 'k75_assembly_mobile.png'),
+      fullPage: false
+    });
+
+    // 4. Emulate prefers-reduced-motion: reduce
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(200);
+
+    const videoVisible = await video.isVisible();
+    expect(videoVisible).toBe(false);
+
+    const staticFallback = page.locator('.story-assembly-static-fallback');
+    await expect(staticFallback).toBeVisible();
+  });
+
 });
+

@@ -359,8 +359,55 @@
           </h2>
         </div>
 
-        <div class="story-visual-canvas">
-          <img src="../assets/images/exploded-k75.png" alt="Technical exploded 3D render of the NOVA K75 keyboard layers" class="story-exploded-img" loading="lazy" />
+        <div class="story-visual-canvas" id="k75AssemblyContainer">
+          <!-- 1. Interactive 3D Dynamic Assembly / Disassembly -->
+          <div class="assembly-stage-wrapper">
+            <video 
+              id="k75AssemblyVideo" 
+              class="story-assembly-video" 
+              autoplay 
+              loop 
+              muted 
+              playsinline 
+              preload="auto"
+              poster="../assets/images/exploded-k75.png"
+              aria-label="3D animated assembly and disassembly breakdown of NOVA Keys K75 mechanical keyboard"
+            >
+              <source src="../assets/images/k75_assembly.webm" type="video/webm" />
+            </video>
+            
+            <!-- Static assembled fallback for prefers-reduced-motion -->
+            <img 
+              src="../assets/images/keyboard-k75.png" 
+              alt="NOVA Keys K75 fully assembled keyboard view" 
+              class="story-assembly-static-fallback" 
+              loading="lazy" 
+            />
+
+            <!-- Play / Pause accessible toggle button -->
+            <button 
+              type="button" 
+              id="k75AnimToggleBtn" 
+              class="assembly-ctrl-btn" 
+              aria-label="Pause 3D assembly animation" 
+              aria-pressed="false"
+              title="Pause animation"
+            >
+              <span class="ctrl-icon-pause" aria-hidden="true">⏸</span>
+              <span class="ctrl-icon-play" aria-hidden="true" style="display: none;">▶</span>
+              <span class="ctrl-btn-text">PAUSE</span>
+            </button>
+          </div>
+
+          <!-- 2. Technical Exploded Schematic Layers -->
+          <div class="story-exploded-view">
+            <img 
+              src="../assets/images/exploded-k75.png" 
+              alt="Technical exploded 3D render of the NOVA K75 keyboard layers" 
+              class="story-exploded-img" 
+              loading="lazy" 
+            />
+          </div>
         </div>
 
         <!-- Accessible HTML Legend for Mobile and Screen Readers -->

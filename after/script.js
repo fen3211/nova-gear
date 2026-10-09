@@ -1186,6 +1186,67 @@
   }
 
   /* --------------------------------------------------------------------------
+     NOVA KEYS K75 INTERACTIVE ASSEMBLY ANIMATION (INTERSECTION OBSERVER & TOGGLE)
+     -------------------------------------------------------------------------- */
+  function initK75AssemblyAnimation() {
+    const video = document.getElementById('k75AssemblyVideo');
+    const toggleBtn = document.getElementById('k75AnimToggleBtn');
+    const container = document.getElementById('k75AssemblyContainer');
+
+    if (!video) return;
+
+    let userPaused = false;
+    const pauseIcon = toggleBtn ? toggleBtn.querySelector('.ctrl-icon-pause') : null;
+    const playIcon = toggleBtn ? toggleBtn.querySelector('.ctrl-icon-play') : null;
+    const btnText = toggleBtn ? toggleBtn.querySelector('.ctrl-btn-text') : null;
+
+    function updateBtnUI(isPaused) {
+      if (!toggleBtn) return;
+      toggleBtn.setAttribute('aria-pressed', isPaused ? 'true' : 'false');
+      toggleBtn.setAttribute('aria-label', isPaused ? 'Play 3D assembly animation' : 'Pause 3D assembly animation');
+      toggleBtn.setAttribute('title', isPaused ? 'Play animation' : 'Pause animation');
+      if (pauseIcon) pauseIcon.style.display = isPaused ? 'none' : 'inline-block';
+      if (playIcon) playIcon.style.display = isPaused ? 'inline-block' : 'none';
+      if (btnText) btnText.textContent = isPaused ? 'PLAY' : 'PAUSE';
+    }
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        if (video.paused) {
+          userPaused = false;
+          video.play().catch(() => {});
+          updateBtnUI(false);
+        } else {
+          userPaused = true;
+          video.pause();
+          updateBtnUI(true);
+        }
+      });
+    }
+
+    // IntersectionObserver pauses playback when scrolled out of view to conserve GPU & battery
+    if ('IntersectionObserver' in window && container) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (!userPaused && video.paused) {
+              video.play().catch(() => {});
+              updateBtnUI(false);
+            }
+          } else {
+            if (!video.paused) {
+              video.pause();
+            }
+          }
+        });
+      }, {
+        threshold: 0.15
+      });
+      observer.observe(container);
+    }
+  }
+
+  /* --------------------------------------------------------------------------
      BOOTSTRAP
      -------------------------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', () => {
@@ -1198,5 +1259,6 @@
     initReviewsSlider();
     initNewsletter();
     initParallax();
+    initK75AssemblyAnimation();
   });
 })();

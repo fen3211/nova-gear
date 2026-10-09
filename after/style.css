@@ -981,6 +981,15 @@ ul, ol {
   width: 100%;
   margin: 1.5rem 0 3.5rem;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.5rem;
+}
+
+.story-exploded-view {
+  width: 100%;
+  max-width: 980px;
+  display: flex;
   justify-content: center;
 }
 
@@ -990,6 +999,111 @@ ul, ol {
   height: auto;
   border-radius: 14px;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+}
+
+/* 10.1 NOVA KEYS K75 INTERACTIVE ASSEMBLY ANIMATION */
+.assembly-stage-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-assembly-video {
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-assembly-img-fallback {
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
+}
+
+.story-assembly-static-fallback {
+  display: none;
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.8));
+}
+
+.assembly-ctrl-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background-color: rgba(22, 24, 29, 0.88);
+  color: var(--dark-text);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  z-index: 5;
+}
+
+.assembly-ctrl-btn:hover {
+  background-color: rgba(35, 38, 45, 0.96);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  transform: translateY(-1px);
+}
+
+.assembly-ctrl-btn:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 3px;
+}
+
+.assembly-ctrl-btn:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 768px) {
+  .assembly-ctrl-btn {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Reduced motion preference: display assembled keyboard still, hide video */
+@media (prefers-reduced-motion: reduce) {
+  .story-assembly-video,
+  .story-assembly-img-fallback {
+    display: none !important;
+  }
+  .story-assembly-static-fallback {
+    display: block !important;
+  }
+  .assembly-ctrl-btn {
+    display: none !important;
+  }
 }
 
 /* Accessible HTML Legend for Mobile / Screen Readers */
