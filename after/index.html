@@ -60,70 +60,85 @@
        ========================================================================== -->
   <main id="main-content">
     
-    <!-- HERO POSTER SECTION (CINEMATIC PRESENTATION) -->
-    <section class="hero-section" id="hero" aria-label="Hero Spotlight">
-      <div class="editorial-container hero-poster-canvas">
-        <h1 class="title-mega hero-headline">
-          <span class="line-break"><span class="line-inner">BETTER GEAR.</span></span>
-          <span class="line-break"><span class="line-inner">BETTER DAYS.</span></span>
-        </h1>
-
-        <!-- High-End 3D Studio Product Render with Parallax Layering -->
-        <div class="hero-visual-stage" id="heroVisualStage" aria-hidden="true">
-          <div class="hero-cinematic-glow" aria-hidden="true"></div>
-          <div class="hero-parallax-wrapper" id="heroParallaxWrapper">
-            <img src="../assets/images/keyboard-k75-shadow.webp" alt="" class="hero-shadow-img" aria-hidden="true" />
-            <img src="../assets/images/keyboard-k75.png" alt="NOVA K75 75% Mechanical Keyboard 3D Render" class="hero-3d-img" fetchpriority="high" width="1200" height="800" />
-          </div>
-
-          <!-- Precision Highlight Chips -->
-          <div class="hero-feature-tags" id="heroFeatureTags">
-            <div class="hero-tag-pill tag-knob">
-              <span class="tag-dot"></span>
-              <span class="tag-text">BRASS ROTARY ENCODER</span>
+    <!-- HERO POSTER SECTION (CINEMATIC PRESENTATION & 3D MOTION) -->
+    <section class="hero-section hero-cinematic-stage" id="hero" aria-label="Hero Spotlight">
+      <div class="hero-sticky-track" id="heroScrollTrack">
+        <div class="hero-sticky-viewport">
+          <div class="editorial-container hero-poster-canvas">
+            <div class="hero-super-badge-row">
+              <span class="hero-super-badge">NOVA K75 // ARCHITECTURAL 75% WIRELESS</span>
+              <span class="hero-super-sub">ENGINEERED TO FEEL DIFFERENT</span>
             </div>
-            <div class="hero-tag-pill tag-chassis">
-              <span class="tag-dot"></span>
-              <span class="tag-text">CNC 6063 ANODIZED</span>
-            </div>
-            <div class="hero-tag-pill tag-gasket">
-              <span class="tag-dot"></span>
-              <span class="tag-text">FR4 GASKET ACOUSTICS</span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <h1 class="title-mega hero-headline">
+              <span class="line-break"><span class="line-inner">BETTER GEAR.</span></span>
+              <span class="line-break"><span class="line-inner">BETTER DAYS.</span></span>
+            </h1>
 
-      <div class="editorial-container">
-        <div class="hero-meta-bar">
-          <div class="hero-meta-left">
-            <p class="hero-lead-text">
-              Premium tactile tools engineered to eliminate friction from everyday interaction. Solid CNC 6063 aerospace alloys, custom-dampened acoustics, effortless workflow.
-            </p>
-            <a href="#story" class="hero-scroll-indicator" aria-label="Scroll down to explore architecture">
-              <span class="scroll-arrow" aria-hidden="true">↓</span>
-              <span class="scroll-label">SCROLL TO EXPLORE ARCHITECTURE</span>
-            </a>
-          </div>
-          <div class="hero-meta-right">
-            <div class="hero-product-pill">
-              <div class="pill-badge-row">
-                <span class="pill-status-dot"></span>
-                <span class="pill-status-text">IN STOCK • SHIPS IN 24H</span>
+            <!-- High-End 3D Studio Product Stage with Real 3D Scrub Sequence -->
+            <div class="hero-visual-stage" id="heroVisualStage" aria-hidden="true">
+              <div class="hero-cinematic-glow" aria-hidden="true"></div>
+              <div class="hero-canvas-frame">
+                <canvas id="heroScrubCanvas" class="hero-scrub-canvas" width="1200" height="800" data-frame-index="0" data-progress="0.000"></canvas>
+                <div class="hero-parallax-wrapper" id="heroParallaxWrapper">
+                  <img src="../assets/images/keyboard-k75-shadow.webp" alt="" class="hero-shadow-img" aria-hidden="true" />
+                  <img src="../assets/images/keyboard-k75.png" alt="NOVA K75 75% Mechanical Keyboard 3D Render" class="hero-3d-img" fetchpriority="high" width="1200" height="800" />
+                </div>
               </div>
-              <div class="pill-name">NOVA K75 // 75% WIRELESS</div>
-              <div class="pill-price">$129</div>
+
+              <!-- Precision Highlight Chips (Realtime Telemetry Callouts) -->
+              <div class="hero-feature-tags" id="heroFeatureTags">
+                <div class="hero-tag-pill tag-knob active" data-phase="knob">
+                  <span class="tag-dot"></span>
+                  <span class="tag-text">BRASS ROTARY ENCODER</span>
+                </div>
+                <div class="hero-tag-pill tag-chassis" data-phase="chassis">
+                  <span class="tag-dot"></span>
+                  <span class="tag-text">CNC 6063 ANODIZED</span>
+                </div>
+                <div class="hero-tag-pill tag-gasket" data-phase="gasket">
+                  <span class="tag-dot"></span>
+                  <span class="tag-text">FR4 GASKET ACOUSTICS</span>
+                </div>
+                <div class="hero-tag-pill tag-switches" data-phase="switches">
+                  <span class="tag-dot"></span>
+                  <span class="tag-text">TTC LINEAR 45G // 3.8MM</span>
+                </div>
+              </div>
             </div>
-            <div class="hero-cta-group">
-              <button type="button" class="btn-hero-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
-                QUICK ADD <span aria-hidden="true">+</span>
-              </button>
-              <button type="button" class="btn-hero-studio-cta" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio">
-                HARDWARE STUDIO ⚙
-              </button>
-              <a href="#products" class="btn-hero-cta">
-                EXPLORE CATALOG <span aria-hidden="true">↗</span>
-              </a>
+          </div>
+
+          <div class="editorial-container">
+            <div class="hero-meta-bar">
+              <div class="hero-meta-left">
+                <p class="hero-lead-text">
+                  Premium tactile tools engineered to eliminate friction from everyday interaction. Solid CNC 6063 aerospace alloys, custom-dampened acoustics, effortless workflow.
+                </p>
+                <a href="#story" class="hero-scroll-indicator" aria-label="Scroll down to explore architecture">
+                  <span class="scroll-arrow" aria-hidden="true">↓</span>
+                  <span class="scroll-label">SCROLL TO EXPLORE ARCHITECTURE</span>
+                </a>
+              </div>
+              <div class="hero-meta-right">
+                <div class="hero-product-pill">
+                  <div class="pill-badge-row">
+                    <span class="pill-status-dot"></span>
+                    <span class="pill-status-text">IN STOCK • SHIPS IN 24H</span>
+                  </div>
+                  <div class="pill-name">NOVA K75 // 75% WIRELESS</div>
+                  <div class="pill-price">$129</div>
+                </div>
+                <div class="hero-cta-group">
+                  <button type="button" class="btn-hero-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
+                    QUICK ADD <span aria-hidden="true">+</span>
+                  </button>
+                  <button type="button" class="btn-hero-studio-cta" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio">
+                    HARDWARE STUDIO ⚙
+                  </button>
+                  <a href="#products" class="btn-hero-cta">
+                    EXPLORE CATALOG <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -848,20 +863,15 @@
       <!-- Studio App Title Bar -->
       <div class="studio-topbar">
         <div class="studio-topbar-left">
-          <div class="studio-window-controls" aria-hidden="true">
-            <span class="win-dot win-dot-close"></span>
-            <span class="win-dot win-dot-min"></span>
-            <span class="win-dot win-dot-max"></span>
-          </div>
           <div class="studio-title-stack">
             <h2 id="configurator-modal-title" class="studio-title-heading">NOVA KEYBOARD STUDIO</h2>
-            <span class="studio-version-pill">v2.4 PRO // FIRMWARE LINK</span>
+            <span class="studio-version-pill">v2.4 LIGHT // SIMULATOR DEMO</span>
           </div>
         </div>
         <div class="studio-topbar-right">
           <div class="studio-connection-badge">
             <span class="conn-pulse-dot" aria-hidden="true"></span>
-            <span class="conn-status-text">CONNECTED // SIMULATOR ACTIVE</span>
+            <span class="conn-status-text">LOCAL SIMULATOR ACTIVE</span>
           </div>
           <button type="button" class="btn-studio-reset" id="btnStudioReset" aria-label="Reset keyboard to factory defaults">
             RESET DEFAULTS
@@ -874,6 +884,10 @@
 
       <!-- Studio Two-Column Workstation Body -->
       <div class="studio-grid-body">
+        <div class="studio-mobile-switcher" role="tablist" aria-label="Studio View Switcher">
+          <button type="button" class="studio-mob-tab active" data-tab="config" role="tab" aria-selected="true">SETTINGS &amp; REMAP</button>
+          <button type="button" class="studio-mob-tab" data-tab="preview" role="tab" aria-selected="false">KEYMAP PREVIEW</button>
+        </div>
         <!-- Left Panel: Configuration Controls & Key Inspector -->
         <aside class="studio-panel-config" aria-label="Hardware Configuration Parameters">
           <!-- Parameter 1: OS Target -->
@@ -941,7 +955,7 @@
           <div class="studio-cfg-section">
             <div class="section-title-row">
               <span class="studio-section-label">03 // ACTIVE HARDWARE LAYER</span>
-              <span class="studio-section-badge">EEPROM</span>
+              <span class="studio-section-badge">LAYER MAP</span>
             </div>
             <div class="studio-layer-tabs" role="tablist" aria-label="Memory layer mapping">
               <button type="button" class="btn-cfg-layer studio-tab-btn active" data-layer="0" role="tab" aria-pressed="true" aria-selected="true">

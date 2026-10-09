@@ -796,5 +796,210 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     await expect(fallbackImg).toBeVisible();
   });
 
+  test('16: Cinematic 3D Hero Sequence Scrub Pipeline & Bidirectional Travel', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(AFTER_URL);
+    await page.waitForLoadState('networkidle');
+
+    const heroTrack = page.locator('#heroScrollTrack');
+    await expect(heroTrack).toBeAttached();
+
+    const heroCanvas = page.locator('#heroScrubCanvas');
+    await expect(heroCanvas).toBeAttached();
+
+    // 1. Initial State: Frame 0
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
+
+    const initialFrame = await heroCanvas.getAttribute('data-frame-index');
+    expect(Number(initialFrame)).toBe(0);
+
+    // Initial Telemetry Tag: Knob active
+    const knobPill = page.locator('.hero-tag-pill[data-phase="knob"]');
+    await expect(knobPill).toHaveClass(/active/);
+
+    // 2. Scroll 30% down the hero track: Chassis active
+    const trackBox = await heroTrack.boundingBox();
+    expect(trackBox).not.toBeNull();
+    const scrollTravel = trackBox!.height - 900;
+
+    await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.35);
+    await page.waitForTimeout(350);
+
+    const midFrame = await heroCanvas.getAttribute('data-frame-index');
+    expect(Number(midFrame)).toBeGreaterThan(5);
+    expect(Number(midFrame)).toBeLessThan(55);
+
+    const chassisPill = page.locator('.hero-tag-pill[data-phase="chassis"]');
+    await expect(chassisPill).toHaveClass(/active/);
+
+    // 3. Scroll to 85% down the hero track: Switches active, final beauty reveal
+    await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.85);
+    await page.waitForTimeout(350);
+
+    const lateFrame = await heroCanvas.getAttribute('data-frame-index');
+    expect(Number(lateFrame)).toBeGreaterThan(35);
+
+    const switchesPill = page.locator('.hero-tag-pill[data-phase="switches"]');
+    await expect(switchesPill).toHaveClass(/active/);
+
+    // 4. Reverse scroll up back to top: Frame decreases back towards 0
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(350);
+
+    const topFrame = await heroCanvas.getAttribute('data-frame-index');
+    expect(Number(topFrame)).toBeLessThan(5);
+
+    // 5. Test Quick Add and Studio CTA buttons in Hero
+    const heroAddBtn = page.locator('.btn-hero-add-cart');
+    await expect(heroAddBtn).toBeVisible();
+    await heroAddBtn.click();
+    await page.waitForTimeout(200);
+
+    const cartDrawer = page.locator('.cart-drawer');
+    await expect(cartDrawer).toBeVisible();
+    const closeCartBtn = page.locator('.btn-close-cart');
+    await closeCartBtn.click();
+    await page.waitForTimeout(200);
+
+    const heroStudioBtn = page.locator('.btn-hero-studio-cta');
+    await expect(heroStudioBtn).toBeVisible();
+    await heroStudioBtn.click();
+    await page.waitForTimeout(200);
+
+    const studioModal = page.locator('.configurator-modal-backdrop');
+    await expect(studioModal).toHaveClass(/open/);
+    const closeStudioBtn = page.locator('.studio-topbar .btn-close-configurator');
+    await closeStudioBtn.click();
+  });
+
+  test('17: Light Keyboard Studio Workstation Overhaul & Key Remap Action ID Bugfix', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(AFTER_URL);
+    await page.waitForLoadState('networkidle');
+
+    // 1. Open Studio Modal
+    const trigger = page.locator('.btn-hero-studio-cta');
+    await trigger.click();
+    await page.waitForTimeout(300);
+
+    const studioModal = page.locator('.configurator-modal-backdrop');
+    await expect(studioModal).toHaveClass(/open/);
+
+    // Verify Light Edition styles: Not black background (#121317)
+    const studioWindow = page.locator('.studio-window');
+    const bgColor = await studioWindow.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    // rgba or rgb format for #F4F1E9 is rgb(244, 241, 233)
+    expect(bgColor).not.toBe('rgb(18, 19, 23)');
+
+    // 2. Verify Key Selection and Remap Bugfix
+    const escKey = page.locator('.keycap[data-code="Escape"], .cfg-key[data-code="Escape"]').first();
+    await escKey.click();
+    await page.waitForTimeout(150);
+
+    const inspectorSelect = page.locator('#inspectorActionSelect');
+    await expect(inspectorSelect).toBeVisible();
+
+    // Select 'VOL_UP' action
+    await inspectorSelect.selectOption('VOL_UP');
+    await page.waitForTimeout(200);
+
+    // Verify Inspector status and displayed value
+    const statusBadge = page.locator('#inspectorStatusBadge');
+    await expect(statusBadge).toHaveText('REMAPPED');
+    expect(await inspectorSelect.inputValue()).toBe('VOL_UP');
+
+    // Verify Keycap displays short label 'VOL+'
+    await expect(escKey).toHaveText('VOL+');
+
+    // 3. Select another key and return to Escape: verify dropdown retains 'VOL_UP' (not reverted to DEFAULT)
+    const spaceKey = page.locator('.key-spacebar');
+    await spaceKey.click();
+    await page.waitForTimeout(150);
+    expect(await inspectorSelect.inputValue()).toBe('DEFAULT');
+
+    await escKey.click();
+    await page.waitForTimeout(150);
+    expect(await inspectorSelect.inputValue()).toBe('VOL_UP');
+    await expect(statusBadge).toHaveText('REMAPPED');
+
+    // 4. Persistence Check: Reload and re-open
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+    await page.locator('.btn-hero-studio-cta').click();
+    await page.waitForTimeout(300);
+
+    const reloadedEscKey = page.locator('.keycap[data-code="Escape"], .cfg-key[data-code="Escape"]').first();
+    await expect(reloadedEscKey).toHaveText('VOL+');
+    await reloadedEscKey.click();
+    await page.waitForTimeout(150);
+    expect(await page.locator('#inspectorActionSelect').inputValue()).toBe('VOL_UP');
+
+    // 5. Reset Defaults Check
+    const resetBtn = page.locator('#btnStudioReset');
+    await resetBtn.click();
+    await page.waitForTimeout(200);
+
+    await expect(reloadedEscKey).toHaveText('ESC');
+    expect(await page.locator('#inspectorActionSelect').inputValue()).toBe('DEFAULT');
+    await expect(page.locator('#inspectorStatusBadge')).toHaveText('DEFAULT');
+
+    // Close dialog
+    await page.locator('.studio-topbar .btn-close-configurator').click();
+  });
+
+  test('18: Light Keyboard Studio Mobile Responsiveness & 320px Layout Integrity', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+
+    // Test on 390px (iPhone 14) and 320px (Ultra-compact mobile)
+    for (const mobWidth of [390, 320]) {
+      await page.setViewportSize({ width: mobWidth, height: 750 });
+      await page.goto(AFTER_URL);
+      await page.waitForLoadState('networkidle');
+
+      // Open Studio Modal via hero button
+      const studioBtn = page.locator('.btn-hero-studio-cta');
+      await studioBtn.click();
+      await page.waitForTimeout(300);
+
+      // Verify Mobile Switcher is visible
+      const mobileSwitcher = page.locator('.studio-mobile-switcher');
+      await expect(mobileSwitcher).toBeVisible();
+
+      // Check Settings Tab
+      const settingsTab = page.locator('.studio-mob-tab[data-tab="config"]');
+      const previewTab = page.locator('.studio-mob-tab[data-tab="preview"]');
+      await expect(settingsTab).toBeVisible();
+      await expect(previewTab).toBeVisible();
+
+      // Switch to Keymap Preview Tab
+      await previewTab.click();
+      await page.waitForTimeout(200);
+
+      const previewPanel = page.locator('.studio-panel-preview');
+      await expect(previewPanel).toBeVisible();
+
+      // Verify ZERO horizontal overflow on document
+      const hasOverflow = await page.evaluate(() => {
+        return document.documentElement.scrollWidth > window.innerWidth;
+      });
+      expect(hasOverflow, `Viewport ${mobWidth}px must not have horizontal document overflow in studio preview`).toBe(false);
+
+      // Switch back to Settings Tab
+      await settingsTab.click();
+      await page.waitForTimeout(200);
+      const configPanel = page.locator('.studio-panel-config');
+      await expect(configPanel).toBeVisible();
+
+      // Close modal
+      const closeBtn = page.locator('.studio-topbar .btn-close-configurator');
+      await closeBtn.click();
+      await page.waitForTimeout(200);
+    }
+  });
+
 });
+
 

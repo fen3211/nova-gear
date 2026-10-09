@@ -1166,6 +1166,16 @@
       updateLayerKeyLabels();
     }
 
+    const ACTION_MAP = {
+      'MUTE': { keyLabel: 'MUTE', desc: 'Mute / Unmute Audio' },
+      'PLAY_PAUSE': { keyLabel: 'PLAY', desc: 'Play / Pause Media' },
+      'VOL_UP': { keyLabel: 'VOL+', desc: 'Volume Increment' },
+      'VOL_DOWN': { keyLabel: 'VOL-', desc: 'Volume Decrement' },
+      'SCREENSHOT': { keyLabel: 'SHOT', desc: 'Capture Screenshot' },
+      'CALCULATOR': { keyLabel: 'CALC', desc: 'Launch Calculator' },
+      'MACRO_CLEAR': { keyLabel: 'CLEAR', desc: 'Clear Active Macro' }
+    };
+
     function updateLayerKeyLabels() {
       const allKeyButtons = configuratorBackdrop.querySelectorAll('.keycap, .cfg-key');
       allKeyButtons.forEach(btn => {
@@ -1174,7 +1184,8 @@
 
         // Check if explicitly remapped by user
         if (keyRemaps[code]) {
-          btn.textContent = keyRemaps[code];
+          const actId = keyRemaps[code];
+          btn.textContent = ACTION_MAP[actId] ? ACTION_MAP[actId].keyLabel : actId;
           return;
         }
 
@@ -1216,6 +1227,31 @@
         btn.textContent = defaultLabel;
       });
     }
+
+    // Mobile Switcher Tabs
+    const mobTabs = configuratorBackdrop.querySelectorAll('.studio-mob-tab');
+    const panelConfig = configuratorBackdrop.querySelector('.studio-panel-config');
+    const panelPreview = configuratorBackdrop.querySelector('.studio-panel-preview');
+
+    mobTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+        mobTabs.forEach(t => {
+          const isCurrent = (t === tab);
+          t.classList.toggle('active', isCurrent);
+          t.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+        });
+        if (panelConfig && panelPreview) {
+          if (targetTab === 'config') {
+            panelConfig.classList.remove('mob-hidden');
+            panelPreview.classList.add('mob-hidden');
+          } else {
+            panelConfig.classList.add('mob-hidden');
+            panelPreview.classList.remove('mob-hidden');
+          }
+        }
+      });
+    });
 
     // OS Toggle Click
     configuratorBackdrop.querySelectorAll('.btn-cfg-os').forEach(btn => {
@@ -1297,17 +1333,8 @@
           if (statusBadge) statusBadge.textContent = 'DEFAULT';
           if (activeBtn) activeBtn.textContent = activeBtn.getAttribute('data-label') || selectedKeyCode;
         } else {
-          const actionLabels = {
-            'MUTE': 'MUTE',
-            'PLAY_PAUSE': 'PLAY',
-            'VOL_UP': 'VOL+',
-            'VOL_DOWN': 'VOL-',
-            'SCREENSHOT': 'SHOT',
-            'CALCULATOR': 'CALC',
-            'MACRO_CLEAR': 'CLEAR'
-          };
-          const displayLabel = actionLabels[val] || val;
-          keyRemaps[selectedKeyCode] = displayLabel;
+          keyRemaps[selectedKeyCode] = val;
+          const displayLabel = ACTION_MAP[val] ? ACTION_MAP[val].keyLabel : val;
           if (statusBadge) statusBadge.textContent = 'REMAPPED';
           if (activeBtn) activeBtn.textContent = displayLabel;
         }
@@ -1340,6 +1367,10 @@
           localStorage.removeItem('nova_k75_studio_config');
         } catch (e) {}
         updateStudioUI();
+        const statusBadge = document.getElementById('inspectorStatusBadge');
+        const selectEl = document.getElementById('inspectorActionSelect');
+        if (statusBadge) statusBadge.textContent = 'DEFAULT';
+        if (selectEl) selectEl.value = 'DEFAULT';
       });
     }
 
@@ -1418,11 +1449,13 @@
      12. CINEMATIC HERO PRESENTATION & INTERACTION
      -------------------------------------------------------------------------- */
   function initHeroCinematicInteraction() {
-    const stage = document.getElementById('heroVisualStage');
-    const wrapper = document.getElementById('heroParallaxWrapper');
+    const canvas = document.getElementById('heroScrubCanvas');
+    const track = document.getElementById('heroScrollTrack');
+    const canvasFrame = document.querySelector('.hero-canvas-frame');
     const heroAddBtn = document.querySelector('.btn-hero-add-cart');
+    const studioCtaBtn = document.querySelector('.btn-hero-studio-cta');
     const scrollIndicator = document.querySelector('.hero-scroll-indicator');
-    const heroSection = document.getElementById('hero') || document.querySelector('.hero-section');
+    const featureTags = document.querySelectorAll('.hero-tag-pill');
 
     // Quick Add button for NovaKeys K75
     if (heroAddBtn) {
@@ -1430,6 +1463,14 @@
         addToCart('k75', null);
         const cartDrawer = document.querySelector('.cart-drawer');
         if (cartDrawer) openDialog(cartDrawer, heroAddBtn);
+      });
+    }
+
+    // Hardware Studio CTA Button
+    if (studioCtaBtn) {
+      studioCtaBtn.addEventListener('click', () => {
+        const configurator = document.querySelector('.configurator-modal-backdrop');
+        if (configurator) openDialog(configurator, studioCtaBtn);
       });
     }
 
@@ -1448,59 +1489,119 @@
       });
     }
 
-    if (!heroSection || !wrapper) return;
+    if (!canvas || !track) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const TOTAL_HERO_FRAMES = 56;
+    const frames = [];
+    let currentFrameIndex = -1;
+    let targetFrameIndex = 0;
+    let ticking = false;
+
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    let targetRotX = 0, targetRotY = 0;
-    let currentRotX = 0, currentRotY = 0;
-    let targetTransX = 0, targetTransY = 0;
-    let currentTransX = 0, currentTransY = 0;
-    let isTracking = false;
+    function getNearestLoadedFrameIndex(targetIdx) {
+      if (frames[targetIdx] && frames[targetIdx].complete && frames[targetIdx].naturalWidth > 0) {
+        return targetIdx;
+      }
+      for (let offset = 1; offset < TOTAL_HERO_FRAMES; offset++) {
+        const left = targetIdx - offset;
+        if (left >= 0 && frames[left] && frames[left].complete && frames[left].naturalWidth > 0) {
+          return left;
+        }
+        const right = targetIdx + offset;
+        if (right < TOTAL_HERO_FRAMES && frames[right] && frames[right].complete && frames[right].naturalWidth > 0) {
+          return right;
+        }
+      }
+      return -1;
+    }
 
-    function renderHeroSpringLoop() {
-      currentRotX += (targetRotX - currentRotX) * 0.1;
-      currentRotY += (targetRotY - currentRotY) * 0.1;
-      currentTransX += (targetTransX - currentTransX) * 0.1;
-      currentTransY += (targetTransY - currentTransY) * 0.1;
-
-      wrapper.style.transform = `perspective(1000px) translate3d(${currentTransX.toFixed(2)}px, ${currentTransY.toFixed(2)}px, 0) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translateZ(8px)`;
-
-      const delta = Math.abs(targetRotX - currentRotX) + Math.abs(targetRotY - currentRotY) + Math.abs(targetTransX - currentTransX) + Math.abs(targetTransY - currentTransY);
-      if (delta > 0.04) {
-        requestAnimationFrame(renderHeroSpringLoop);
-      } else {
-        isTracking = false;
+    function renderFrame(index) {
+      if (index < 0 || index >= TOTAL_HERO_FRAMES) return;
+      targetFrameIndex = index;
+      const frameToDraw = getNearestLoadedFrameIndex(index);
+      if (frameToDraw >= 0) {
+        const img = frames[frameToDraw];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentFrameIndex = frameToDraw;
+        canvas.dataset.frameIndex = String(frameToDraw);
+        if (canvasFrame && !canvasFrame.classList.contains('canvas-ready')) {
+          canvasFrame.classList.add('canvas-ready');
+        }
       }
     }
 
-    const heroTrackTarget = stage || heroSection;
-    heroTrackTarget.addEventListener('mousemove', (e) => {
-      if (window.innerWidth <= 992) return;
-      const rect = heroTrackTarget.getBoundingClientRect();
-      const normX = (e.clientX - rect.left) / rect.width - 0.5;
-      const normY = (e.clientY - rect.top) / rect.height - 0.5;
-      targetRotY = normX * 10;
-      targetRotX = -normY * 10;
-      targetTransX = normX * 14;
-      targetTransY = normY * 14;
-
-      if (!isTracking) {
-        isTracking = true;
-        requestAnimationFrame(renderHeroSpringLoop);
+    function updateTelemetryPills(progress) {
+      let activePhase = 'knob';
+      if (progress >= 0.75) {
+        activePhase = 'switches';
+      } else if (progress >= 0.50) {
+        activePhase = 'gasket';
+      } else if (progress >= 0.25) {
+        activePhase = 'chassis';
       }
-    });
 
-    heroTrackTarget.addEventListener('mouseleave', () => {
-      targetRotX = 0;
-      targetRotY = 0;
-      targetTransX = 0;
-      targetTransY = 0;
-      if (!isTracking) {
-        isTracking = true;
-        requestAnimationFrame(renderHeroSpringLoop);
+      featureTags.forEach(pill => {
+        const phase = pill.getAttribute('data-phase');
+        const isActive = (phase === activePhase);
+        pill.classList.toggle('active', isActive);
+      });
+    }
+
+    // Preload all 56 high-resolution WebP hero orbit frames
+    for (let i = 0; i < TOTAL_HERO_FRAMES; i++) {
+      const img = new Image();
+      const padIndex = String(i).padStart(2, '0');
+      img.src = `../assets/frames_hero/k75_hero_${padIndex}.webp`;
+      img.onload = () => {
+        if (i === 0 && currentFrameIndex === -1) {
+          renderFrame(0);
+        } else if (i === targetFrameIndex && currentFrameIndex !== targetFrameIndex) {
+          renderFrame(targetFrameIndex);
+        }
+      };
+      frames.push(img);
+    }
+
+    function updateHeroScrub() {
+      const trackRect = track.getBoundingClientRect();
+      const scrollHeight = trackRect.height - window.innerHeight;
+      if (scrollHeight <= 0) return;
+
+      const rawProgress = -trackRect.top / scrollHeight;
+      const progress = Math.max(0, Math.min(1, rawProgress));
+      canvas.dataset.progress = progress.toFixed(3);
+
+      updateTelemetryPills(progress);
+
+      const targetFrame = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(progress * (TOTAL_HERO_FRAMES - 1))));
+      if (targetFrame !== currentFrameIndex) {
+        renderFrame(targetFrame);
       }
-    });
+    }
+
+    function onScrollOrResize() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateHeroScrub();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    if (window.__lenis) {
+      window.__lenis.on('scroll', onScrollOrResize);
+    }
+
+    renderFrame(0);
+    updateHeroScrub();
   }
 
   /* --------------------------------------------------------------------------
