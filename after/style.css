@@ -342,7 +342,7 @@ ul, ol {
 }
 
 /* --------------------------------------------------------------------------
-   5. HERO POSTER SECTION (REBALANCED LAYERING & VISIBILITY)
+   5. HERO POSTER SECTION (CINEMATIC PRESENTATION)
    -------------------------------------------------------------------------- */
 .hero-section {
   position: relative;
@@ -374,34 +374,159 @@ ul, ol {
 
 .hero-headline .line-break {
   display: block;
+  overflow: hidden;
 }
 
-/* Layered 3D Render Position: True alpha silhouette with organic drop-shadow */
+.hero-headline .line-inner {
+  display: block;
+  animation: heroTitleReveal 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-headline .line-break:nth-child(2) .line-inner {
+  animation-delay: 0.12s;
+}
+
+@keyframes heroTitleReveal {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+/* Layered 3D Render Position: True alpha silhouette with organic drop-shadow & 3D Tilt */
 .hero-visual-stage {
   position: absolute;
   top: 48%;
   right: 0;
-  width: clamp(320px, 46vw, 750px);
+  width: clamp(340px, 48vw, 780px);
   transform: translateY(-28%);
   z-index: 1;
   pointer-events: auto;
-  transition: transform 120ms ease-out;
+  perspective: 1000px;
+}
+
+.hero-cinematic-glow {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  width: 80%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(30, 32, 38, 0.28) 0%, rgba(30, 32, 38, 0) 70%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+  animation: heroGlowPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlowPulse {
+  from { opacity: 0.6; transform: scale(0.95); }
+  to { opacity: 1.0; transform: scale(1.05); }
 }
 
 .hero-parallax-wrapper {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  transform-style: preserve-3d;
   will-change: transform;
+  transition: transform 180ms ease-out;
 }
 
+.hero-shadow-img,
 .hero-3d-img {
+  grid-area: 1 / 1;
   width: 100%;
   height: auto;
   border-radius: 0;
-  filter: drop-shadow(0 22px 36px rgba(18, 18, 18, 0.22));
-  transition: transform var(--trans-base);
+  pointer-events: none;
+  object-fit: contain;
 }
 
-.hero-visual-stage:hover .hero-3d-img {
-  transform: scale(1.02) rotate(0.8deg);
+.hero-shadow-img {
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.hero-3d-img {
+  z-index: 2;
+  filter: none;
+  animation: heroKeyboardReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes heroKeyboardReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Precision Highlight Chips */
+.hero-feature-tags {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hero-tag-pill {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(18, 19, 22, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #F3F0E7;
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: heroTagFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-tag-pill .tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.tag-knob {
+  top: 14%;
+  right: 12%;
+  animation-delay: 0.4s;
+}
+
+.tag-chassis {
+  bottom: 22%;
+  left: 6%;
+  animation-delay: 0.6s;
+}
+
+.tag-gasket {
+  bottom: 8%;
+  right: 22%;
+  animation-delay: 0.8s;
+}
+
+@keyframes heroTagFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-meta-bar {
@@ -416,7 +541,10 @@ ul, ol {
 }
 
 .hero-meta-left {
-  max-width: 460px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .hero-lead-text {
@@ -424,6 +552,41 @@ ul, ol {
   line-height: 1.45;
   color: var(--text);
   font-weight: 500;
+}
+
+.hero-scroll-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--trans-fast);
+}
+
+.hero-scroll-indicator:hover {
+  color: var(--text);
+}
+
+.hero-scroll-indicator .scroll-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  animation: heroArrowBounce 2s ease-in-out infinite;
+}
+
+@keyframes heroArrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
 }
 
 .hero-meta-right {
@@ -434,6 +597,38 @@ ul, ol {
 
 .hero-product-pill {
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.pill-badge-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.pill-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ECC71;
+  box-shadow: 0 0 6px #2ECC71;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.pill-status-text {
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #166534;
 }
 
 .hero-product-pill .pill-name {
@@ -450,27 +645,64 @@ ul, ol {
   color: var(--text);
 }
 
-.btn-hero-cta {
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-hero-add-cart {
   background-color: var(--text);
   color: var(--bg);
-  padding: 0.95rem 2rem;
+  padding: 0.95rem 1.6rem;
   border-radius: 999px;
   font-family: var(--font-heading);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--text);
+  cursor: pointer;
+  transition: transform var(--trans-fast), background-color var(--trans-fast), color var(--trans-fast), box-shadow var(--trans-fast);
+}
+
+.btn-hero-add-cart:hover {
+  background-color: var(--accent-green);
+  color: var(--text);
+  border-color: var(--accent-green);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(199, 255, 61, 0.4);
+}
+
+.btn-hero-add-cart:active {
+  transform: scale(0.98);
+}
+
+.btn-hero-cta {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.95rem 1.8rem;
+  border-radius: 999px;
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: transform var(--trans-fast), background-color var(--trans-fast), color var(--trans-fast), box-shadow var(--trans-fast);
+  transition: transform var(--trans-fast), background-color var(--trans-fast), color var(--trans-fast), border-color var(--trans-fast);
 }
 
 .btn-hero-cta:hover {
-  background-color: var(--accent-green);
-  color: var(--text);
+  background-color: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(199, 255, 61, 0.4);
 }
 
 /* --------------------------------------------------------------------------
@@ -691,9 +923,31 @@ ul, ol {
   transition: transform var(--trans-slow);
 }
 
+.card-visual-stage.scale-keyboard {
+  width: 100%;
+  max-width: 620px;
+  max-height: 250px;
+  aspect-ratio: 1200 / 800;
+}
+
+.card-visual-stage.scale-mouse {
+  width: 86%;
+  max-width: 320px;
+  max-height: 250px;
+  aspect-ratio: 1000 / 800;
+}
+
+.card-visual-stage.scale-headphones {
+  width: 88%;
+  max-width: 330px;
+  max-height: 260px;
+  aspect-ratio: 1000 / 900;
+}
+
 .card-visual-stage.scale-charger {
   max-height: 280px;
   max-width: 280px;
+  aspect-ratio: 1 / 1;
 }
 
 .card-visual-stage.scale-mat {
@@ -702,17 +956,10 @@ ul, ol {
   aspect-ratio: 1600 / 663;
 }
 
-.card-visual-stage.scale-keyboard {
-  width: 100%;
-  max-width: 620px;
-  max-height: 240px;
-  aspect-ratio: 1600 / 1200;
-}
-
 .card-visual-stage.scale-beam {
   width: 96%;
-  max-height: 220px;
-  aspect-ratio: 1600 / 1000;
+  max-height: 230px;
+  aspect-ratio: 1200 / 800;
 }
 
 .card-visual-stage .card-shadow-layer,
@@ -729,7 +976,7 @@ ul, ol {
 }
 
 .card-visual-stage .card-shadow-layer {
-  opacity: var(--keyboard-shadow-opacity, var(--beam-shadow-opacity, var(--mat-shadow-opacity, var(--charger-shadow-opacity, var(--shadow-opacity, 0.85)))));
+  opacity: var(--mouse-shadow-opacity, var(--headphones-shadow-opacity, var(--keyboard-shadow-opacity, var(--beam-shadow-opacity, var(--mat-shadow-opacity, var(--charger-shadow-opacity, var(--shadow-opacity, 0.85)))))));
   transition: opacity var(--trans-fast);
   z-index: 1;
 }
@@ -1021,6 +1268,66 @@ ul, ol {
   margin: 0 auto;
 }
 
+/* Real-time Technical Phase Indicator Badge */
+.story-phase-badge {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 1rem;
+  background: rgba(18, 19, 22, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.story-phase-badge .phase-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 10px var(--accent-green);
+}
+
+.story-phase-badge .phase-text {
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #F3F0E7;
+  text-transform: uppercase;
+}
+
+.story-phase-badge .phase-progress-bar {
+  width: 48px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.story-phase-badge .phase-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent-green);
+  transition: width 60ms linear;
+}
+
+.story-phase-badge .phase-percent {
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--accent-green);
+  min-width: 3.5ch;
+  text-align: right;
+}
+
 .story-scroll-canvas {
   width: 100%;
   height: 100%;
@@ -1059,6 +1366,21 @@ ul, ol {
   .story-breakdown-stage {
     max-width: 380px;
     max-height: calc(100vh - 180px);
+  }
+  .story-phase-badge {
+    top: 0.5rem;
+    right: 50%;
+    transform: translateX(50%);
+    width: max-content;
+    max-width: 92%;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+  }
+  .story-phase-badge .phase-text {
+    font-size: 0.66rem;
+  }
+  .story-phase-badge .phase-progress-bar {
+    width: 28px;
   }
 }
 
@@ -2539,9 +2861,59 @@ ul, ol {
     transition: none !important;
   }
 
+  .product-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-headline .line-inner {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .hero-3d-img {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-tag-pill {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-cinematic-glow {
+    animation: none !important;
+  }
+
   .toast {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   23. LENIS INERTIAL SCROLL SYSTEM
+   -------------------------------------------------------------------------- */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

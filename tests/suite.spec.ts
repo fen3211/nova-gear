@@ -40,8 +40,10 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
       'keyboard-k75.png',
       'keyboard-k75-isolated.webp',
       'keyboard-k75-shadow.webp',
-      'mouse-pulse.png',
-      'headphones-orbit.png',
+      'mouse-pulse-isolated.webp',
+      'mouse-pulse-shadow.webp',
+      'headphones-orbit-isolated.webp',
+      'headphones-orbit-shadow.webp',
       'flux-charger-isolated.webp',
       'flux-charger-shadow.webp',
       'mat-novadesk-isolated.webp',
@@ -542,6 +544,8 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
 
     const stages = [
       { name: 'NovaKeys K75', cardSelector: '.card-theme-k75', stageSelector: '.scale-keyboard' },
+      { name: 'Pulse Pro', cardSelector: '.card-theme-pulse', stageSelector: '.scale-mouse' },
+      { name: 'Orbit ANC', cardSelector: '.card-theme-orbit', stageSelector: '.scale-headphones' },
       { name: 'Flux 100W', cardSelector: '.card-theme-flux', stageSelector: '.scale-charger' },
       { name: 'NovaDesk XL', cardSelector: '.card-theme-mat', stageSelector: '.scale-mat' },
       { name: 'Beam RGB', cardSelector: '.card-theme-beam', stageSelector: '.scale-beam' }

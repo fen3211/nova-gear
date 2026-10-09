@@ -290,6 +290,9 @@
     if (siteFooter) siteFooter.setAttribute('inert', '');
 
     document.body.style.overflow = 'hidden';
+    if (window.__lenis) {
+      window.__lenis.stop();
+    }
 
     // Move focus to first focusable element inside dialog
     const focusable = dialogWrapper.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -314,6 +317,9 @@
     if (siteFooter) siteFooter.removeAttribute('inert');
 
     document.body.style.overflow = '';
+    if (window.__lenis) {
+      window.__lenis.start();
+    }
     const closingDialog = dialogWrapper;
     state.activeDialog = null;
 
@@ -1186,11 +1192,152 @@
   }
 
   /* --------------------------------------------------------------------------
-     NOVA KEYS K75 SCROLL-DRIVEN 3D BREAKDOWN PIPELINE
+     11. LENIS INERTIAL SMOOTH SCROLL
+     -------------------------------------------------------------------------- */
+  function initLenisScroll() {
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || typeof window.Lenis !== 'function') return;
+
+    try {
+      const lenis = new window.Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+        touchMultiplier: 1.5
+      });
+
+      window.__lenis = lenis;
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    } catch (e) {
+      // Lenis fallback to native scroll
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     12. CINEMATIC HERO PRESENTATION & INTERACTION
+     -------------------------------------------------------------------------- */
+  function initHeroCinematicInteraction() {
+    const stage = document.getElementById('heroVisualStage');
+    const wrapper = document.getElementById('heroParallaxWrapper');
+    const heroAddBtn = document.querySelector('.btn-hero-add-cart');
+    const scrollIndicator = document.querySelector('.hero-scroll-indicator');
+
+    // Quick Add button for NovaKeys K75
+    if (heroAddBtn) {
+      heroAddBtn.addEventListener('click', () => {
+        addToCart('k75', null);
+        const cartDrawer = document.querySelector('.cart-drawer');
+        if (cartDrawer) openDialog(cartDrawer, heroAddBtn);
+      });
+    }
+
+    // Scroll indicator click
+    if (scrollIndicator) {
+      scrollIndicator.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById('story');
+        if (target) {
+          if (window.__lenis) {
+            window.__lenis.scrollTo(target);
+          } else {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    }
+
+    // 3D Perspective Mouse Tilt Reaction
+    if (!stage || !wrapper) return;
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
+    let animId = null;
+
+    function renderTilt() {
+      currentRotX += (targetRotX - currentRotX) * 0.12;
+      currentRotY += (targetRotY - currentRotY) * 0.12;
+      wrapper.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translateZ(8px)`;
+
+      if (Math.abs(targetRotX - currentRotX) > 0.04 || Math.abs(targetRotY - currentRotY) > 0.04) {
+        animId = requestAnimationFrame(renderTilt);
+      } else {
+        animId = null;
+      }
+    }
+
+    stage.addEventListener('mousemove', (e) => {
+      const rect = stage.getBoundingClientRect();
+      const normX = (e.clientX - rect.left) / rect.width - 0.5;
+      const normY = (e.clientY - rect.top) / rect.height - 0.5;
+      targetRotY = normX * 10;
+      targetRotX = -normY * 10;
+      if (!animId) {
+        animId = requestAnimationFrame(renderTilt);
+      }
+    });
+
+    stage.addEventListener('mouseleave', () => {
+      targetRotX = 0;
+      targetRotY = 0;
+      if (!animId) {
+        animId = requestAnimationFrame(renderTilt);
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     13. UNIFIED MOTION: CARD SCROLL REVEALS
+     -------------------------------------------------------------------------- */
+  function initCardScrollReveals() {
+    const cards = document.querySelectorAll('.product-card');
+    if (!cards.length) return;
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      cards.forEach(c => c.classList.add('card-revealed'));
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('card-revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      cards.forEach((card, idx) => {
+        card.style.transitionDelay = `${(idx % 2) * 80}ms`;
+        observer.observe(card);
+      });
+    } else {
+      cards.forEach(c => c.classList.add('card-revealed'));
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     14. NOVA KEYS K75 SCROLL-DRIVEN 3D BREAKDOWN PIPELINE
      -------------------------------------------------------------------------- */
   function initK75ScrollBreakdown() {
     const canvas = document.getElementById('k75ScrollCanvas');
     const track = document.getElementById('k75ScrollTrack');
+    const phaseTextEl = document.getElementById('k75PhaseText');
+    const phaseProgressFillEl = document.getElementById('k75ProgressFill');
+    const phasePercentEl = document.getElementById('k75PhasePercent');
+
     if (!canvas || !track) return;
 
     const ctx = canvas.getContext('2d');
@@ -1199,6 +1346,7 @@
     const TOTAL_FRAMES = 57;
     const frames = [];
     let currentFrameIndex = -1;
+    let targetFrameIndex = 0;
     let ticking = false;
 
     // Check prefers-reduced-motion
@@ -1207,14 +1355,56 @@
       return; // Static fallback image is rendered via CSS
     }
 
+    function getNearestLoadedFrameIndex(targetIdx) {
+      if (frames[targetIdx] && frames[targetIdx].complete && frames[targetIdx].naturalWidth > 0) {
+        return targetIdx;
+      }
+      for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+        const left = targetIdx - offset;
+        if (left >= 0 && frames[left] && frames[left].complete && frames[left].naturalWidth > 0) {
+          return left;
+        }
+        const right = targetIdx + offset;
+        if (right < TOTAL_FRAMES && frames[right] && frames[right].complete && frames[right].naturalWidth > 0) {
+          return right;
+        }
+      }
+      return -1;
+    }
+
     function renderFrame(index) {
       if (index < 0 || index >= TOTAL_FRAMES) return;
-      const img = frames[index];
-      if (img && img.complete && img.naturalWidth > 0) {
+      targetFrameIndex = index;
+      const frameToDraw = getNearestLoadedFrameIndex(index);
+      if (frameToDraw >= 0) {
+        const img = frames[frameToDraw];
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        currentFrameIndex = index;
-        canvas.dataset.frameIndex = String(index);
+        currentFrameIndex = frameToDraw;
+        canvas.dataset.frameIndex = String(frameToDraw);
+      }
+    }
+
+    function updatePhaseBadge(progress) {
+      let phase = 'ASSEMBLED CHASSIS // CNC 6063';
+      if (progress > 0.85) {
+        phase = 'FULL EXPLODED ARCHITECTURE // 1,850G BRASS WEIGHT';
+      } else if (progress > 0.60) {
+        phase = 'ENIG PCB & PORON FOAM // SOUTH-FACING RGB';
+      } else if (progress > 0.35) {
+        phase = 'SWITCHES & FR4 PLATE // CUSTOM LUBED LINEAR';
+      } else if (progress > 0.15) {
+        phase = 'KEYCAP MATRIX // CHERRY PROFILE PBT';
+      }
+
+      if (phaseTextEl && phaseTextEl.textContent !== phase) {
+        phaseTextEl.textContent = phase;
+      }
+      if (phaseProgressFillEl) {
+        phaseProgressFillEl.style.width = `${(progress * 100).toFixed(1)}%`;
+      }
+      if (phasePercentEl) {
+        phasePercentEl.textContent = `${Math.round(progress * 100)}%`;
       }
     }
 
@@ -1224,11 +1414,10 @@
       const padIndex = String(i).padStart(2, '0');
       img.src = `../assets/frames_scrub/k75_scrub_${padIndex}.webp`;
       img.onload = () => {
-        // As soon as the first frame (fully assembled) is ready, draw it if nothing drawn yet
         if (i === 0 && currentFrameIndex === -1) {
           renderFrame(0);
-        } else if (i === currentFrameIndex) {
-          renderFrame(i);
+        } else if (i === targetFrameIndex && currentFrameIndex !== targetFrameIndex) {
+          renderFrame(targetFrameIndex);
         }
       };
       frames.push(img);
@@ -1243,6 +1432,8 @@
       const rawProgress = -trackRect.top / scrollHeight;
       const progress = Math.max(0, Math.min(1, rawProgress));
       canvas.dataset.progress = progress.toFixed(3);
+
+      updatePhaseBadge(progress);
 
       // Calculate target frame: 0 (fully assembled) to 56 (fully exploded)
       const targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progress * (TOTAL_FRAMES - 1))));
@@ -1265,6 +1456,10 @@
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize, { passive: true });
 
+    if (window.__lenis) {
+      window.__lenis.on('scroll', onScrollOrResize);
+    }
+
     // Initial render
     renderFrame(0);
     updateScrollBreakdown();
@@ -1274,6 +1469,7 @@
      BOOTSTRAP
      -------------------------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', () => {
+    initLenisScroll();
     initHeaderScroll();
     initCartListeners();
     initMobileMenu();
@@ -1283,6 +1479,8 @@
     initReviewsSlider();
     initNewsletter();
     initParallax();
+    initHeroCinematicInteraction();
+    initCardScrollReveals();
     initK75ScrollBreakdown();
   });
 })();
