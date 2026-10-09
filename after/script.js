@@ -949,45 +949,8 @@
      13. SMOOTH PARALLAX VIA REQUESTANIMATIONFRAME
      -------------------------------------------------------------------------- */
   function initParallax() {
-    if (!heroStage || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    const heroSection = document.querySelector('.hero-section');
-    if (!heroSection) return;
-
-    let targetX = 0, targetY = 0;
-    let currentX = 0, currentY = 0;
-    let isTracking = false;
-
-    heroSection.addEventListener('mousemove', (e) => {
-      if (window.innerWidth <= 992) return;
-      const rect = heroSection.getBoundingClientRect();
-      targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 16;
-      targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 16;
-      if (!isTracking) {
-        isTracking = true;
-        requestAnimationFrame(updateParallaxLoop);
-      }
-    });
-
-    heroSection.addEventListener('mouseleave', () => {
-      targetX = 0;
-      targetY = 0;
-    });
-
-    function updateParallaxLoop() {
-      currentX += (targetX - currentX) * 0.1;
-      currentY += (targetY - currentY) * 0.1;
-
-      heroStage.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
-
-      if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
-        requestAnimationFrame(updateParallaxLoop);
-      } else {
-        isTracking = false;
-      }
-    }
+    // Parallax and perspective tilt are unified into initHeroCinematicInteraction
+    // to eliminate conflicting transforms on hero elements.
   }
 
   /* --------------------------------------------------------------------------
@@ -1034,29 +997,44 @@
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
 
-      let freq = 240;
+      let freq = 160;
       let decay = 0.06;
-      let filterFreq = 1200;
+      let filterFreq = 950;
+      let filterQ = 2.5;
 
       if (switchType === 'tactile') {
-        freq = 320;
-        decay = 0.08;
-        filterFreq = 1800;
+        freq = 280;
+        decay = 0.07;
+        filterFreq = 1900;
+        filterQ = 4.0;
+        // Tactile bump high click
+        const clickOsc = ctx.createOscillator();
+        const clickGain = ctx.createGain();
+        clickOsc.type = 'triangle';
+        clickOsc.frequency.setValueAtTime(2400, ctx.currentTime);
+        clickOsc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.015);
+        clickGain.gain.setValueAtTime(0.12, ctx.currentTime);
+        clickGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
+        clickOsc.connect(clickGain);
+        clickGain.connect(ctx.destination);
+        clickOsc.start();
+        clickOsc.stop(ctx.currentTime + 0.02);
       } else if (switchType === 'silent') {
-        freq = 140;
-        decay = 0.03;
-        filterFreq = 600;
+        freq = 95;
+        decay = 0.04;
+        filterFreq = 450;
+        filterQ = 1.2;
       }
 
-      osc.type = 'triangle';
+      osc.type = switchType === 'silent' ? 'sine' : 'triangle';
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + decay);
+      osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + decay);
 
-      filter.type = 'bandpass';
+      filter.type = 'lowpass';
       filter.frequency.setValueAtTime(filterFreq, ctx.currentTime);
-      filter.Q.setValueAtTime(3.0, ctx.currentTime);
+      filter.Q.setValueAtTime(filterQ, ctx.currentTime);
 
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.setValueAtTime(0.22, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + decay);
 
       osc.connect(filter);
@@ -1066,7 +1044,7 @@
       osc.start();
       osc.stop(ctx.currentTime + decay + 0.01);
     } catch (e) {
-      // AudioContext unavailable
+      // AudioContext unavailable in headless environments
     }
   }
 
@@ -1075,11 +1053,40 @@
     let selectedOS = 'mac';
     let selectedSwitch = 'linear';
     let selectedLayer = '0';
+    let selectedKeyCode = 'Escape';
+    let keyRemaps = {};
+
+    const switchPrices = {
+      linear: 129,
+      tactile: 144,
+      silent: 149
+    };
+
+    const switchLabels = {
+      linear: 'TTC Linear 45g',
+      tactile: 'Baby Kangaroo 45g Tactile',
+      silent: 'Silent White 38g'
+    };
+
+    // Restore saved settings from localStorage if available
+    try {
+      const savedConfig = localStorage.getItem('nova_k75_studio_config');
+      if (savedConfig) {
+        const parsed = JSON.parse(savedConfig);
+        if (parsed.os) selectedOS = parsed.os;
+        if (parsed.switchType) selectedSwitch = parsed.switchType;
+        if (parsed.layer) selectedLayer = parsed.layer;
+        if (parsed.remaps && typeof parsed.remaps === 'object') keyRemaps = parsed.remaps;
+      }
+    } catch (e) {
+      // Storage unavailable
+    }
 
     configuratorTriggers.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         openDialog(configuratorBackdrop, btn);
+        updateStudioUI();
       });
     });
 
@@ -1087,86 +1094,272 @@
       closeConfiguratorBtn.addEventListener('click', () => closeDialog(configuratorBackdrop));
     }
 
-    if (configuratorBackdrop) {
-      configuratorBackdrop.addEventListener('click', (e) => {
-        if (e.target === configuratorBackdrop) closeDialog(configuratorBackdrop);
-      });
+    if (!configuratorBackdrop) return;
 
-      // OS Toggle
-      configuratorBackdrop.querySelectorAll('.btn-cfg-os').forEach(btn => {
-        btn.addEventListener('click', () => {
-          configuratorBackdrop.querySelectorAll('.btn-cfg-os').forEach(b => {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
-          selectedOS = btn.getAttribute('data-os') || 'mac';
-          
-          const optKey = configuratorBackdrop.querySelector('.cfg-key-opt');
-          const cmdKey = configuratorBackdrop.querySelector('.cfg-key-cmd');
-          if (optKey) optKey.textContent = selectedOS === 'mac' ? 'OPT' : 'WIN';
-          if (cmdKey) cmdKey.textContent = selectedOS === 'mac' ? 'CMD' : 'ALT';
-        });
-      });
+    configuratorBackdrop.addEventListener('click', (e) => {
+      if (e.target === configuratorBackdrop) closeDialog(configuratorBackdrop);
+    });
 
-      // Switch Selector
-      configuratorBackdrop.querySelectorAll('.btn-cfg-switch').forEach(btn => {
-        btn.addEventListener('click', () => {
-          configuratorBackdrop.querySelectorAll('.btn-cfg-switch').forEach(b => {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
-          selectedSwitch = btn.getAttribute('data-switch') || 'linear';
-          playKeyClickSound(selectedSwitch);
-        });
-      });
-
-      // Layer Selector
-      configuratorBackdrop.querySelectorAll('.btn-cfg-layer').forEach(btn => {
-        btn.addEventListener('click', () => {
-          configuratorBackdrop.querySelectorAll('.btn-cfg-layer').forEach(b => {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
-          selectedLayer = btn.getAttribute('data-layer') || '0';
-          const layerDesc = configuratorBackdrop.querySelector('.cfg-layer-desc');
-          if (layerDesc) {
-            if (selectedLayer === '0') layerDesc.textContent = 'LAYER 0: Primary QWERTY & Alpha Navigation (Standard)';
-            else if (selectedLayer === '1') layerDesc.textContent = 'LAYER 1: Media Shortcuts, Volume Knob, Function Keys';
-            else layerDesc.textContent = 'LAYER 2: Bluetooth Devices (1-3), LED Backlight Hue & Macro Trigger';
-          }
-        });
-      });
-
-      // Sound Demo Button
-      const soundDemoBtn = configuratorBackdrop.querySelector('.btn-cfg-sound-demo');
-      if (soundDemoBtn) {
-        soundDemoBtn.addEventListener('click', () => playKeyClickSound(selectedSwitch));
-      }
-
-      // Add Configured Keyboard to Cart
-      if (configuratorAddBtn) {
-        configuratorAddBtn.addEventListener('click', () => {
-          const switchLabelMap = {
-            'linear': 'TTC Linear 45g',
-            'tactile': 'Baby Kangaroo 45g Tactile',
-            'silent': 'Silent White 38g'
-          };
-          addToCart('k75', {
-            os: selectedOS,
-            switchType: selectedSwitch,
-            switchLabel: switchLabelMap[selectedSwitch] || selectedSwitch,
-            layer: selectedLayer
-          });
-          closeDialog(configuratorBackdrop);
-        });
+    function saveStudioConfig() {
+      try {
+        localStorage.setItem('nova_k75_studio_config', JSON.stringify({
+          os: selectedOS,
+          switchType: selectedSwitch,
+          layer: selectedLayer,
+          remaps: keyRemaps
+        }));
+      } catch (e) {
+        // Storage unavailable
       }
     }
+
+    function updateStudioUI() {
+      // 1. OS Controls
+      configuratorBackdrop.querySelectorAll('.btn-cfg-os').forEach(b => {
+        const isAct = (b.getAttribute('data-os') === selectedOS);
+        b.classList.toggle('active', isAct);
+        b.setAttribute('aria-pressed', isAct ? 'true' : 'false');
+        b.setAttribute('aria-checked', isAct ? 'true' : 'false');
+      });
+
+      const optKey = configuratorBackdrop.querySelector('.cfg-key-opt');
+      const cmdKey = configuratorBackdrop.querySelector('.cfg-key-cmd');
+      if (optKey) optKey.textContent = selectedOS === 'mac' ? 'OPT' : 'WIN';
+      if (cmdKey) cmdKey.textContent = selectedOS === 'mac' ? 'CMD' : 'ALT';
+
+      // 2. Switch Controls & Pricing
+      configuratorBackdrop.querySelectorAll('.btn-cfg-switch').forEach(b => {
+        const isAct = (b.getAttribute('data-switch') === selectedSwitch);
+        b.classList.toggle('active', isAct);
+        b.setAttribute('aria-pressed', isAct ? 'true' : 'false');
+        b.setAttribute('aria-checked', isAct ? 'true' : 'false');
+      });
+
+      const priceTag = document.getElementById('studioPriceTag');
+      const buildSummary = document.getElementById('studioBuildSummary');
+      const curPrice = switchPrices[selectedSwitch] || 129;
+      if (priceTag) priceTag.textContent = `$${curPrice}`;
+      if (buildSummary) {
+        buildSummary.textContent = `75% • ${switchLabels[selectedSwitch] || selectedSwitch} • ${selectedOS === 'mac' ? 'macOS' : 'Windows'}`;
+      }
+
+      // 3. Layer Controls & Legend Swapping
+      configuratorBackdrop.querySelectorAll('.btn-cfg-layer').forEach(b => {
+        const isAct = (b.getAttribute('data-layer') === selectedLayer);
+        b.classList.toggle('active', isAct);
+        b.setAttribute('aria-pressed', isAct ? 'true' : 'false');
+        b.setAttribute('aria-selected', isAct ? 'true' : 'false');
+      });
+
+      const layerDesc = configuratorBackdrop.querySelector('.cfg-layer-desc');
+      if (layerDesc) {
+        if (selectedLayer === '0') {
+          layerDesc.textContent = 'LAYER 0: Primary QWERTY & Alpha Navigation (Standard)';
+        } else if (selectedLayer === '1') {
+          layerDesc.textContent = 'LAYER 1: Media Shortcuts, Volume Knob, Function Keys';
+        } else {
+          layerDesc.textContent = 'LAYER 2: Bluetooth Devices (1-3), LED Backlight Hue & Macro Trigger';
+        }
+      }
+
+      // Update layer legends on keyboard
+      updateLayerKeyLabels();
+    }
+
+    function updateLayerKeyLabels() {
+      const allKeyButtons = configuratorBackdrop.querySelectorAll('.keycap, .cfg-key');
+      allKeyButtons.forEach(btn => {
+        const code = btn.getAttribute('data-code');
+        const defaultLabel = btn.getAttribute('data-label') || btn.textContent.trim();
+
+        // Check if explicitly remapped by user
+        if (keyRemaps[code]) {
+          btn.textContent = keyRemaps[code];
+          return;
+        }
+
+        // Layer 0: Default layout
+        if (selectedLayer === '0') {
+          if (code === 'AltLeft') btn.textContent = selectedOS === 'mac' ? 'OPT' : 'WIN';
+          else if (code === 'MetaLeft') btn.textContent = selectedOS === 'mac' ? 'CMD' : 'ALT';
+          else btn.textContent = defaultLabel;
+          return;
+        }
+
+        // Layer 1: Media & Navigation
+        if (selectedLayer === '1') {
+          const layer1Map = {
+            'F1': 'DIM-', 'F2': 'DIM+', 'F3': 'EXP', 'F4': 'SRCH',
+            'F7': 'PREV', 'F8': 'PLAY', 'F9': 'NEXT',
+            'F10': 'MUTE', 'F11': 'VOL-', 'F12': 'VOL+',
+            'ArrowUp': 'PGUP', 'ArrowDown': 'PGDN', 'ArrowLeft': 'HOME', 'ArrowRight': 'END'
+          };
+          if (layer1Map[code]) {
+            btn.textContent = layer1Map[code];
+            return;
+          }
+        }
+
+        // Layer 2: Connectivity & RGB
+        if (selectedLayer === '2') {
+          const layer2Map = {
+            'Digit1': 'BT1', 'Digit2': 'BT2', 'Digit3': 'BT3', 'Digit4': '2.4G', 'Digit5': 'USB',
+            'KeyQ': 'RGB+', 'KeyW': 'SPD+', 'KeyE': 'HUE+',
+            'KeyA': 'RGB-', 'KeyS': 'SPD-', 'KeyD': 'HUE-'
+          };
+          if (layer2Map[code]) {
+            btn.textContent = layer2Map[code];
+            return;
+          }
+        }
+
+        btn.textContent = defaultLabel;
+      });
+    }
+
+    // OS Toggle Click
+    configuratorBackdrop.querySelectorAll('.btn-cfg-os').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedOS = btn.getAttribute('data-os') || 'mac';
+        updateStudioUI();
+        saveStudioConfig();
+      });
+    });
+
+    // Switch Selector Click
+    configuratorBackdrop.querySelectorAll('.btn-cfg-switch').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedSwitch = btn.getAttribute('data-switch') || 'linear';
+        playKeyClickSound(selectedSwitch);
+        updateStudioUI();
+        saveStudioConfig();
+      });
+    });
+
+    // Layer Selector Click
+    configuratorBackdrop.querySelectorAll('.btn-cfg-layer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedLayer = btn.getAttribute('data-layer') || '0';
+        updateStudioUI();
+        saveStudioConfig();
+      });
+    });
+
+    // Audition Sound Button Click
+    const soundDemoBtn = configuratorBackdrop.querySelector('.btn-cfg-sound-demo');
+    if (soundDemoBtn) {
+      soundDemoBtn.addEventListener('click', () => playKeyClickSound(selectedSwitch));
+    }
+
+    // Keycap Click Selection
+    const keyButtons = configuratorBackdrop.querySelectorAll('.keycap, .cfg-key, .k75-rotary-knob');
+    keyButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        keyButtons.forEach(b => b.classList.remove('key-selected'));
+        btn.classList.add('key-selected');
+
+        selectedKeyCode = btn.getAttribute('data-code') || 'Escape';
+        const label = btn.getAttribute('data-label') || btn.textContent.trim();
+
+        playKeyClickSound(selectedSwitch);
+
+        // Update Inspector
+        const badge = document.getElementById('inspectorKeyBadge');
+        const nameEl = document.getElementById('inspectorKeyName');
+        const coordEl = document.getElementById('inspectorKeyCoord');
+        const statusBadge = document.getElementById('inspectorStatusBadge');
+        const selectEl = document.getElementById('inspectorActionSelect');
+
+        if (badge) badge.textContent = label;
+        if (nameEl) nameEl.textContent = `${label} Key`;
+        if (coordEl) coordEl.textContent = `HID ID: ${selectedKeyCode}`;
+
+        if (keyRemaps[selectedKeyCode]) {
+          if (statusBadge) statusBadge.textContent = 'REMAPPED';
+          if (selectEl) selectEl.value = keyRemaps[selectedKeyCode];
+        } else {
+          if (statusBadge) statusBadge.textContent = 'DEFAULT';
+          if (selectEl) selectEl.value = 'DEFAULT';
+        }
+      });
+    });
+
+    // Remap Select Action
+    const remapSelect = document.getElementById('inspectorActionSelect');
+    if (remapSelect) {
+      remapSelect.addEventListener('change', () => {
+        const val = remapSelect.value;
+        const statusBadge = document.getElementById('inspectorStatusBadge');
+        const activeBtn = configuratorBackdrop.querySelector(`.keycap[data-code="${selectedKeyCode}"], .cfg-key[data-code="${selectedKeyCode}"], .k75-rotary-knob[data-code="${selectedKeyCode}"]`);
+
+        if (val === 'DEFAULT') {
+          delete keyRemaps[selectedKeyCode];
+          if (statusBadge) statusBadge.textContent = 'DEFAULT';
+          if (activeBtn) activeBtn.textContent = activeBtn.getAttribute('data-label') || selectedKeyCode;
+        } else {
+          const actionLabels = {
+            'MUTE': 'MUTE',
+            'PLAY_PAUSE': 'PLAY',
+            'VOL_UP': 'VOL+',
+            'VOL_DOWN': 'VOL-',
+            'SCREENSHOT': 'SHOT',
+            'CALCULATOR': 'CALC',
+            'MACRO_CLEAR': 'CLEAR'
+          };
+          const displayLabel = actionLabels[val] || val;
+          keyRemaps[selectedKeyCode] = displayLabel;
+          if (statusBadge) statusBadge.textContent = 'REMAPPED';
+          if (activeBtn) activeBtn.textContent = displayLabel;
+        }
+        saveStudioConfig();
+      });
+    }
+
+    // Physical Keyboard Listener
+    window.addEventListener('keydown', (e) => {
+      if (!configuratorBackdrop.classList.contains('open')) return;
+      if (e.key === 'Escape') return; // Handled by global escape modal close
+
+      const matchingKey = configuratorBackdrop.querySelector(`[data-code="${e.code}"]`);
+      if (matchingKey) {
+        matchingKey.classList.add('key-active');
+        playKeyClickSound(selectedSwitch);
+        setTimeout(() => matchingKey.classList.remove('key-active'), 120);
+      }
+    });
+
+    // Reset Defaults Button
+    const resetBtn = document.getElementById('btnStudioReset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        selectedOS = 'mac';
+        selectedSwitch = 'linear';
+        selectedLayer = '0';
+        keyRemaps = {};
+        try {
+          localStorage.removeItem('nova_k75_studio_config');
+        } catch (e) {}
+        updateStudioUI();
+      });
+    }
+
+    // Add to Cart Action
+    if (configuratorAddBtn) {
+      configuratorAddBtn.addEventListener('click', () => {
+        saveStudioConfig();
+        addToCart('k75', {
+          os: selectedOS,
+          switchType: selectedSwitch,
+          switchLabel: switchLabels[selectedSwitch] || selectedSwitch,
+          layer: selectedLayer,
+          remapCount: Object.keys(keyRemaps).length
+        });
+        closeDialog(configuratorBackdrop);
+      });
+    }
+
+    // Initialize initial state
+    updateStudioUI();
   }
 
   function initWarrantyModal() {
@@ -1229,6 +1422,7 @@
     const wrapper = document.getElementById('heroParallaxWrapper');
     const heroAddBtn = document.querySelector('.btn-hero-add-cart');
     const scrollIndicator = document.querySelector('.hero-scroll-indicator');
+    const heroSection = document.getElementById('hero') || document.querySelector('.hero-section');
 
     // Quick Add button for NovaKeys K75
     if (heroAddBtn) {
@@ -1254,45 +1448,57 @@
       });
     }
 
-    // 3D Perspective Mouse Tilt Reaction
-    if (!stage || !wrapper) return;
+    if (!heroSection || !wrapper) return;
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    let targetRotX = 0;
-    let targetRotY = 0;
-    let currentRotX = 0;
-    let currentRotY = 0;
-    let animId = null;
+    let targetRotX = 0, targetRotY = 0;
+    let currentRotX = 0, currentRotY = 0;
+    let targetTransX = 0, targetTransY = 0;
+    let currentTransX = 0, currentTransY = 0;
+    let isTracking = false;
 
-    function renderTilt() {
-      currentRotX += (targetRotX - currentRotX) * 0.12;
-      currentRotY += (targetRotY - currentRotY) * 0.12;
-      wrapper.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translateZ(8px)`;
+    function renderHeroSpringLoop() {
+      currentRotX += (targetRotX - currentRotX) * 0.1;
+      currentRotY += (targetRotY - currentRotY) * 0.1;
+      currentTransX += (targetTransX - currentTransX) * 0.1;
+      currentTransY += (targetTransY - currentTransY) * 0.1;
 
-      if (Math.abs(targetRotX - currentRotX) > 0.04 || Math.abs(targetRotY - currentRotY) > 0.04) {
-        animId = requestAnimationFrame(renderTilt);
+      wrapper.style.transform = `perspective(1000px) translate3d(${currentTransX.toFixed(2)}px, ${currentTransY.toFixed(2)}px, 0) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) translateZ(8px)`;
+
+      const delta = Math.abs(targetRotX - currentRotX) + Math.abs(targetRotY - currentRotY) + Math.abs(targetTransX - currentTransX) + Math.abs(targetTransY - currentTransY);
+      if (delta > 0.04) {
+        requestAnimationFrame(renderHeroSpringLoop);
       } else {
-        animId = null;
+        isTracking = false;
       }
     }
 
-    stage.addEventListener('mousemove', (e) => {
-      const rect = stage.getBoundingClientRect();
+    const heroTrackTarget = stage || heroSection;
+    heroTrackTarget.addEventListener('mousemove', (e) => {
+      if (window.innerWidth <= 992) return;
+      const rect = heroTrackTarget.getBoundingClientRect();
       const normX = (e.clientX - rect.left) / rect.width - 0.5;
       const normY = (e.clientY - rect.top) / rect.height - 0.5;
       targetRotY = normX * 10;
       targetRotX = -normY * 10;
-      if (!animId) {
-        animId = requestAnimationFrame(renderTilt);
+      targetTransX = normX * 14;
+      targetTransY = normY * 14;
+
+      if (!isTracking) {
+        isTracking = true;
+        requestAnimationFrame(renderHeroSpringLoop);
       }
     });
 
-    stage.addEventListener('mouseleave', () => {
+    heroTrackTarget.addEventListener('mouseleave', () => {
       targetRotX = 0;
       targetRotY = 0;
-      if (!animId) {
-        animId = requestAnimationFrame(renderTilt);
+      targetTransX = 0;
+      targetTransY = 0;
+      if (!isTracking) {
+        isTracking = true;
+        requestAnimationFrame(renderHeroSpringLoop);
       }
     });
   }

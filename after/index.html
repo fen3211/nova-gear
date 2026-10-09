@@ -118,6 +118,9 @@
               <button type="button" class="btn-hero-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
                 QUICK ADD <span aria-hidden="true">+</span>
               </button>
+              <button type="button" class="btn-hero-studio-cta" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio">
+                HARDWARE STUDIO ⚙
+              </button>
               <a href="#products" class="btn-hero-cta">
                 EXPLORE CATALOG <span aria-hidden="true">↗</span>
               </a>
@@ -151,12 +154,12 @@
         </div>
 
         <div class="editorial-grid">
-          <!-- Row 1: K75 (65%) + Pulse Pro (35%) -->
+          <!-- Row 1: K75 Grand Flagship (100% Full Width Showcase) -->
           <div class="editorial-row">
             <!-- 01: NovaKeys K75 -->
-            <article class="product-card col-65 card-theme-k75">
+            <article class="product-card col-full card-theme-k75 card-flagship-k75">
               <div class="card-top-meta">
-                <span class="card-number">01 // FLAGSHIP</span>
+                <span class="card-number">01 // FLAGSHIP ARCHITECTURE</span>
                 <span class="card-category">Mechanical Keyboard</span>
               </div>
               <div class="card-visual-wrapper">
@@ -168,12 +171,13 @@
               <div class="card-bottom-info">
                 <div class="card-text-block">
                   <h3 class="product-card-title">NovaKeys K75</h3>
-                  <p class="product-card-desc">75% gasket-mounted CNC 6063 aluminum chassis with custom lubricated linear switches and knurled brass knob.</p>
-                  <p class="card-specs-list">FR4 GASKET • TTC 45G LINEAR • 1,850G BRASS WEIGHT • 2.4GHZ / BT / TYPE-C</p>
+                  <p class="product-card-desc">75% gasket-mounted CNC 6063 aluminum chassis with custom lubricated linear switches, solid brass weight and knurled encoder knob.</p>
+                  <p class="card-specs-list">CNC 6063 • FR4 GASKET • TTC 45G LINEAR • 1,850G BRASS WEIGHT • 2.4GHZ / BT / TYPE-C</p>
                 </div>
                 <div class="card-action-bar">
                   <span class="product-price">$129</span>
                   <div class="card-buttons-group">
+                    <button type="button" class="btn-configurator-trigger" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio for K75">STUDIO ⚙</button>
                     <button type="button" class="btn-quick-view" data-id="k75" aria-label="Quick view details for NovaKeys K75">SPECS</button>
                     <button type="button" class="btn-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
                       ADD TO CART ↗
@@ -182,9 +186,12 @@
                 </div>
               </div>
             </article>
+          </div>
 
+          <!-- Row 2: Ergonomic & Acoustic Duo (Pulse Pro 48% + Orbit ANC 52%) -->
+          <div class="editorial-row">
             <!-- 02: Pulse Pro -->
-            <article class="product-card col-35 card-theme-pulse">
+            <article class="product-card col-48 card-theme-pulse">
               <div class="card-top-meta">
                 <span class="card-number">02 // PRECISION</span>
                 <span class="card-category">Wireless Mouse</span>
@@ -198,7 +205,7 @@
               <div class="card-bottom-info">
                 <div class="card-text-block">
                   <h3 class="product-card-title">Pulse Pro</h3>
-                  <p class="product-card-desc">8,000Hz polling rate ergonomic mouse with optical microswitches and knurled magnesium wheel.</p>
+                  <p class="product-card-desc">8,000Hz polling rate ergonomic mouse with optical microswitches, sculpted thumb rest and knurled wheel with cyan neon halo.</p>
                   <p class="card-specs-list">PAW3395 26K DPI • 8KHZ POLLING • 58G • OPTICAL SWITCHES</p>
                 </div>
                 <div class="card-action-bar">
@@ -212,12 +219,9 @@
                 </div>
               </div>
             </article>
-          </div>
 
-          <!-- Row 2: Orbit ANC (35%) + Flux 100W (65%) -->
-          <div class="editorial-row">
             <!-- 03: Orbit ANC -->
-            <article class="product-card col-35 card-theme-orbit">
+            <article class="product-card col-52 card-theme-orbit">
               <div class="card-top-meta">
                 <span class="card-number">03 // ACOUSTICS</span>
                 <span class="card-category">Wireless Headphones</span>
@@ -231,7 +235,7 @@
               <div class="card-bottom-info">
                 <div class="card-text-block">
                   <h3 class="product-card-title">Orbit ANC</h3>
-                  <p class="product-card-desc">Hybrid active noise cancellation, custom 40mm titanium drivers, and 48-hour battery.</p>
+                  <p class="product-card-desc">Hybrid active noise cancellation, custom 40mm titanium drivers, signature anodized orange chamfer ring and 48-hour battery.</p>
                   <p class="card-specs-list">40MM TITANIUM • -42DB HYBRID ANC • 48H BATTERY • LDAC 24-BIT</p>
                 </div>
                 <div class="card-action-bar">
@@ -245,9 +249,12 @@
                 </div>
               </div>
             </article>
+          </div>
 
+          <!-- Row 3: Compact Power & Panoramic Illumination (Flux 38% + Beam RGB 62%) -->
+          <div class="editorial-row">
             <!-- 04: Flux 100W -->
-            <article class="product-card col-65 card-theme-flux">
+            <article class="product-card col-38 card-theme-flux">
               <div class="card-top-meta">
                 <span class="card-number">04 // POWER</span>
                 <span class="card-category">GaN Fast Charger</span>
@@ -275,14 +282,45 @@
                 </div>
               </div>
             </article>
+
+            <!-- 05: Beam RGB -->
+            <article class="product-card col-62 card-theme-beam card-beam-panoramic">
+              <div class="card-top-meta">
+                <span class="card-number">05 // ILLUMINATION</span>
+                <span class="card-category">Monitor Light</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-beam" style="--beam-shadow-opacity: 0.85;">
+                  <div class="beam-atmospheric-glow" aria-hidden="true"></div>
+                  <img src="../assets/images/light-beam-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="../assets/images/light-beam-isolated.webp" alt="Beam RGB Monitor Light" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">Beam RGB</h3>
+                  <p class="product-card-desc">Dual-source asymmetric workstation illumination with museum-grade CRI 97 daylight reproduction and ambient RGB backlight.</p>
+                  <p class="card-specs-list">RA>97 CRI • ASYMMETRIC REFLECTOR • 2700K-6500K CCT • TOUCH ENDCAPS</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$89</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="beam" aria-label="Quick view details for Beam RGB">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="beam" aria-label="Add Beam RGB to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
           </div>
 
-          <!-- Row 3: NovaDesk XL (50%) + Beam RGB (50%) -->
+          <!-- Row 4: NovaDesk XL (100% Panoramic Surface Showcase) -->
           <div class="editorial-row">
-            <!-- 05: NovaDesk XL -->
-            <article class="product-card col-50 card-theme-mat">
+            <!-- 06: NovaDesk XL -->
+            <article class="product-card col-full card-theme-mat card-mat-panoramic">
               <div class="card-top-meta">
-                <span class="card-number">05 // SURFACE</span>
+                <span class="card-number">06 // SURFACE</span>
                 <span class="card-category">Desk Mat</span>
               </div>
               <div class="card-visual-wrapper">
@@ -302,36 +340,6 @@
                   <div class="card-buttons-group">
                     <button type="button" class="btn-quick-view" data-id="novadesk" aria-label="Quick view details for NovaDesk XL">SPECS</button>
                     <button type="button" class="btn-add-cart" data-id="novadesk" aria-label="Add NovaDesk XL to cart">
-                      ADD TO CART ↗
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- 06: Beam RGB -->
-            <article class="product-card col-50 card-theme-beam">
-              <div class="card-top-meta">
-                <span class="card-number">06 // ILLUMINATION</span>
-                <span class="card-category">Monitor Light</span>
-              </div>
-              <div class="card-visual-wrapper">
-                <div class="card-visual-stage scale-beam" style="--beam-shadow-opacity: 0.85;">
-                  <img src="../assets/images/light-beam-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
-                  <img src="../assets/images/light-beam-isolated.webp" alt="Beam RGB Monitor Light" class="card-product-layer" loading="lazy" />
-                </div>
-              </div>
-              <div class="card-bottom-info">
-                <div class="card-text-block">
-                  <h3 class="product-card-title">Beam RGB</h3>
-                  <p class="product-card-desc">Dual-source asymmetric workstation illumination with museum-grade CRI 97 daylight reproduction.</p>
-                  <p class="card-specs-list">RA>97 CRI • ASYMMETRIC REFLECTOR • 2700K-6500K CCT • TOUCH ENDCAPS</p>
-                </div>
-                <div class="card-action-bar">
-                  <span class="product-price">$89</span>
-                  <div class="card-buttons-group">
-                    <button type="button" class="btn-quick-view" data-id="beam" aria-label="Quick view details for Beam RGB">SPECS</button>
-                    <button type="button" class="btn-add-cart" data-id="beam" aria-label="Add Beam RGB to cart">
                       ADD TO CART ↗
                     </button>
                   </div>
@@ -836,73 +844,292 @@
        CONFIGURATOR DEMO MODAL
        ========================================================================== -->
   <div class="configurator-modal-backdrop" aria-hidden="true">
-    <div class="configurator-dialog" role="dialog" aria-modal="true" aria-labelledby="configurator-modal-title">
-      <button type="button" class="btn-close-modal btn-close-configurator" aria-label="Close configurator modal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-
-      <span class="tag-label" style="background: var(--accent-green); padding: 0.25rem 0.65rem; border-radius: 999px;">LOCAL DEMO // QMK &amp; VIA ENGINE</span>
-      <h2 id="configurator-modal-title" style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; margin: 0.75rem 0 0.35rem;">
-        K75 WEB HARDWARE CONFIGURATOR
-      </h2>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Customize switch actuation curves, OS keymaps, and acoustic profile in real time.
-      </p>
-
-      <div class="cfg-controls-grid">
-        <div class="cfg-control-block">
-          <label class="cfg-label">OPERATING SYSTEM MAPPING</label>
-          <div class="cfg-btn-row">
-            <button type="button" class="btn-cfg-os active" data-os="mac" aria-pressed="true">macOS (CMD/OPT)</button>
-            <button type="button" class="btn-cfg-os" data-os="win" aria-pressed="false">Windows (WIN/ALT)</button>
+    <div class="configurator-dialog studio-window" role="dialog" aria-modal="true" aria-labelledby="configurator-modal-title">
+      <!-- Studio App Title Bar -->
+      <div class="studio-topbar">
+        <div class="studio-topbar-left">
+          <div class="studio-window-controls" aria-hidden="true">
+            <span class="win-dot win-dot-close"></span>
+            <span class="win-dot win-dot-min"></span>
+            <span class="win-dot win-dot-max"></span>
+          </div>
+          <div class="studio-title-stack">
+            <h2 id="configurator-modal-title" class="studio-title-heading">NOVA KEYBOARD STUDIO</h2>
+            <span class="studio-version-pill">v2.4 PRO // FIRMWARE LINK</span>
           </div>
         </div>
-
-        <div class="cfg-control-block">
-          <label class="cfg-label">MECHANICAL SWITCH TYPE</label>
-          <div class="cfg-btn-row">
-            <button type="button" class="btn-cfg-switch active" data-switch="linear" aria-pressed="true">TTC Linear 45g</button>
-            <button type="button" class="btn-cfg-switch" data-switch="tactile" aria-pressed="false">Baby Kangaroo 45g Tactile</button>
-            <button type="button" class="btn-cfg-switch" data-switch="silent" aria-pressed="false">Silent White 38g</button>
+        <div class="studio-topbar-right">
+          <div class="studio-connection-badge">
+            <span class="conn-pulse-dot" aria-hidden="true"></span>
+            <span class="conn-status-text">CONNECTED // SIMULATOR ACTIVE</span>
           </div>
+          <button type="button" class="btn-studio-reset" id="btnStudioReset" aria-label="Reset keyboard to factory defaults">
+            RESET DEFAULTS
+          </button>
+          <button type="button" class="btn-close-modal btn-close-configurator" aria-label="Close configurator modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
 
-      <div class="cfg-control-block" style="margin-top: 1rem;">
-        <label class="cfg-label">LAYER MAPPING</label>
-        <div class="cfg-btn-row">
-          <button type="button" class="btn-cfg-layer active" data-layer="0" aria-pressed="true">LAYER 0 (Base)</button>
-          <button type="button" class="btn-cfg-layer" data-layer="1" aria-pressed="false">LAYER 1 (Fn)</button>
-          <button type="button" class="btn-cfg-layer" data-layer="2" aria-pressed="false">LAYER 2 (RGB/BT)</button>
-        </div>
-        <p class="cfg-layer-desc" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">
-          LAYER 0: Primary QWERTY &amp; Alpha Navigation (Standard)
-        </p>
-      </div>
+      <!-- Studio Two-Column Workstation Body -->
+      <div class="studio-grid-body">
+        <!-- Left Panel: Configuration Controls & Key Inspector -->
+        <aside class="studio-panel-config" aria-label="Hardware Configuration Parameters">
+          <!-- Parameter 1: OS Target -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">01 // TARGET OPERATING SYSTEM</span>
+              <span class="studio-section-badge">HID MAP</span>
+            </div>
+            <div class="studio-seg-control" role="radiogroup" aria-label="Operating system mapping">
+              <button type="button" class="btn-cfg-os active" data-os="mac" role="radio" aria-pressed="true" aria-checked="true">
+                <span class="os-icon">⌘</span> macOS (CMD / OPT)
+              </button>
+              <button type="button" class="btn-cfg-os" data-os="win" role="radio" aria-pressed="false" aria-checked="false">
+                <span class="os-icon">⊞</span> Windows (WIN / ALT)
+              </button>
+            </div>
+          </div>
 
-      <div class="cfg-keymap-preview" aria-label="Interactive keymap preview">
-        <div class="cfg-preview-row">
-          <span class="cfg-key cfg-key-esc">ESC</span>
-          <span class="cfg-key">Q</span>
-          <span class="cfg-key">W</span>
-          <span class="cfg-key">E</span>
-          <span class="cfg-key">R</span>
-          <span class="cfg-key">T</span>
-          <span class="cfg-key">Y</span>
-          <span class="cfg-key cfg-key-opt">OPT</span>
-          <span class="cfg-key cfg-key-cmd">CMD</span>
-          <span class="cfg-key cfg-key-space">SPACEBAR</span>
-          <span class="cfg-key cfg-key-enter">ENTER</span>
-        </div>
-      </div>
+          <!-- Parameter 2: Switch Architecture & Sound Audition -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">02 // MECHANICAL SWITCH PROFILE</span>
+              <button type="button" class="btn-secondary btn-cfg-sound-demo btn-audition-click" aria-label="Audition switch click sound">
+                <span class="sound-symbol">♫</span> AUDITION SOUND
+              </button>
+            </div>
+            <div class="studio-switches-stack" role="radiogroup" aria-label="Switch mechanism selection">
+              <!-- Linear 45g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill active" data-switch="linear" role="radio" aria-pressed="true" aria-checked="true">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-linear" aria-hidden="true"></span>
+                  <span class="switch-pill-name">TTC Linear 45g</span>
+                  <span class="switch-pill-status">INCLUDED</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Smooth Acoustic Thock • 3.8mm Travel • Lubed POM</span>
+                </div>
+              </button>
+              <!-- Tactile 45g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill" data-switch="tactile" role="radio" aria-pressed="false" aria-checked="false">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-tactile" aria-hidden="true"></span>
+                  <span class="switch-pill-name">Baby Kangaroo 45g Tactile</span>
+                  <span class="switch-pill-status">+$15</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Crisp Tactile Snap • 3.6mm Travel • Dual-Stage</span>
+                </div>
+              </button>
+              <!-- Silent 38g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill" data-switch="silent" role="radio" aria-pressed="false" aria-checked="false">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-silent" aria-hidden="true"></span>
+                  <span class="switch-pill-name">Silent White 38g</span>
+                  <span class="switch-pill-status">+$20</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Muted Acoustic Dampener • 3.5mm Travel • Studio Quiet</span>
+                </div>
+              </button>
+            </div>
+          </div>
 
-      <div class="cfg-action-row" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-        <button type="button" class="btn-secondary btn-cfg-sound-demo" style="flex: 1; padding: 0.85rem 1rem; font-size: 0.82rem;">
-          AUDITION SWITCH SOUND ♫
-        </button>
-        <button type="button" class="btn-hero-cta btn-configurator-add-cart" style="flex: 1; justify-content: center; font-size: 0.82rem;">
-          ADD CUSTOM K75 TO CART ↗
-        </button>
+          <!-- Parameter 3: Memory Layers -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">03 // ACTIVE HARDWARE LAYER</span>
+              <span class="studio-section-badge">EEPROM</span>
+            </div>
+            <div class="studio-layer-tabs" role="tablist" aria-label="Memory layer mapping">
+              <button type="button" class="btn-cfg-layer studio-tab-btn active" data-layer="0" role="tab" aria-pressed="true" aria-selected="true">
+                LAYER 0 (Base)
+              </button>
+              <button type="button" class="btn-cfg-layer studio-tab-btn" data-layer="1" role="tab" aria-pressed="false" aria-selected="false">
+                LAYER 1 (Fn)
+              </button>
+              <button type="button" class="btn-cfg-layer studio-tab-btn" data-layer="2" role="tab" aria-pressed="false" aria-selected="false">
+                LAYER 2 (RGB/BT)
+              </button>
+            </div>
+            <p class="cfg-layer-desc studio-layer-annotation">
+              LAYER 0: Primary QWERTY &amp; Alpha Navigation (Standard)
+            </p>
+          </div>
+
+          <!-- Parameter 4: Key Remap Inspector -->
+          <div class="studio-cfg-section studio-inspector-box">
+            <div class="section-title-row">
+              <span class="studio-section-label">04 // KEY REMAP INSPECTOR</span>
+              <span class="studio-section-badge" id="inspectorStatusBadge">MAPPED</span>
+            </div>
+            <div class="inspector-card-inner">
+              <div class="inspector-badge-wrap">
+                <span class="inspector-key-badge" id="inspectorKeyBadge">ESC</span>
+                <div class="inspector-details">
+                  <span class="inspector-key-name" id="inspectorKeyName">Escape Key</span>
+                  <span class="inspector-key-coord" id="inspectorKeyCoord">Row 0, Col 0 // HID 0x29</span>
+                </div>
+              </div>
+              <div class="inspector-input-row">
+                <label for="inspectorActionSelect" class="inspector-label">ASSIGNED FUNCTION:</label>
+                <select id="inspectorActionSelect" class="inspector-action-select" aria-label="Remap selected key function">
+                  <option value="DEFAULT">Default Keycode</option>
+                  <option value="MUTE">Audio Mute / Unmute</option>
+                  <option value="PLAY_PAUSE">Media Play / Pause</option>
+                  <option value="VOL_UP">System Volume Up</option>
+                  <option value="VOL_DOWN">System Volume Down</option>
+                  <option value="SCREENSHOT">System Screen Capture</option>
+                  <option value="CALCULATOR">Launch Calculator</option>
+                  <option value="MACRO_CLEAR">Macro: Terminal Clear (Ctrl+L)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checkout & Cart Integration -->
+          <div class="studio-summary-footer">
+            <div class="studio-price-breakdown">
+              <div class="price-desc-block">
+                <span class="build-tier-title">CUSTOM K75 BUILD</span>
+                <span class="build-tier-sub" id="studioBuildSummary">75% • TTC Linear 45g • macOS</span>
+              </div>
+              <span class="build-price-number" id="studioPriceTag">$129</span>
+            </div>
+            <button type="button" class="btn-hero-cta btn-configurator-add-cart studio-submit-btn">
+              ADD CUSTOM K75 TO CART ↗
+            </button>
+          </div>
+        </aside>
+
+        <!-- Right Panel: Live 75% Mechanical Keyboard Stage -->
+        <main class="studio-panel-preview" aria-label="Live Interactive 75% Mechanical Keyboard Canvas">
+          <div class="studio-preview-header">
+            <div class="preview-mode-tag">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>LIVE 75% ANSI KEYMAP // 84 PHYSICAL SWITCHES + ROTARY ENCODER</span>
+            </div>
+            <span class="preview-hint-tag">CLICK KEYS TO SELECT &amp; AUDITION • HARDWARE AUDIO SYNTHESIS ACTIVE</span>
+          </div>
+
+          <!-- True 75% Mechanical Keyboard Physical Chassis -->
+          <div class="k75-chassis-stage">
+            <div class="k75-chassis-bezel" id="k75ChassisBezel">
+              <!-- Row 0: F-Row & Knob (16 items, includes test classes) -->
+              <div class="k75-key-row row-f cfg-preview-row" data-row="0">
+                <button type="button" class="cfg-key cfg-key-esc keycap key-accent-lime" data-code="Escape" data-label="ESC" aria-label="Escape key">ESC</button>
+                <button type="button" class="cfg-key keycap" data-code="F1" data-label="F1" aria-label="F1 key">F1</button>
+                <button type="button" class="cfg-key keycap" data-code="F2" data-label="F2" aria-label="F2 key">F2</button>
+                <button type="button" class="cfg-key keycap" data-code="F3" data-label="F3" aria-label="F3 key">F3</button>
+                <button type="button" class="cfg-key keycap" data-code="F4" data-label="F4" aria-label="F4 key">F4</button>
+                <button type="button" class="cfg-key keycap" data-code="F5" data-label="F5" aria-label="F5 key">F5</button>
+                <button type="button" class="cfg-key keycap" data-code="F6" data-label="F6" aria-label="F6 key">F6</button>
+                <button type="button" class="cfg-key keycap" data-code="F7" data-label="F7" aria-label="F7 key">F7</button>
+                <button type="button" class="cfg-key keycap" data-code="F8" data-label="F8" aria-label="F8 key">F8</button>
+                <button type="button" class="cfg-key keycap" data-code="F9" data-label="F9" aria-label="F9 key">F9</button>
+                <button type="button" class="cfg-key keycap" data-code="F10" data-label="F10" aria-label="F10 key">F10</button>
+                <button type="button" class="cfg-key keycap" data-code="F11" data-label="F11" aria-label="F11 key">F11</button>
+                <button type="button" class="cfg-key keycap" data-code="F12" data-label="F12" aria-label="F12 key">F12</button>
+                <button type="button" class="cfg-key keycap key-nav" data-code="PrintScreen" data-label="PRT" aria-label="Print Screen key">PRT</button>
+                <button type="button" class="cfg-key keycap key-nav" data-code="Delete" data-label="DEL" aria-label="Delete key">DEL</button>
+                <!-- Rotary Encoder Knob (Brass Accent) -->
+                <button type="button" class="k75-rotary-knob" id="k75RotaryKnob" data-code="Knob" data-label="KNOB" aria-label="Brass rotary volume knob">
+                  <span class="knob-marker" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <!-- Row 1: Number Row (15 items) -->
+              <div class="k75-key-row row-num" data-row="1">
+                <button type="button" class="keycap key-mod" data-code="Backquote" data-label="~">~</button>
+                <button type="button" class="keycap" data-code="Digit1" data-label="1">1</button>
+                <button type="button" class="keycap" data-code="Digit2" data-label="2">2</button>
+                <button type="button" class="keycap" data-code="Digit3" data-label="3">3</button>
+                <button type="button" class="keycap" data-code="Digit4" data-label="4">4</button>
+                <button type="button" class="keycap" data-code="Digit5" data-label="5">5</button>
+                <button type="button" class="keycap" data-code="Digit6" data-label="6">6</button>
+                <button type="button" class="keycap" data-code="Digit7" data-label="7">7</button>
+                <button type="button" class="keycap" data-code="Digit8" data-label="8">8</button>
+                <button type="button" class="keycap" data-code="Digit9" data-label="9">9</button>
+                <button type="button" class="keycap" data-code="Digit0" data-label="0">0</button>
+                <button type="button" class="keycap" data-code="Minus" data-label="-">-</button>
+                <button type="button" class="keycap" data-code="Equal" data-label="=">=</button>
+                <button type="button" class="keycap key-w-20 key-mod" data-code="Backspace" data-label="BACK">BACK</button>
+                <button type="button" class="keycap key-nav" data-code="Home" data-label="HOME">HOME</button>
+              </div>
+
+              <!-- Row 2: QWERTY Row (15 items) -->
+              <div class="k75-key-row row-qwerty" data-row="2">
+                <button type="button" class="keycap key-w-15 key-mod" data-code="Tab" data-label="TAB">TAB</button>
+                <button type="button" class="keycap" data-code="KeyQ" data-label="Q">Q</button>
+                <button type="button" class="keycap" data-code="KeyW" data-label="W">W</button>
+                <button type="button" class="keycap" data-code="KeyE" data-label="E">E</button>
+                <button type="button" class="keycap" data-code="KeyR" data-label="R">R</button>
+                <button type="button" class="keycap" data-code="KeyT" data-label="T">T</button>
+                <button type="button" class="keycap" data-code="KeyY" data-label="Y">Y</button>
+                <button type="button" class="keycap" data-code="KeyU" data-label="U">U</button>
+                <button type="button" class="keycap" data-code="KeyI" data-label="I">I</button>
+                <button type="button" class="keycap" data-code="KeyO" data-label="O">O</button>
+                <button type="button" class="keycap" data-code="KeyP" data-label="P">P</button>
+                <button type="button" class="keycap" data-code="BracketLeft" data-label="[">[</button>
+                <button type="button" class="keycap" data-code="BracketRight" data-label="]">]</button>
+                <button type="button" class="keycap key-w-15 key-mod" data-code="Backslash" data-label="\">\</button>
+                <button type="button" class="keycap key-nav" data-code="PageUp" data-label="PGUP">PGUP</button>
+              </div>
+
+              <!-- Row 3: ASDF / Home Row (14 items) -->
+              <div class="k75-key-row row-asdf" data-row="3">
+                <button type="button" class="keycap key-w-175 key-mod" data-code="CapsLock" data-label="CAPS">CAPS</button>
+                <button type="button" class="keycap" data-code="KeyA" data-label="A">A</button>
+                <button type="button" class="keycap" data-code="KeyS" data-label="S">S</button>
+                <button type="button" class="keycap" data-code="KeyD" data-label="D">D</button>
+                <button type="button" class="keycap" data-code="KeyF" data-label="F">F</button>
+                <button type="button" class="keycap" data-code="KeyG" data-label="G">G</button>
+                <button type="button" class="keycap" data-code="KeyH" data-label="H">H</button>
+                <button type="button" class="keycap" data-code="KeyJ" data-label="J">J</button>
+                <button type="button" class="keycap" data-code="KeyK" data-label="K">K</button>
+                <button type="button" class="keycap" data-code="KeyL" data-label="L">L</button>
+                <button type="button" class="keycap" data-code="Semicolon" data-label=";">;</button>
+                <button type="button" class="keycap" data-code="Quote" data-label="'">'</button>
+                <button type="button" class="keycap key-w-225 key-enter key-mod" data-code="Enter" data-label="ENTER">ENTER</button>
+                <button type="button" class="keycap key-nav" data-code="PageDown" data-label="PGDN">PGDN</button>
+              </div>
+
+              <!-- Row 4: ZXCV / Shift Row (14 items) -->
+              <div class="k75-key-row row-zxcv" data-row="4">
+                <button type="button" class="keycap key-w-225 key-mod" data-code="ShiftLeft" data-label="SHIFT">SHIFT</button>
+                <button type="button" class="keycap" data-code="KeyZ" data-label="Z">Z</button>
+                <button type="button" class="keycap" data-code="KeyX" data-label="X">X</button>
+                <button type="button" class="keycap" data-code="KeyC" data-label="C">C</button>
+                <button type="button" class="keycap" data-code="KeyV" data-label="V">V</button>
+                <button type="button" class="keycap" data-code="KeyB" data-label="B">B</button>
+                <button type="button" class="keycap" data-code="KeyN" data-label="N">N</button>
+                <button type="button" class="keycap" data-code="KeyM" data-label="M">M</button>
+                <button type="button" class="keycap" data-code="Comma" data-label=",">,</button>
+                <button type="button" class="keycap" data-code="Period" data-label=".">.</button>
+                <button type="button" class="keycap" data-code="Slash" data-label="/">/</button>
+                <button type="button" class="keycap key-w-175 key-mod" data-code="ShiftRight" data-label="SHIFT">SHIFT</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowUp" data-label="▲">▲</button>
+                <button type="button" class="keycap key-nav" data-code="End" data-label="END">END</button>
+              </div>
+
+              <!-- Row 5: Modifier / Spacebar Row (9 items) -->
+              <div class="k75-key-row row-mods" data-row="5">
+                <button type="button" class="keycap key-w-125 key-mod" data-code="ControlLeft" data-label="CTRL">CTRL</button>
+                <button type="button" class="keycap key-w-125 key-mod cfg-key-opt" data-code="AltLeft" data-label="OPT">OPT</button>
+                <button type="button" class="keycap key-w-125 key-mod cfg-key-cmd" data-code="MetaLeft" data-label="CMD">CMD</button>
+                <!-- Spacebar (Cream Accent) -->
+                <button type="button" class="keycap key-spacebar key-accent-cream" data-code="Space" data-label="SPACE" aria-label="Spacebar">SPACE</button>
+                <button type="button" class="keycap key-mod" data-code="MetaRight" data-label="CMD">CMD</button>
+                <button type="button" class="keycap key-mod" data-code="Fn" data-label="FN">FN</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowLeft" data-label="◀">◀</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowDown" data-label="▼">▼</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowRight" data-label="▶">▶</button>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   </div>
