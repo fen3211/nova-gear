@@ -19,7 +19,7 @@ async function recordHeroDemo() {
   const page = await context.newPage();
   await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
 
-  const fileUrl = 'file:///' + path.resolve(__dirname, '../after/index.html').replace(/\\/g, '/');
+  const fileUrl = 'file:///' + path.resolve(__dirname, '../index.html').replace(/\\/g, '/');
   console.log('Navigating to', fileUrl);
   await page.goto(fileUrl);
   await page.waitForLoadState('networkidle');

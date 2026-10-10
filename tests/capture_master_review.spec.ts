@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 const BASE_URL = 'file:///' + path.resolve(__dirname, '..').replace(/\\/g, '/');
-const AFTER_URL = `${BASE_URL}/after/index.html`;
+const AFTER_URL = `${BASE_URL}/index.html`;
 const REVIEW_DIR = path.resolve(__dirname, '../review');
 
 fs.mkdirSync(REVIEW_DIR, { recursive: true });

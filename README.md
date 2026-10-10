@@ -1,74 +1,152 @@
-# NOVA Gear — Frontend Bug Fix Case Study
+# NOVA Gear — Architectural Hardware & Interactive 3D Showcase
 
-A high-end editorial e-commerce portfolio case study demonstrating realistic frontend debugging, responsive architectural repair, and production-grade Vanilla JavaScript engineering.
+[![Live Demo](https://img.shields.io/badge/LIVE%20DEMO-fen3211.github.io%2Fnova--gear-critical?style=for-the-badge&logo=githubpages&logoColor=white&color=C7FF3D&labelColor=151515)](https://fen3211.github.io/nova-gear/)
+[![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla%20ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Canvas 60 FPS](https://img.shields.io/badge/Canvas-60%2F120%20FPS%20Scrub-blueviolet?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
+[![Lenis Scroll](https://img.shields.io/badge/Scroll-Lenis%20Smooth%20Momentum-black?style=for-the-badge)](https://github.com/darkroomengineering/lenis)
+[![Blender Cycles](https://img.shields.io/badge/3D%20Pipeline-Blender%20Cycles-EA7600?style=for-the-badge&logo=blender&logoColor=white)](https://www.blender.org/)
+[![Playwright 100% Pass](https://img.shields.io/badge/E2E%20Tests-20%2F20%20PASS%20(100%25)-brightgreen?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 
----
+> **🔴 [LAUNCH LIVE DEMO IN BROWSER](https://fen3211.github.io/nova-gear/)**
 
-## 1. The Project
-
-**NOVA Gear** is a premium direct-to-consumer (DTC) hardware brand specializing in precision mechanical keyboards, ultra-low latency wireless mice, audiophile noise-cancelling headphones, and architecturally considered workstation accessories.
-
-The visual direction is inspired by contemporary editorial commerce (such as [Collider](https://www.drinkcollider.com/)): massive fluid headlines, stark asymmetrical compositions, tactile material palettes, wide color surfaces with WCAG AA compliance, and zero generic startup clutter.
-
-This repository demonstrates two iterations of the exact same product campaign:
-- **`BEFORE` (`/before/`):** A client-grade build with 18 realistic HTML, CSS, and JavaScript bugs that degrade usability, break mobile viewports, and cause runtime console exceptions.
-- **`AFTER` (`/after/`):** The fully repaired, production-grade implementation engineered with fluid CSS math (`clamp()`), accessible dialog management, persistent state handling, and zero third-party dependencies.
+A cinematic, editorial direct-to-consumer (DTC) showcase crafted for premium tactile hardware. Inspired by cutting-edge digital ateliers and modern spatial commerce (e.g. *Collider*), NOVA Gear unifies an ultra-smooth 56-frame interactive 3D rotation, real-time hardware telemetry leader lines, bespoke editorial product staging, and an in-browser interactive mechanical keyboard studio.
 
 ---
 
-## 2. Verified Defect Matrix (18 Client Bugs)
+## English Overview
 
-| # | Дефект (Problem) | Как воспроизвести в BEFORE (Reproduction) | Исправление в AFTER (Fix Applied) | Проверка в AFTER (Verification) |
-|---|---|---|---|---|
-| **01** | **Horizontal Overflow on Mobile** | Открыть на экране 320–390px; страница скроллится вправо до 1250px из-за жесткого `width: 1200px` у контейнера Hero. | Заменено на fluid container с `max-width: var(--container-max)`, `margin: 0 auto` и `padding: clamp(...)`. | `scrollWidth === clientWidth` на 320px, 375px, 390px; горизонтальный скролл полностью отсутствует. |
-| **02** | **Hero 3D Product Overlap** | На мобильных экранах клавиатура с `position: absolute; width: 800px;` перекрывает текст заголовка `BETTER GEAR. BETTER DAYS.`. | Разделены позиционирование и параллакс; на экранах `<992px` визуал переходит в естественный поток документа ниже текста. | Текст заголовка и 3D-рендер полностью видимы и не конфликтуют на всех разрешениях. |
-| **03** | **Rigid Oversized Headline** | Заголовок имеет жесткий `font-size: 118px;`, из-за чего слова вылезают за границы экрана на планшетах и смартфонах. | Внедрена флюидная типографика `font-size: clamp(3rem, 8.5vw, 8.5rem);` с отрицательным трекингом. | Текст пропорционально сжимается от 320px до 4K без разрыва строк и выпадения за вьюпорт. |
-| **04** | **Broken Mobile Navigation** | На мобильных экранах десктопные ссылки сбиваются в кашу; кнопка бургера не открывает меню. | Добавлен медиа-запрос скрытия десктопных ссылок и полноэкранный доступный оверлей с управлением фокусом. | Клик по бургеру открывает оверлей, блокирует скролл body; закрывается по крестику, Escape и клику по ссылкам. |
-| **05** | **Rigid Product Grid on Mobile** | Колонки каталога имеют фиксированные доли `65%` и `35%` без `flex-wrap`, превращая карточки на телефонах в сплющенные полосы. | Добавлен `flex-wrap: wrap;` и перестроение колонок в `flex: 0 0 100%` ниже 992px. | Карточки плавно перестраиваются в единую удобную вертикальную ленту на мобильных устройствах. |
-| **06** | **Image Width Blowout** | Рендер Flux 100W имеет жесткий `width: 700px` без `max-width: 100%`, ломая соседние карточки. | Установлено глобальное правило `img { max-width: 100%; height: auto; }` и индивидуальные размерные классы. | Картинка масштабируется внутри карточки без распирания родительских флекс-контейнеров. |
-| **07** | **Broken Card Baseline Alignment** | Длинное описание в карточке Orbit ANC выталкивает блок цены и кнопки вниз относительно соседней карточки. | Внедрен flexbox-каркас с `display: flex; flex-direction: column;` и `margin-top: auto` у блока цен и кнопок. | Блоки цены и кнопок выровнены по нижнему краю карточек независимо от объема текста. |
-| **08** | **Broken "Add to Cart" Selector** | В HTML кнопка имеет `class="add-cart"`, а JS ищет `document.querySelectorAll('.add-to-cart')`. Клик ничего не делает. | Синхронизированы классы, внедрен Event Delegation на документ с чтением `data-id`. | Клик по кнопке любого товара добавляет товар в корзину и вызывает всплывающий toast. |
-| **09** | **Console Runtime Crash on Cart** | Клик по иконке корзины ищет `.cart-panel`, а реальный элемент — `.cart-drawer`. В консоли падает `Uncaught TypeError`. | Заменен селектор на `.cart-drawer`, добавлена проверка наличия и ARIA-атрибуты. | Ноль ошибок в консоли; корзина плавно выдвигается справа. |
-| **10** | **Newsletter Page Reload Bug** | Отправка формы рассылки перезагружает страницу из-за отсутствия `e.preventDefault()`, принимая пустые строки. | Добавлен `e.preventDefault()`, проверка regex и вывод честного демо-сообщения. | Страница не перезагружается; валидация отсекает пустые и некорректные адреса. |
-| **11** | **Fixed Header Content Clipping** | Хедер имеет `position: fixed; height: 80px`, а секция Hero — `padding-top: 30px`. Верхний заголовок заезжает под плашку. | Хедер переведен в `position: sticky; top: 0;`, Hero рассчитан с учетом высоты вьюпорта. | Верхняя строка заголовка не перекрывается хедерами ни в статике, ни при скролле. |
-| **12** | **Broken Promo Modal Close Trigger** | В разметке крестик имеет `class="btn-close-modal"`, а скрипт слушает `.modal-close-trigger`. Модалку невозможно закрыть. | Селекторы синхронизированы; добавлено закрытие по клику на оверлей, клавише Escape и копирование кода в буфер. | Модалка надежно закрывается всеми тремя способами; кнопка копирует промокод с визуальным подтверждением. |
-| **13** | **Fixed 1000px Footer Grid** | Сетка футера жестко зафиксирована на `width: 1000px; grid-template-columns: 500px 250px 250px;`, ломая мобильный экран. | Переведена на адаптивный CSS Grid (`grid-template-columns: 2fr 1fr 1fr 1fr` на десктопе, 1 колонка на мобильном). | Футер аккуратно перестраивается в компактный столбец на 320–768px без бокового скролла. |
-| **14** | **Jump-to-Top Anchor Links** | CTA-ссылки используют пустой `href="#"`, из-за чего клик дергает страницу на самый верх (`scroll(0,0)`). | Заменены на валидные семантические якоря (`#products`, `#statement`, `#journal`, `#support`). | Клик плавно прокручивает страницу к соответствующей секции. |
-| **15** | **Runaway Hover Scale Collision** | При наведении на товар изображение масштабируется `scale(1.18)` при `overflow: visible`, наползая на текст и соседние карточки. | Установлен `overflow: hidden;` на карточках и сбалансированный микро-скейл `scale(1.03) rotate(0.8deg)`. | Визуал аккуратно реагирует на курсор, не нарушая границ сетки и читаемости текста. |
-| **16** | **Missing Overflow Protection** | В CSS задано `body { overflow-x: visible; }`, из-за чего любой микросдвиг элементов раздувает страницу. | Внедрено `overflow-x: hidden;` для `body` и контейнеров. | Страница защищена от случайных паразитных субпиксельных переполнений. |
-| **17** | **Broken Review Slider Previous Button** | Кнопка «Вперед» работает, а для «Назад» скрипт слушает `.slider-prev-btn` вместо `.btn-slider-prev`. | Исправлен селектор кнопки; добавлен единый циклический переключатель с мягким переходом. | Отзывы перелистываются в обе стороны плавно и без сбоев. |
-| **18** | **Layout Sizing Breakage on Resize** | Скрипт рассчитывает размеры один раз в `window.onload` и жестко зашивает инлайновые пиксели, ломаясь при ресайзе. | Фиксированные инлайн-размеры удалены; сетка опирается на нативный CSS; параллакс привязан к `requestAnimationFrame`. | Окно можно свободно ресайзить между мобильным и 4K режимами без перезагрузки страницы. |
+### 1. Key Features & Creative Highlights
 
----
+- **Cinematic Hero Orbit (Unified Momentum Physics)**
+  - 56-frame photorealistic 3D sequence rendered in Blender Cycles, optimized to **2.17 MB total** via compressed modern WebP.
+  - Zero Canvas Clipping guarantee: scaled via `SAFE_SCALE = 0.82` (18% margin) ensuring the keyboard geometry never collides with canvas edges at any rotation angle.
+  - Unified momentum loop driven by continuous damping lerp:
+    $$\text{currentFrame} += (\text{targetFrame} - \text{currentFrame}) \times 0.08$$
+  - Seamless fly-in intro (frames 0–14) with `easeOutQuart` impulse (1100ms) with zero-latency interruption on wheel, touch, scroll, or keyboard navigation.
+  - Clean separation: editorial headline *BETTER GEAR. BETTER DAYS.* is constrained within the left column with an air gap of over 40px to eliminate visual collisions.
 
-## 3. Новая предметная 3D-графика
+- **Anatomical Telemetry Callouts**
+  - Frame-synchronized hardware callouts with dynamic 1px SVG leader lines and 4px contact target dots (`#C7FF3D`):
+    - **CNC 6063 ANODIZED**: active on frames `0–18`.
+    - **BRASS ROTARY ENCODER**: active on frames `10–26`.
+    - **LINEAR 45G // 3.8MM**: active on frames `12–30`.
+    - **FR4 GASKET ACOUSTICS**: active on frames `24–42`.
+  - Smooth fade-in/fade-out transitions (`cubic-bezier(0.16, 1, 0.3, 1)`) with zero layout clutter during beauty product reveals.
 
-Вместо плоских двухмерных векторных схем проект оснащен фотореалистичными рендерами промышленного дизайна:
-1. **NovaKeys K75:** Изометрический 3D-рендер 75% клавиатуры в анодированном алюминиевом корпусе CNC 6063 с латунным поворотным энкодером, PBT кейкапами и акцентными клавишами.
-2. **Pulse Pro:** Эргономичная беспроводная мышь 8KHz с текстурированным матовым корпусом, оптическими переключателями и кольцевой синей подсветкой колеса.
-3. **Orbit ANC:** Беспроводные наушники с оголовьем из шлифованного алюминия, амбушюрами из пены с эффектом памяти и оранжевыми фасками.
-4. **Flux 100W:** Компактный GaN III блок питания с акцентной желтой полосой и прецизионными портами (2x USB-C, 1x USB-A).
-5. **NovaDesk XL:** Премиальный войлочный коврик 900x400мм с микропрострочкой и кожаным органайзером кабелей.
-6. **Beam RGB:** Алюминиевая лампа для монитора с асимметричным отражателем, сенсорным управлением и мягким светораспределением.
-7. **Exploded View K75:** Технический послойный чертеж клавиатуры на темном фоне (верхний корпус, плейт FR4, PCB, звукопоглощающий Poron, латунный груз) с доступной легендой.
-8. **Interactive Assembly Animation K75:** Бесшовная 144-кадровая Cycles анимация послойной сборки/разборки (24 fps, 6.0s цикл, каскадная волна клавиш, пауза 1s в собранном виде, прозрачный фон yuva420p VP9 WebM + анимированный WebP). Оснащена IntersectionObserver для отключения при скролле, кнопкой паузы/воспроизведения и корректным поведением при `prefers-reduced-motion: reduce`.
+- **Light Keyboard Studio v2.4 (Workstation Simulator)**
+  - Interactive tactile keyboard workstation featuring Mac/Windows layouts, switch audio synthesizer (TTC Linear, Baby Kangaroo Tactile, Silent White), and per-key layer remapping.
+  - Built-in Web Audio API mechanical sound synthesis with realistic high-frequency contact clicks and low-frequency case resonance.
+  - Persistent state management via `localStorage` with full keyboard accessibility (focus traps, Esc handling, aria-expanded sync).
+  - Responsive layout down to ultra-compact 320px mobile viewports with dedicated tab switches and zero horizontal document overflow.
 
----
+- **Editorial Product Catalog**
+  - Bespoke product cards custom-proportioned for each piece of hardware (NovaKeys K75, Pulse Pro 8KHz Mouse, Orbit ANC Headphones, Flux 100W GaN Charger, NovaDesk XL Felt Mat, Beam RGB Monitor Light).
+  - Dual-layer composite staging with synchronized hover perspective transitions and independent soft shadow occlusion.
 
-## 4. Интерактивные возможности AFTER
+### 2. Performance & Architecture
 
-- **Корзина:** по умолчанию пустая, реактивное добавление/удаление, счетчик, сумма, хранение в `localStorage`, кнопка «Reset Demo State».
-- **Демо-чекаут:** кнопка оформления заблокирована при пустой корзине; при заполненной открывает модальное окно с перечнем товаров и дисклеймером об отсутствии списания средств.
-- **Локальный поиск:** мгновенная фильтрация по каталогу, названиям и характеристикам с возможностью очистки и обработкой пустого результата.
-- **Быстрый просмотр (Quick View):** модальное окно с характеристиками, материалами и добавлением товара.
-- **Доступность (A11y):** фокус-ловушка (Focus Trap), возврат фокуса на инициатор, блокировка фонового контента через `inert`, поддержка `prefers-reduced-motion`.
+- **Zero-Dependency Core:** Pure Vanilla JavaScript (ES6+), semantic HTML5, and native CSS3 Grid/Flexbox with fluid math (`clamp()`).
+- **Featherweight Asset Footprint:** Hero 3D assets total only **2.17 MB**; full website assets under **18 MB**.
+- **High-DPI Retina Rendering:** Adaptive `devicePixelRatio` scaling with offscreen memory cleanup and progressive batch preloading.
+- **Automated QA Coverage:** 20 comprehensive Playwright E2E tests validating layout integrity, accessibility, touch/keyboard interactions, and alpha border integrity.
 
 ---
 
-## 5. Запуск и проверка
+## Русская версия (Russian Overview)
 
-Откройте `index.html` в браузере (Chrome / Edge / Firefox / Safari). Интерактивная витрина позволяет переключаться между `AFTER` и `BEFORE`, а также тестировать поведение на эмуляторах разрешений:
-- `320px` (iPhone SE)
-- `390px` (iPhone 14/15)
-- `768px` (iPad Portrait)
-- `100%` (Desktop / 1440px / 1920px)
+### 1. Архитектурные и визуальные особенности
+
+- **Кинематографичный 3D Hero с единым импульсом (Unified Momentum)**
+  - 56-кадровая фотореалистичная последовательность вращения K75, отрендеренная в Blender Cycles и оптимизированная в WebP (**2.17 МБ на все кадры**).
+  - Безопасное масштабирование `SAFE_SCALE = 0.82` (18% поля), полностью исключающее обрезание граней клавиатуры при любых углах вращения.
+  - Единая математическая модель физики с фактором демпфирования `0.08` — плавный скраббинг без ступенек и рывков.
+  - Мягкий стартовый запуск (кадры 0–14, 1100 мс `easeOutQuart`) с мгновенным подхватом управления при любом действии пользователя (колесо мыши, свайп, клавиши).
+  - Типографическая чистота: крупный заголовок *BETTER GEAR. BETTER DAYS.* гарантированно отделен воздушным зазором от 3D-модели.
+
+- **Анатомическая аппаратная телеметрия**
+  - Динамические аппаратные выноски, появляющиеся и исчезающие строго в своих диапазонах кадров:
+    - **CNC 6063 ANODIZED**: кадры `0–18`.
+    - **BRASS ROTARY ENCODER**: кадры `10–26`.
+    - **LINEAR 45G // 3.8MM**: кадры `12–30`.
+    - **FR4 GASKET ACOUSTICS**: кадры `24–42`.
+  - Компактные 1px SVG-линии указателей, контактные точки 4px `#C7FF3D`, минималистичные бейджи `#151515` и мягкие переходы прозрачности `0.35s cubic-bezier(0.16, 1, 0.3, 1)`.
+
+- **NOVA Keyboard Studio v2.4 (Светлая рабочая станция)**
+  - Полнофункциональный конфигуратор 75% клавиатуры: переключение раскладок macOS / Windows, выбор свитчей, переназначение клавиш (Layer 0–3) с сохранением в `localStorage`.
+  - Встроенный синтезатор акустики свитчей через Web Audio API (реалистичный звук механики без внешних MP3/WAV файлов).
+  - Безупречная адаптивность: на экранах 320–390px интерфейс переключается в режим вкладок (Preview / Settings) с нулевым горизонтальным скроллом.
+
+- **Редакторский каталог девайсов**
+  - Индивидуальная сетка карточек под геометрию каждого устройства (мышь Pulse Pro, наушники Orbit ANC, зарядка Flux 100W, коврик NovaDesk XL, лампа Beam RGB).
+  - Раздельные слои теней и предметов с плавной синхронизацией при ховере.
+
+### 2. Технические показатели
+
+| Показатель | Значение |
+|---|---|
+| **Стек** | Vanilla JS (ES6+), CSS3 Grid/Flexbox, HTML5, Lenis Scroll |
+| **Вес 3D Hero последовательности** | **2.17 МБ** (56 кадров WebP) |
+| **Общий вес ассетов сайта** | **~17.8 МБ** (оптимизировано с 261 МБ) |
+| **FPS Canvas Scrub** | Стабильные 60 / 120 FPS |
+| **Тестовое покрытие** | 20 E2E-тестов Playwright (100% Pass) |
+| **Доступность** | WCAG AA контраст, WAI-ARIA диалоги, поддержка `prefers-reduced-motion` |
+
+---
+
+## Quickstart & Local Installation (Локальный запуск)
+
+### Требования
+- Node.js 18+
+- Современный браузер (Chrome, Firefox, Safari, Edge)
+
+### 1. Клонирование и установка зависимостей
+```bash
+git clone https://github.com/fen3211/nova-gear.git
+cd nova-gear
+npm install
+```
+
+### 2. Запуск локального сервера
+```bash
+npx serve
+# или откройте index.html напрямую в браузере / через расширение Live Server в VS Code
+```
+
+### 3. Запуск автоматизированных E2E тестов Playwright
+```bash
+npx playwright test
+```
+
+### 4. Запись демонстрационного видео Hero
+```bash
+node scripts/record_hero_cinematic.js
+```
+
+---
+
+## Structure (Структура проекта)
+
+```text
+nova-gear/
+├── assets/
+│   ├── frames_hero/     # 56 WebP кадров 3D последовательности Hero (2.17 MB)
+│   ├── frames_scrub/    # 57 WebP кадров послойной разборки K75 (1.46 MB)
+│   ├── icons/           # Векторный фавикон и пиктограммы
+│   └── images/          # Высокодетализированные продуктовые рендеры и тени
+├── review/              # Верификационные скриншоты и MP4 демонстрации
+├── scripts/             # Скрипты генерации видео (Playwright + FFmpeg)
+├── tests/               # 20 автоматизированных тестов Playwright
+├── index.html           # Продакшен разметка сайта
+├── script.js            # Основная бизнес-логика, физический движок и Studio
+├── style.css            # Токены, сетки, типографика и анимации
+├── lenis.min.js         # Инерционный плавный скроллинг
+├── package.json         # Зависимости тестирования
+└── README.md            # Презентация проекта
+```
+
+---
+
+## License & Credits
+
+Designed and developed by **fen3211**. Released under the [MIT License](LICENSE).
+Live deployment: [https://fen3211.github.io/nova-gear/](https://fen3211.github.io/nova-gear/)

@@ -3,9 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 const BASE_URL = 'file:///' + path.resolve(__dirname, '..').replace(/\\/g, '/');
-const AFTER_URL = `${BASE_URL}/after/index.html`;
-const BEFORE_URL = `${BASE_URL}/before/index.html`;
 const ROOT_URL = `${BASE_URL}/index.html`;
+const AFTER_URL = ROOT_URL;
 
 const SCREENSHOTS_DIR = path.resolve(__dirname, '../test-results/screenshots');
 fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
@@ -15,21 +14,19 @@ fs.mkdirSync(REVIEW_DIR, { recursive: true });
 
 test.describe('NOVA GEAR Master DTC Verification Suite', () => {
 
-  test('01: Showcase Switcher & BEFORE/AFTER defect contrast', async ({ page }) => {
+  test('01: Production Site Root Launch, Metadata & Semantic Shell', async ({ page }) => {
     await page.goto(ROOT_URL);
     await page.waitForLoadState('networkidle');
 
-    // 1. Check BEFORE version retains intentional defects
-    await page.goto(BEFORE_URL);
-    await page.waitForLoadState('networkidle');
-    const beforeHeadline = page.locator('h1').first();
-    await expect(beforeHeadline).toBeVisible();
+    // 1. Verify Page Title & Metadata
+    await expect(page).toHaveTitle(/NOVA Gear/);
+    const metaDesc = page.locator('meta[name="description"]');
+    await expect(metaDesc).toHaveAttribute('content', /engineered/);
 
-    // 2. Visit AFTER master version
-    await page.goto(AFTER_URL);
-    await page.waitForLoadState('networkidle');
+    // 2. Verify Semantic Header, Hero Spotlight & Brand Logo
     await expect(page.locator('.hero-headline')).toBeVisible();
     await expect(page.locator('.brand-logo').first()).toContainText('NOVA');
+    await expect(page.locator('.site-header')).toBeVisible();
   });
 
   test('02: Product Images Alpha Transparency & Border-Radius Removal', async ({ page }) => {

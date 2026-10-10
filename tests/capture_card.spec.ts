@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import * as path from 'path';
 
-const AFTER_URL = 'file:///' + path.resolve(__dirname, '../after/index.html').replace(/\\/g, '/');
-const OUTPUT_DIR = path.resolve(__dirname, '../assets/previews');
+const AFTER_URL = 'file:///' + path.resolve(__dirname, '../index.html').replace(/\\/g, '/');
+const OUTPUT_DIR = path.resolve(__dirname, '../review');
 
 test('Capture real browser screenshots of Flux charger and NovaDesk mat on Desktop and Mobile', async ({ page }) => {
   // Prevent automated promo popup from opening and intercepting pointer events

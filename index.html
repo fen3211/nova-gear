@@ -1,362 +1,1235 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NOVA Gear — Editorial E-Commerce Bug Fix Case Study</title>
+  <title>NOVA Gear — Premium Tactile Technology</title>
+  <meta name="description" content="Obsessively engineered mechanical keyboards, wireless audio, and workspace essentials designed to make every day feel better." />
   
+  <!-- Google Fonts: Space Grotesk & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      height: 100dvh;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #0E0F12;
-      color: #F3F0E7;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    /* Solid App Shell layout with CSS Grid */
-    .app-shell {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      height: 100dvh;
-      height: 100vh;
-      width: 100vw;
-      min-height: 0;
-    }
-
-    /* Top Showcase Bar */
-    .showcase-header {
-      background-color: #17181D;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.65rem 1.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      z-index: 100;
-      flex-shrink: 0;
-    }
-
-    .brand-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .case-badge {
-      background-color: rgba(199, 255, 61, 0.12);
-      color: #C7FF3D;
-      border: 1px solid rgba(199, 255, 61, 0.25);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Mode Switcher Buttons */
-    .mode-switcher {
-      display: inline-flex;
-      background-color: #0E0F12;
-      padding: 3px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .btn-mode {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 0.78rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 0.4rem 0.85rem;
-      border: none;
-      background: none;
-      color: #8E93A0;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .btn-mode[aria-pressed="true"].mode-after {
-      background-color: #C7FF3D;
-      color: #111111;
-    }
-
-    .btn-mode[aria-pressed="true"].mode-before {
-      background-color: #FF5353;
-      color: #FFFFFF;
-    }
-
-    /* Viewport Presets */
-    .viewport-controls {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .btn-vp {
-      background-color: #202228;
-      color: #A0A5B5;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.35rem 0.65rem;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-vp:hover, .btn-vp.active {
-      background-color: #2F323C;
-      color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Actions */
-    .header-actions-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .btn-direct {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #C7FF3D;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.35rem 0.7rem;
-      border-radius: 6px;
-      background-color: rgba(199, 255, 61, 0.1);
-      border: 1px solid rgba(199, 255, 61, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .btn-direct:hover {
-      background-color: #C7FF3D;
-      color: #111111;
-    }
-
-    /* Main Preview Stage (Fill 100% available vertical room) */
-    .preview-stage {
-      position: relative;
-      background-color: #08080A;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      height: 100%;
-      min-height: 0;
-      width: 100%;
-    }
-
-    .preview-frame-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .preview-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background-color: #F3F0E7;
-      transition: box-shadow 0.3s ease, border-radius 0.3s ease;
-    }
-
-    .preview-frame-container.framed {
-      padding: 1rem 0;
-    }
-
-    .preview-frame-container.framed .preview-frame {
-      height: 100%;
-      max-height: 94vh;
-      border-radius: 14px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    }
-
-    /* Floating Status Indicator */
-    .status-pill {
-      position: absolute;
-      bottom: 1rem;
-      left: 1.25rem;
-      background-color: rgba(23, 24, 29, 0.92);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.45rem 0.95rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      z-index: 50;
-      pointer-events: none;
-      max-width: calc(100vw - 2.5rem);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .status-dot.green { background-color: #C7FF3D; box-shadow: 0 0 8px #C7FF3D; }
-    .status-dot.red { background-color: #FF5353; box-shadow: 0 0 8px #FF5353; }
-
-    /* Responsive adjustments for showcase bar */
-    @media (max-width: 900px) {
-      .showcase-header {
-        padding: 0.5rem 0.75rem;
-      }
-      .brand-title {
-        font-size: 0.95rem;
-      }
-      .viewport-controls {
-        display: none; /* Hide device frames on tablet/mobile screens */
-      }
-      .status-pill {
-        display: none;
-      }
-    }
-  </style>
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Accessible Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <div class="app-shell">
-    <!-- Top Showcase Navigation Bar -->
-    <header class="showcase-header" role="banner">
-      <div class="brand-meta">
-        <h1 class="brand-title">
-          NOVA GEAR <span style="font-weight: 400; opacity: 0.5;">// CASE STUDY</span>
-        </h1>
-        <span class="case-badge">HTML / CSS / JS FIX</span>
-      </div>
+  <!-- ==========================================================================
+       SITE HEADER
+       ========================================================================== -->
+  <header class="site-header" role="banner">
+    <div class="editorial-container header-inner">
+      <a href="index.html" class="brand-logo" aria-label="NOVA Gear Homepage">
+        NOVA<sup>®</sup>
+      </a>
 
-      <!-- Toggle BEFORE vs AFTER with ARIA attributes -->
-      <div class="mode-switcher" role="group" aria-label="Version Switcher">
-        <button type="button" class="btn-mode mode-after" id="btn-after" aria-pressed="true">
-          <span aria-hidden="true">✓</span> AFTER (FIXED)
+      <!-- Desktop Navigation -->
+      <nav class="nav-desktop" aria-label="Primary Navigation">
+        <a href="#products" class="nav-link">SHOP</a>
+        <a href="#statement" class="nav-link">ABOUT</a>
+        <a href="#journal" class="nav-link">JOURNAL</a>
+        <a href="#support" class="nav-link">SUPPORT</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button type="button" class="btn-header-action" data-action="open-search" aria-label="Search catalog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          SEARCH
         </button>
-        <button type="button" class="btn-mode mode-before" id="btn-before" aria-pressed="false">
-          <span aria-hidden="true">✕</span> BEFORE (BUGS)
+        <button type="button" class="btn-header-action" data-action="open-cart" aria-label="Open shopping cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          CART <span class="cart-counter" aria-live="polite">0</span>
         </button>
-      </div>
-
-      <!-- Viewport Presets -->
-      <div class="viewport-controls" role="group" aria-label="Preview Viewport Width">
-        <button type="button" class="btn-vp active" data-width="100%">100% DESKTOP</button>
-        <button type="button" class="btn-vp" data-width="768px">768px TABLET</button>
-        <button type="button" class="btn-vp" data-width="390px">390px MOBILE</button>
-      </div>
-
-      <!-- Direct Link -->
-      <div class="header-actions-group">
-        <a href="after/index.html" target="_blank" class="btn-direct" id="btn-direct-link">
-          OPEN DIRECTLY <span aria-hidden="true">↗</span>
+        <a href="#products" class="btn-shop-cta">
+          SHOP NOW <span aria-hidden="true">↗</span>
         </a>
+        <button type="button" class="btn-mobile-menu" aria-label="Toggle mobile navigation menu" aria-expanded="false" aria-controls="mobile-nav-menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+        </button>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- Interactive Sandbox Preview -->
-    <main class="preview-stage">
-      <div class="preview-frame-container" id="frame-container">
-        <iframe src="after/index.html" class="preview-frame" id="site-frame" title="NOVA Gear Preview Frame"></iframe>
+  <!-- ==========================================================================
+       MAIN CONTENT
+       ========================================================================== -->
+  <main id="main-content">
+    
+    <!-- HERO POSTER SECTION (CINEMATIC PRESENTATION & 3D MOTION) -->
+    <section class="hero-section hero-cinematic-stage" id="hero" aria-label="Hero Spotlight">
+      <div class="hero-sticky-track" id="heroScrollTrack">
+        <div class="hero-sticky-viewport">
+          <div class="editorial-container hero-asymmetric-grid">
+            <!-- Left Column: Editorial Data (max 44-46% width) -->
+            <div class="hero-editorial-col">
+              <div class="hero-super-badge-row">
+                <span class="hero-super-badge">NOVA K75 // ARCHITECTURAL 75% WIRELESS</span>
+                <span class="hero-super-sub">ENGINEERED TO FEEL DIFFERENT</span>
+              </div>
+              <h1 class="title-mega hero-headline">
+                <span class="line-break"><span class="line-inner">BETTER GEAR.</span></span>
+                <span class="line-break"><span class="line-inner">BETTER DAYS.</span></span>
+              </h1>
+
+              <p class="hero-lead-text">
+                Premium tactile tools engineered to eliminate friction from everyday interaction. Solid CNC 6063 aerospace alloys, custom-dampened acoustics, effortless workflow.
+              </p>
+
+              <!-- Decomposed Inventory & Price Tag (In Left Column) -->
+              <div class="hero-editorial-inventory">
+                <div class="pill-badge-row">
+                  <span class="pill-status-dot" aria-hidden="true"></span>
+                  <span class="pill-status-text">IN STOCK • SHIPS IN 24H</span>
+                </div>
+                <div class="hero-editorial-price-row">
+                  <span class="pill-name">NOVA K75 // 75% WIRELESS</span>
+                  <span class="pill-price">$129</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: 3D Stage (54-56% width) with guaranteed >= 40px horizontal gap -->
+            <div class="hero-stage-col">
+              <div class="hero-visual-stage" id="heroVisualStage" aria-hidden="true">
+                <div class="hero-cinematic-glow" aria-hidden="true"></div>
+                <div class="hero-canvas-frame">
+                  <canvas id="heroScrubCanvas" class="hero-scrub-canvas" width="1200" height="800" data-frame-index="0" data-progress="0.000"></canvas>
+                  <div class="hero-parallax-wrapper" id="heroParallaxWrapper">
+                    <img src="./assets/images/keyboard-k75-shadow.webp" alt="" class="hero-shadow-img" aria-hidden="true" />
+                    <img src="./assets/images/keyboard-k75.png" alt="NOVA K75 75% Mechanical Keyboard 3D Render" class="hero-3d-img" fetchpriority="high" width="1200" height="800" />
+                  </div>
+                </div>
+
+                <!-- SVG Leader Lines connecting pins to hardware nodes (SAFE_SCALE = 0.82) -->
+                <svg class="hero-leader-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                  <!-- Leader 1: Brass Rotary Encoder (frames 10-26) -->
+                  <g class="leader-group leader-knob" data-phase="knob">
+                    <path class="leader-line" d="M 850 200 L 930 200 L 1003 466" />
+                    <circle class="leader-dot-target" cx="1003" cy="466" r="4" />
+                  </g>
+                  <!-- Leader 2: Linear 45g Switches (frames 12-30) -->
+                  <g class="leader-group leader-switches" data-phase="switches">
+                    <path class="leader-line" d="M 360 130 L 450 130 L 584 351" />
+                    <circle class="leader-dot-target" cx="584" cy="351" r="4" />
+                  </g>
+                  <!-- Leader 3: CNC 6063 Anodized Chassis (frames 0-18) -->
+                  <g class="leader-group leader-chassis active" data-phase="chassis">
+                    <path class="leader-line" d="M 150 580 L 240 580 L 346 531" />
+                    <circle class="leader-dot-target" cx="346" cy="531" r="4" />
+                  </g>
+                  <!-- Leader 4: FR4 Gasket Acoustics (frames 24-42) -->
+                  <g class="leader-group leader-gasket" data-phase="gasket">
+                    <path class="leader-line" d="M 650 725 L 730 725 L 797 654" />
+                    <circle class="leader-dot-target" cx="797" cy="654" r="4" />
+                  </g>
+                </svg>
+
+                <!-- Precision Highlight Chips (Realtime Telemetry Callouts) -->
+                <div class="hero-feature-tags" id="heroFeatureTags">
+                  <div class="hero-tag-pill tag-knob" data-phase="knob">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">BRASS ROTARY ENCODER</span>
+                  </div>
+                  <div class="hero-tag-pill tag-switches" data-phase="switches">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">LINEAR 45G // 3.8MM</span>
+                  </div>
+                  <div class="hero-tag-pill tag-chassis active" data-phase="chassis">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">CNC 6063 ANODIZED</span>
+                  </div>
+                  <div class="hero-tag-pill tag-gasket" data-phase="gasket">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">FR4 GASKET ACOUSTICS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Floating Meta / CTA Bar -->
+          <div class="editorial-container">
+            <div class="hero-meta-bar">
+              <div class="hero-meta-left">
+                <a href="#story" class="hero-scroll-indicator" aria-label="Scroll down to explore architecture">
+                  <span class="scroll-arrow" aria-hidden="true">↓</span>
+                  <span class="scroll-label">SCROLL TO EXPLORE ARCHITECTURE ↗</span>
+                </a>
+              </div>
+              <div class="hero-meta-right">
+                <div class="hero-cta-group">
+                  <button type="button" class="btn-hero-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
+                    QUICK ADD <span aria-hidden="true">+</span>
+                  </button>
+                  <button type="button" class="btn-hero-studio-cta" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio">
+                    HARDWARE STUDIO ⚙
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HORIZONTAL MARQUEE TICKER (PURE CSS) -->
+    <div class="marquee-band" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-content">ENGINEERED FOR EVERYDAY <span class="separator">•</span> BUILT TO LAST <span class="separator">•</span> DESIGNED TO FEEL BETTER <span class="separator">•</span> NOVA GEAR <span class="separator">•</span></span>
+        <span class="marquee-content">ENGINEERED FOR EVERYDAY <span class="separator">•</span> BUILT TO LAST <span class="separator">•</span> DESIGNED TO FEEL BETTER <span class="separator">•</span> NOVA GEAR <span class="separator">•</span></span>
+        <span class="marquee-content">ENGINEERED FOR EVERYDAY <span class="separator">•</span> BUILT TO LAST <span class="separator">•</span> DESIGNED TO FEEL BETTER <span class="separator">•</span> NOVA GEAR <span class="separator">•</span></span>
+        <span class="marquee-content">ENGINEERED FOR EVERYDAY <span class="separator">•</span> BUILT TO LAST <span class="separator">•</span> DESIGNED TO FEEL BETTER <span class="separator">•</span> NOVA GEAR <span class="separator">•</span></span>
+      </div>
+    </div>
+
+    <!-- EDITORIAL PRODUCTS SECTION (3D STUDIO RENDERS) -->
+    <section id="products" class="products-section" aria-label="Curated Product Releases">
+      <div class="editorial-container">
+        <div class="section-header-row">
+          <div>
+            <span class="tag-label">SYSTEM ARCHITECTURE</span>
+            <h2 class="title-section">CURATED RELEASES</h2>
+          </div>
+          <p class="section-subtitle">
+            Every physical surface is developed as part of an integrated workstation interface. High tactile feedback, zero unnecessary decoration.
+          </p>
+        </div>
+
+        <div class="editorial-grid">
+          <!-- Row 1: K75 Grand Flagship (100% Full Width Showcase) -->
+          <div class="editorial-row">
+            <!-- 01: NovaKeys K75 -->
+            <article class="product-card col-full card-theme-k75 card-flagship-k75">
+              <div class="card-top-meta">
+                <span class="card-number">01 // FLAGSHIP ARCHITECTURE</span>
+                <span class="card-category">Mechanical Keyboard</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-keyboard" style="--keyboard-shadow-opacity: 0.85;">
+                  <img src="./assets/images/keyboard-k75-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/keyboard-k75-isolated.webp" alt="NovaKeys K75 Mechanical Keyboard" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">NovaKeys K75</h3>
+                  <p class="product-card-desc">75% gasket-mounted CNC 6063 aluminum chassis with custom lubricated linear switches, solid brass weight and knurled encoder knob.</p>
+                  <p class="card-specs-list">CNC 6063 • FR4 GASKET • TTC 45G LINEAR • 1,850G BRASS WEIGHT • 2.4GHZ / BT / TYPE-C</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$129</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-configurator-trigger" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio for K75">STUDIO ⚙</button>
+                    <button type="button" class="btn-quick-view" data-id="k75" aria-label="Quick view details for NovaKeys K75">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Row 2: Ergonomic & Acoustic Duo (Pulse Pro 48% + Orbit ANC 52%) -->
+          <div class="editorial-row">
+            <!-- 02: Pulse Pro -->
+            <article class="product-card col-48 card-theme-pulse">
+              <div class="card-top-meta">
+                <span class="card-number">02 // PRECISION</span>
+                <span class="card-category">Wireless Mouse</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-mouse" style="--mouse-shadow-opacity: 0.85;">
+                  <img src="./assets/images/mouse-pulse-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/mouse-pulse-isolated.webp" alt="Pulse Pro Wireless Mouse" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">Pulse Pro</h3>
+                  <p class="product-card-desc">8,000Hz polling rate ergonomic mouse with optical microswitches, sculpted thumb rest and knurled wheel with cyan neon halo.</p>
+                  <p class="card-specs-list">PAW3395 26K DPI • 8KHZ POLLING • 58G • OPTICAL SWITCHES</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$79</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="pulse" aria-label="Quick view details for Pulse Pro">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="pulse" aria-label="Add Pulse Pro to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- 03: Orbit ANC -->
+            <article class="product-card col-52 card-theme-orbit">
+              <div class="card-top-meta">
+                <span class="card-number">03 // ACOUSTICS</span>
+                <span class="card-category">Wireless Headphones</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-headphones" style="--headphones-shadow-opacity: 0.85;">
+                  <img src="./assets/images/headphones-orbit-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/headphones-orbit-isolated.webp" alt="Orbit ANC Wireless Headphones" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">Orbit ANC</h3>
+                  <p class="product-card-desc">Hybrid active noise cancellation, custom 40mm titanium drivers, signature anodized orange chamfer ring and 48-hour battery.</p>
+                  <p class="card-specs-list">40MM TITANIUM • -42DB HYBRID ANC • 48H BATTERY • LDAC 24-BIT</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$159</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="orbit" aria-label="Quick view details for Orbit ANC">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="orbit" aria-label="Add Orbit ANC to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Row 3: Compact Power & Panoramic Illumination (Flux 38% + Beam RGB 62%) -->
+          <div class="editorial-row">
+            <!-- 04: Flux 100W -->
+            <article class="product-card col-38 card-theme-flux">
+              <div class="card-top-meta">
+                <span class="card-number">04 // POWER</span>
+                <span class="card-category">GaN Fast Charger</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-charger" style="--charger-shadow-opacity: 0.85;">
+                  <img src="./assets/images/flux-charger-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/flux-charger-isolated.webp" alt="Flux 100W GaN Fast Charger" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">Flux 100W</h3>
+                  <p class="product-card-desc">Triple-port GaN III architecture engineered to fast charge a laptop and two accessories simultaneously.</p>
+                  <p class="card-specs-list">100W PD 3.0 • DUAL NAVITAS GAN • 2X USB-C + 1X USB-A • THERMALGUARD 3.0</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$69</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="flux" aria-label="Quick view details for Flux 100W">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="flux" aria-label="Add Flux 100W to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- 05: Beam RGB -->
+            <article class="product-card col-62 card-theme-beam card-beam-panoramic">
+              <div class="card-top-meta">
+                <span class="card-number">05 // ILLUMINATION</span>
+                <span class="card-category">Monitor Light</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-beam" style="--beam-shadow-opacity: 0.85;">
+                  <div class="beam-atmospheric-glow" aria-hidden="true"></div>
+                  <img src="./assets/images/light-beam-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/light-beam-isolated.webp" alt="Beam RGB Monitor Light" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">Beam RGB</h3>
+                  <p class="product-card-desc">Dual-source asymmetric workstation illumination with museum-grade CRI 97 daylight reproduction and ambient RGB backlight.</p>
+                  <p class="card-specs-list">RA>97 CRI • ASYMMETRIC REFLECTOR • 2700K-6500K CCT • TOUCH ENDCAPS</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$89</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="beam" aria-label="Quick view details for Beam RGB">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="beam" aria-label="Add Beam RGB to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Row 4: NovaDesk XL (100% Panoramic Surface Showcase) -->
+          <div class="editorial-row">
+            <!-- 06: NovaDesk XL -->
+            <article class="product-card col-full card-theme-mat card-mat-panoramic">
+              <div class="card-top-meta">
+                <span class="card-number">06 // SURFACE</span>
+                <span class="card-category">Desk Mat</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div class="card-visual-stage scale-mat" style="--mat-shadow-opacity: 0.85;">
+                  <img src="./assets/images/mat-novadesk-shadow.webp" alt="" class="card-shadow-layer" aria-hidden="true" loading="lazy" />
+                  <img src="./assets/images/mat-novadesk-isolated.webp" alt="NovaDesk XL Desk Mat" class="card-product-layer" loading="lazy" />
+                </div>
+              </div>
+              <div class="card-bottom-info">
+                <div class="card-text-block">
+                  <h3 class="product-card-title">NovaDesk XL</h3>
+                  <p class="product-card-desc">High-density merino-blend felt with micro-stitched perimeter and full-grain leather magnetic cable catch.</p>
+                  <p class="card-specs-list">900 × 400 × 4MM • MERINO FELT • VEGAN LEATHER BINDING • ANTI-SLIP BASE</p>
+                </div>
+                <div class="card-action-bar">
+                  <span class="product-price">$39</span>
+                  <div class="card-buttons-group">
+                    <button type="button" class="btn-quick-view" data-id="novadesk" aria-label="Quick view details for NovaDesk XL">SPECS</button>
+                    <button type="button" class="btn-add-cart" data-id="novadesk" aria-label="Add NovaDesk XL to cart">
+                      ADD TO CART ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAND STATEMENT SECTION -->
+    <section id="statement" class="statement-section" aria-label="Brand Philosophy">
+      <div class="editorial-container">
+        <h2 class="title-mega statement-headline">
+          WE MAKE<br />
+          EVERYDAY THINGS<br />
+          FEEL BETTER.
+        </h2>
+        <div class="statement-footer-row">
+          <p class="statement-lead">
+            Keyboards, audio and desk essentials designed around the way you actually work. Built with zero compromise on mechanical feel, physical tolerances, or tactile longevity.
+          </p>
+          <a href="#story" class="btn-statement-cta">
+            EXPLORE ARCHITECTURE <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDITORIAL FEATURES SECTION -->
+    <section class="features-section" aria-label="Core Engineering Principles">
+      <div class="editorial-container">
+        <div class="features-grid">
+          <div class="feature-col">
+            <span class="feature-num">01</span>
+            <h3 class="feature-title">BUILT TO LAST</h3>
+            <p class="feature-desc">Solid 6063 aerospace-grade aluminum blocks CNC milled to 0.02mm tolerances for years of heavy daily typing.</p>
+          </div>
+          <div class="feature-col">
+            <span class="feature-num">02</span>
+            <h3 class="feature-title">MADE TO FEEL GOOD</h3>
+            <p class="feature-desc">Every interaction is considered — from tactile spring curve resistance to bead-blasted satin matte surface grip.</p>
+          </div>
+          <div class="feature-col">
+            <span class="feature-num">03</span>
+            <h3 class="feature-title">DESIGNED WITH PURPOSE</h3>
+            <p class="feature-desc">Less visual noise. Superior acoustic resonance. Nothing unnecessary invading your creative line of sight.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DARK STORY SECTION (INTERACTIVE SCROLL-DRIVEN 3D BREAKDOWN & ARCHITECTURE) -->
+    <section id="story" class="story-section" aria-label="Engineering Architecture">
+      <!-- Outer scroll track providing 180vh of scroll travel -->
+      <div class="story-scroll-track" id="k75ScrollTrack">
+        <!-- Pinned viewport stage (sticky at top: 0, 100vh height) -->
+        <div class="story-sticky-stage" id="k75StickyStage">
+          <div class="editorial-container story-sticky-content">
+            <div class="story-header">
+              <span class="tag-label" style="color: var(--accent-green);">INTERNAL ARCHITECTURE</span>
+              <h2 class="title-mega" style="color: #F3F0E7;">
+                OBSESSIVE<br />
+                BY DESIGN.
+              </h2>
+            </div>
+
+            <!-- Single Major 3D Breakdown Canvas Stage -->
+            <div class="story-breakdown-stage" id="k75BreakdownStage">
+              <!-- Real-time Phase Indicator Badge -->
+              <div class="story-phase-badge" id="k75PhaseBadge" aria-live="polite">
+                <span class="phase-dot" aria-hidden="true"></span>
+                <span class="phase-text" id="k75PhaseText">ASSEMBLED CHASSIS // CNC 6063</span>
+                <span class="phase-progress-bar"><span class="phase-progress-fill" id="k75ProgressFill"></span></span>
+                <span class="phase-percent" id="k75PhasePercent">0%</span>
+              </div>
+
+              <!-- Scroll-driven Canvas (720x720 internal resolution, crisp retina scaling) -->
+              <canvas 
+                id="k75ScrollCanvas" 
+                class="story-scroll-canvas" 
+                width="720" 
+                height="720"
+                aria-label="Interactive 3D scroll-driven breakdown of NOVA Keys K75 mechanical keyboard layers"
+              ></canvas>
+              
+              <!-- Static fallback for prefers-reduced-motion -->
+              <img 
+                src="./assets/images/keyboard-k75.png" 
+                alt="NOVA Keys K75 fully assembled view" 
+                class="story-scroll-fallback" 
+                loading="lazy" 
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="status-pill" id="status-pill" aria-live="polite">
-        <span class="status-dot green" id="status-dot"></span>
-        <span id="status-text">Viewing: AFTER — Corrected responsive layout, verified JS and accessibility</span>
+      <!-- Technical Architecture Specs & Accessible Layer Legend below the interactive breakdown -->
+      <div class="editorial-container story-details-container">
+
+        <!-- Accessible HTML Legend for Mobile and Screen Readers -->
+        <div class="exploded-layers-legend" aria-label="Keyboard assembly layers">
+          <div class="legend-item">
+            <div class="legend-title">01 // CNC 6063 TOP HOUSING</div>
+            <div class="legend-desc">Solid anodized aluminum chassis with beveled perimeter walls and brass encoder mount.</div>
+          </div>
+          <div class="legend-item" style="border-left-color: var(--card-blue-bg);">
+            <div class="legend-title">02 // FR4 GASKET-MOUNTED PLATE</div>
+            <div class="legend-desc">Flex-cut composite plate suspended on poron isolation gaskets for responsive key travel.</div>
+          </div>
+          <div class="legend-item" style="border-left-color: var(--card-orange-bg);">
+            <div class="legend-title">03 // HOT-SWAP 8KHZ PCB</div>
+            <div class="legend-desc">South-facing RGB per-key sockets supporting 3-pin and 5-pin MX mechanical switches.</div>
+          </div>
+          <div class="legend-item" style="border-left-color: var(--card-yellow-bg);">
+            <div class="legend-title">04 // MULTI-STAGE PORON FOAM</div>
+            <div class="legend-desc">Acoustic dampening sandwich absorbing unwanted case ping and hollow frequencies.</div>
+          </div>
+          <div class="legend-item" style="border-left-color: #E5C775;">
+            <div class="legend-title">05 // SOLID BRASS WEIGHT CHASSIS</div>
+            <div class="legend-desc">Mirror-polished 1,850g brass balance block providing immovable desktop anchoring.</div>
+          </div>
+        </div>
+
+        <div class="story-specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">CHASSIS HOUSING</span>
+            <span class="spec-value">CNC ALUMINIUM</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">SWITCH SOCKETS</span>
+            <span class="spec-value">HOT-SWAPPABLE</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">CONNECTIVITY</span>
+            <span class="spec-value">2.4 GHZ WIRELESS</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">FORM FACTOR</span>
+            <span class="spec-value">75% COMPACT</span>
+          </div>
+        </div>
       </div>
-    </main>
+    </section>
+
+    <!-- EDITORIAL REVIEWS -->
+    <section class="reviews-section" aria-label="Customer Reviews">
+      <div class="editorial-container">
+        <div class="review-slider-wrapper">
+          <div class="review-slide active">
+            <div class="review-stars" aria-label="5 out of 5 stars">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <blockquote class="review-quote">
+              “THE FIRST KEYBOARD I ACTUALLY WANT ON MY DESK.”
+            </blockquote>
+            <div class="review-meta">
+              <span class="review-author">Alex M.</span>
+              <span class="review-title">Verified Buyer</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-controls">
+          <button type="button" class="btn-slider-nav btn-slider-prev" aria-label="Previous Review">←</button>
+          <button type="button" class="btn-slider-nav btn-slider-next" aria-label="Next Review">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REAL EDITORIAL JOURNAL SECTION -->
+    <section id="journal" class="journal-section" aria-label="Engineering Journal">
+      <div class="editorial-container">
+        <div class="section-header-row">
+          <div>
+            <span class="tag-label">DESIGN DISPATCHES</span>
+            <h2 class="title-section">THE JOURNAL</h2>
+          </div>
+          <p class="section-subtitle">
+            Insights from our industrial engineering and acoustic tuning lab in Berlin.
+          </p>
+        </div>
+
+        <div class="journal-grid">
+          <article class="journal-card">
+            <div>
+              <span class="journal-tag">ACOUSTICS</span>
+              <h3 class="journal-title">Why Poron Foam Changes Typing Resonance</h3>
+              <p class="journal-excerpt">Exploring how multi-density gasket compression absorbs harsh 2.4kHz harmonic spikes without deadening tactile rebound.</p>
+            </div>
+            <span class="journal-date">OCTOBER 2026 // ISSUE 14</span>
+          </article>
+
+          <article class="journal-card">
+            <div>
+              <span class="journal-tag">FIRMWARE</span>
+              <h3 class="journal-title">The Real Impact of 8,000Hz Wireless Polling</h3>
+              <p class="journal-excerpt">Analyzing micro-latency frame pacing, CPU interrupt overhead, and optical sensor tracking accuracy on high refresh displays.</p>
+            </div>
+            <span class="journal-date">SEPTEMBER 2026 // ISSUE 13</span>
+          </article>
+
+          <article class="journal-card">
+            <div>
+              <span class="journal-tag">MATERIALS</span>
+              <h3 class="journal-title">Anodizing 6063 Aluminum: The Matte Finish</h3>
+              <p class="journal-excerpt">A deep dive into bead-blasting grit sizes and sulfuric acid bath timing for non-fingerprint satin tactile finishes.</p>
+            </div>
+            <span class="journal-date">AUGUST 2026 // ISSUE 12</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- REAL SUPPORT SECTION -->
+    <section id="support" class="support-section" aria-label="Customer Support & Downloads">
+      <div class="editorial-container">
+        <div class="section-header-row">
+          <div>
+            <span class="tag-label">DEDICATED SERVICE</span>
+            <h2 class="title-section">CARE & SUPPORT</h2>
+          </div>
+          <p class="section-subtitle">
+            Long-term ownership commitments. We stock replacement parts and provide open-source firmware mappings for every release.
+          </p>
+        </div>
+
+        <div class="support-grid">
+          <div class="support-card">
+            <h3 class="support-card-title">Firmware & Web Configurator</h3>
+            <p class="support-card-text">Remap keys, configure rotary knobs, and flash QMK/VIA compatible profiles straight in your browser.</p>
+            <button type="button" class="btn-support-action" data-action="open-configurator">LAUNCH CONFIGURATOR ↗</button>
+          </div>
+
+          <div class="support-card">
+            <h3 class="support-card-title">3-Year Hardware Warranty</h3>
+            <p class="support-card-text">Every gear item is backed by a 36-month zero-hassle replacement guarantee covering switches, PCB, and battery cells.</p>
+            <button type="button" class="btn-support-action" data-action="open-warranty">READ WARRANTY POLICY ↗</button>
+          </div>
+
+          <div class="support-card">
+            <h3 class="support-card-title">Direct Engineering Support</h3>
+            <p class="support-card-text">Need setup advice or replacement switches? Our hardware engineers respond within 24 hours.</p>
+            <a href="mailto:support@novagear.tech" class="btn-support-action">CONTACT TEAM ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER SECTION (ACID GREEN) -->
+    <section class="newsletter-section" aria-label="Newsletter Subscription">
+      <div class="editorial-container">
+        <div class="newsletter-inner">
+          <h2 class="title-mega newsletter-headline">
+            GOOD GEAR.<br />
+            GOOD EMAILS.
+          </h2>
+          <p class="newsletter-desc">
+            Product drop notifications, setup inspiration, and engineering updates. No promotional spam.
+          </p>
+
+          <form class="newsletter-form" id="newsletter-form" novalidate>
+            <div class="newsletter-input-row">
+              <input type="email" class="newsletter-input" placeholder="YOUR EMAIL ADDRESS" aria-label="Your email address" required />
+              <button type="submit" class="btn-newsletter-submit" aria-label="Submit newsletter subscription">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+            <div class="form-feedback-message" id="newsletter-feedback" role="alert" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       SITE FOOTER
+       ========================================================================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="editorial-container">
+      <div class="footer-top-grid">
+        <div class="footer-brand-bio">
+          <a href="index.html" class="brand-logo" style="color: #F3F0E7;">
+            NOVA<sup>®</sup>
+          </a>
+          <p class="footer-bio-text">
+            Refined tools designed for developers, designers, and creators who demand precision mechanical feedback and tactile delight.
+          </p>
+        </div>
+
+        <div class="footer-nav-col">
+          <span class="footer-col-title">NAVIGATION</span>
+          <a href="#products" class="footer-link">SHOP GEAR</a>
+          <a href="#statement" class="footer-link">PHILOSOPHY</a>
+          <a href="#journal" class="footer-link">JOURNAL</a>
+          <a href="#support" class="footer-link">SUPPORT</a>
+        </div>
+
+        <div class="footer-nav-col">
+          <span class="footer-col-title">COMMUNITY</span>
+          <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="footer-link">DISCORD ↗</a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-link">GITHUB ↗</a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-link">INSTAGRAM ↗</a>
+        </div>
+
+        <div class="footer-nav-col">
+          <span class="footer-col-title">LEGAL</span>
+          <a href="#support" class="footer-link">PRIVACY</a>
+          <a href="#support" class="footer-link">TERMS</a>
+          <a href="#support" class="footer-link">ACCESSIBILITY</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-wordmark" aria-hidden="true">
+        <div class="mega-wordmark">NOVA®</div>
+      </div>
+
+      <div class="footer-copyright-row">
+        <span>© 2026 NOVA GEAR. ALL RIGHTS RESERVED.</span>
+        <span>ENGINEERED FOR WORK & PLAY.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       CART DRAWER
+       ========================================================================== -->
+  <div class="cart-backdrop" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping Cart Drawer" aria-hidden="true">
+    <div class="cart-header">
+      <h2 class="cart-title">YOUR CART</h2>
+      <button type="button" class="btn-close-cart" aria-label="Close shopping cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="cart-body">
+      <!-- Injected dynamically via script.js -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="subtotal-row">
+        <span class="subtotal-label">SUBTOTAL</span>
+        <span class="subtotal-amount">$0</span>
+      </div>
+      <button type="button" class="btn-checkout" id="btn-checkout" disabled>PROCEED TO CHECKOUT ↗</button>
+      <div class="cart-reset-row">
+        <button type="button" class="btn-reset-demo">Reset Demo State</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       PRODUCT SEARCH MODAL
+       ========================================================================== -->
+  <div class="search-modal-backdrop" aria-hidden="true">
+    <div class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="search-dialog-title">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 id="search-dialog-title" style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; text-transform: uppercase;">
+          SEARCH NOVA GEAR
+        </h2>
+        <button type="button" class="btn-close-modal btn-close-search" aria-label="Close search dialog" style="position: static;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="search-input-wrapper">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="catalog-search-input" class="search-field" placeholder="SEARCH GEAR (E.G. KEYBOARD, GAN, 8KHZ)..." aria-label="Search gear" />
+      </div>
+
+      <div class="search-results-list" aria-live="polite">
+        <!-- Injected dynamically via script.js -->
+      </div>
+    </div>
   </div>
 
-  <script>
-    (function () {
-      const frame = document.getElementById('site-frame');
-      const frameContainer = document.getElementById('frame-container');
-      const btnAfter = document.getElementById('btn-after');
-      const btnBefore = document.getElementById('btn-before');
-      const directLink = document.getElementById('btn-direct-link');
-      const statusText = document.getElementById('status-text');
-      const statusDot = document.getElementById('status-dot');
-      const vpButtons = document.querySelectorAll('.btn-vp');
+  <!-- ==========================================================================
+       PRODUCT DETAIL / QUICK VIEW MODAL
+       ========================================================================== -->
+  <div class="quick-view-backdrop" aria-hidden="true">
+    <div class="quick-view-dialog" role="dialog" aria-modal="true" aria-labelledby="quick-view-title">
+      <button type="button" class="btn-close-modal btn-close-quick-view" aria-label="Close product details">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
 
-      function setMode(mode) {
-        if (mode === 'after') {
-          frame.src = 'after/index.html';
-          btnAfter.setAttribute('aria-pressed', 'true');
-          btnBefore.setAttribute('aria-pressed', 'false');
-          directLink.href = 'after/index.html';
-          statusText.textContent = 'Viewing: AFTER — Corrected responsive layout, verified JS and accessibility';
-          statusDot.className = 'status-dot green';
-        } else {
-          frame.src = 'before/index.html';
-          btnAfter.setAttribute('aria-pressed', 'false');
-          btnBefore.setAttribute('aria-pressed', 'true');
-          directLink.href = 'before/index.html';
-          statusText.textContent = 'Viewing: BEFORE — Demonstrating 18 client-grade frontend bugs';
-          statusDot.className = 'status-dot red';
-        }
-      }
+      <div class="quick-view-visual">
+        <!-- Product visual injected dynamically -->
+      </div>
 
-      btnAfter.addEventListener('click', () => setMode('after'));
-      btnBefore.addEventListener('click', () => setMode('before'));
+      <div class="quick-view-details">
+        <h2 id="quick-view-title" class="quick-view-title" style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; line-height: 1;"></h2>
+        <div class="quick-view-price" style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 800; color: var(--card-blue-bg);"></div>
+        <p class="quick-view-desc" style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.45;"></p>
+        
+        <table class="quick-view-specs-table" aria-label="Hardware technical specifications">
+          <!-- Injected dynamically -->
+        </table>
 
-      vpButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          vpButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const width = btn.getAttribute('data-width');
-          frameContainer.style.width = width;
-          if (width === '100%') {
-            frameContainer.classList.remove('framed');
-          } else {
-            frameContainer.classList.add('framed');
-          }
-        });
-      });
-    })();
-  </script>
+        <button type="button" class="btn-hero-cta quick-view-add-btn" style="margin-top: 1rem; width: 100%; justify-content: center;">
+          ADD TO CART ↗
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CHECKOUT DEMO MODAL
+       ========================================================================== -->
+  <div class="checkout-modal-backdrop" aria-hidden="true">
+    <div class="checkout-dialog" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+      <button type="button" class="btn-close-modal btn-close-checkout" aria-label="Close checkout modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <span class="checkout-demo-badge">PORTFOLIO DEMONSTRATION</span>
+      <h2 id="checkout-modal-title" style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">
+        ORDER CONFIRMATION
+      </h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        This is a demo checkout screen. No payment was processed and no financial details were captured.
+      </p>
+
+      <div style="background-color: var(--bg-secondary); border-radius: 12px; padding: 1.25rem; text-align: left; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem;">
+          ORDER ITEMS:
+        </h3>
+        <ul class="checkout-summary-list" style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+          <!-- Injected dynamically -->
+        </ul>
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-family: var(--font-heading);">
+          <span>TOTAL DUE:</span>
+          <span class="checkout-total-val">$0</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-hero-cta btn-close-checkout" style="width: 100%; justify-content: center;">
+        RETURN TO PORTFOLIO ↗
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MOBILE NAVIGATION OVERLAY
+       ========================================================================== -->
+  <div class="mobile-nav-overlay" id="mobile-nav-menu" aria-label="Mobile Navigation" aria-hidden="true">
+    <div class="mobile-nav-header">
+      <span class="brand-logo">NOVA<sup>®</sup></span>
+      <button type="button" class="btn-close-mobile-nav" aria-label="Close mobile menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <nav class="mobile-nav-links">
+      <button type="button" class="mobile-nav-search-btn" data-action="open-search" aria-label="Search catalog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        SEARCH CATALOG
+      </button>
+      <a href="#products" class="mobile-nav-link">SHOP</a>
+      <a href="#statement" class="mobile-nav-link">ABOUT</a>
+      <a href="#journal" class="mobile-nav-link">JOURNAL</a>
+      <a href="#support" class="mobile-nav-link">SUPPORT</a>
+    </nav>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.9rem;">
+      <span>NOVA TECH GEAR</span>
+      <span>© 2026</span>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       PROMO POPUP MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" aria-hidden="true">
+    <div class="promo-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="promo-title">
+      <button type="button" class="btn-close-modal btn-close-promo" aria-label="Close promo modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <span class="tag-label" style="background: var(--accent-green); padding: 0.25rem 0.65rem; border-radius: 999px;">LIMITED WELCOME OFFER</span>
+      <h2 id="promo-title" class="title-card" style="margin: 0.75rem 0 0.5rem;">UPGRADE YOUR SETUP.</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Get 10% off your first NOVA order. Use the coupon code at checkout.</p>
+
+      <div class="promo-code-card">
+        <span class="promo-code-text">WELCOME10</span>
+        <button type="button" class="btn-copy-code" aria-label="Copy coupon code WELCOME10">COPY CODE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CONFIGURATOR DEMO MODAL
+       ========================================================================== -->
+  <div class="configurator-modal-backdrop" aria-hidden="true">
+    <div class="configurator-dialog studio-window" role="dialog" aria-modal="true" aria-labelledby="configurator-modal-title">
+      <!-- Studio App Title Bar -->
+      <div class="studio-topbar">
+        <div class="studio-topbar-left">
+          <div class="studio-title-stack">
+            <h2 id="configurator-modal-title" class="studio-title-heading">NOVA KEYBOARD STUDIO</h2>
+            <span class="studio-version-pill">v2.4 LIGHT // SIMULATOR DEMO</span>
+          </div>
+        </div>
+        <div class="studio-topbar-right">
+          <div class="studio-connection-badge">
+            <span class="conn-pulse-dot" aria-hidden="true"></span>
+            <span class="conn-status-text">LOCAL SIMULATOR ACTIVE</span>
+          </div>
+          <button type="button" class="btn-studio-reset" id="btnStudioReset" aria-label="Reset keyboard to factory defaults">
+            RESET DEFAULTS
+          </button>
+          <button type="button" class="btn-close-modal btn-close-configurator" aria-label="Close configurator modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Two-Column Workstation Body -->
+      <div class="studio-grid-body">
+        <div class="studio-mobile-switcher" role="tablist" aria-label="Studio View Switcher">
+          <button type="button" class="studio-mob-tab active" data-tab="config" role="tab" aria-selected="true">SETTINGS &amp; REMAP</button>
+          <button type="button" class="studio-mob-tab" data-tab="preview" role="tab" aria-selected="false">KEYMAP PREVIEW</button>
+        </div>
+        <!-- Left Panel: Configuration Controls & Key Inspector -->
+        <aside class="studio-panel-config" aria-label="Hardware Configuration Parameters">
+          <!-- Parameter 1: OS Target -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">01 // TARGET OPERATING SYSTEM</span>
+              <span class="studio-section-badge">HID MAP</span>
+            </div>
+            <div class="studio-seg-control" role="radiogroup" aria-label="Operating system mapping">
+              <button type="button" class="btn-cfg-os active" data-os="mac" role="radio" aria-pressed="true" aria-checked="true">
+                <span class="os-icon">⌘</span> macOS (CMD / OPT)
+              </button>
+              <button type="button" class="btn-cfg-os" data-os="win" role="radio" aria-pressed="false" aria-checked="false">
+                <span class="os-icon">⊞</span> Windows (WIN / ALT)
+              </button>
+            </div>
+          </div>
+
+          <!-- Parameter 2: Switch Architecture & Sound Audition -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">02 // MECHANICAL SWITCH PROFILE</span>
+              <button type="button" class="btn-secondary btn-cfg-sound-demo btn-audition-click" aria-label="Audition switch click sound">
+                <span class="sound-symbol">♫</span> AUDITION SOUND
+              </button>
+            </div>
+            <div class="studio-switches-stack" role="radiogroup" aria-label="Switch mechanism selection">
+              <!-- Linear 45g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill active" data-switch="linear" role="radio" aria-pressed="true" aria-checked="true">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-linear" aria-hidden="true"></span>
+                  <span class="switch-pill-name">TTC Linear 45g</span>
+                  <span class="switch-pill-status">INCLUDED</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Smooth Acoustic Thock • 3.8mm Travel • Lubed POM</span>
+                </div>
+              </button>
+              <!-- Tactile 45g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill" data-switch="tactile" role="radio" aria-pressed="false" aria-checked="false">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-tactile" aria-hidden="true"></span>
+                  <span class="switch-pill-name">Baby Kangaroo 45g Tactile</span>
+                  <span class="switch-pill-status">+$15</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Crisp Tactile Snap • 3.6mm Travel • Dual-Stage</span>
+                </div>
+              </button>
+              <!-- Silent 38g -->
+              <button type="button" class="btn-cfg-switch studio-switch-pill" data-switch="silent" role="radio" aria-pressed="false" aria-checked="false">
+                <div class="switch-pill-header">
+                  <span class="switch-indicator indicator-silent" aria-hidden="true"></span>
+                  <span class="switch-pill-name">Silent White 38g</span>
+                  <span class="switch-pill-status">+$20</span>
+                </div>
+                <div class="switch-pill-meta">
+                  <span>Muted Acoustic Dampener • 3.5mm Travel • Studio Quiet</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Parameter 3: Memory Layers -->
+          <div class="studio-cfg-section">
+            <div class="section-title-row">
+              <span class="studio-section-label">03 // ACTIVE HARDWARE LAYER</span>
+              <span class="studio-section-badge">LAYER MAP</span>
+            </div>
+            <div class="studio-layer-tabs" role="tablist" aria-label="Memory layer mapping">
+              <button type="button" class="btn-cfg-layer studio-tab-btn active" data-layer="0" role="tab" aria-pressed="true" aria-selected="true">
+                LAYER 0 (Base)
+              </button>
+              <button type="button" class="btn-cfg-layer studio-tab-btn" data-layer="1" role="tab" aria-pressed="false" aria-selected="false">
+                LAYER 1 (Fn)
+              </button>
+              <button type="button" class="btn-cfg-layer studio-tab-btn" data-layer="2" role="tab" aria-pressed="false" aria-selected="false">
+                LAYER 2 (RGB/BT)
+              </button>
+            </div>
+            <p class="cfg-layer-desc studio-layer-annotation">
+              LAYER 0: Primary QWERTY &amp; Alpha Navigation (Standard)
+            </p>
+          </div>
+
+          <!-- Parameter 4: Key Remap Inspector -->
+          <div class="studio-cfg-section studio-inspector-box">
+            <div class="section-title-row">
+              <span class="studio-section-label">04 // KEY REMAP INSPECTOR</span>
+              <span class="studio-section-badge" id="inspectorStatusBadge">MAPPED</span>
+            </div>
+            <div class="inspector-card-inner">
+              <div class="inspector-badge-wrap">
+                <span class="inspector-key-badge" id="inspectorKeyBadge">ESC</span>
+                <div class="inspector-details">
+                  <span class="inspector-key-name" id="inspectorKeyName">Escape Key</span>
+                  <span class="inspector-key-coord" id="inspectorKeyCoord">Row 0, Col 0 // HID 0x29</span>
+                </div>
+              </div>
+              <div class="inspector-input-row">
+                <label for="inspectorActionSelect" class="inspector-label">ASSIGNED FUNCTION:</label>
+                <select id="inspectorActionSelect" class="inspector-action-select" aria-label="Remap selected key function">
+                  <option value="DEFAULT">Default Keycode</option>
+                  <option value="MUTE">Audio Mute / Unmute</option>
+                  <option value="PLAY_PAUSE">Media Play / Pause</option>
+                  <option value="VOL_UP">System Volume Up</option>
+                  <option value="VOL_DOWN">System Volume Down</option>
+                  <option value="SCREENSHOT">System Screen Capture</option>
+                  <option value="CALCULATOR">Launch Calculator</option>
+                  <option value="MACRO_CLEAR">Macro: Terminal Clear (Ctrl+L)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checkout & Cart Integration -->
+          <div class="studio-summary-footer">
+            <div class="studio-price-breakdown">
+              <div class="price-desc-block">
+                <span class="build-tier-title">CUSTOM K75 BUILD</span>
+                <span class="build-tier-sub" id="studioBuildSummary">75% • TTC Linear 45g • macOS</span>
+              </div>
+              <span class="build-price-number" id="studioPriceTag">$129</span>
+            </div>
+            <button type="button" class="btn-hero-cta btn-configurator-add-cart studio-submit-btn">
+              ADD CUSTOM K75 TO CART ↗
+            </button>
+          </div>
+        </aside>
+
+        <!-- Right Panel: Live 75% Mechanical Keyboard Stage -->
+        <main class="studio-panel-preview" aria-label="Live Interactive 75% Mechanical Keyboard Canvas">
+          <div class="studio-preview-header">
+            <div class="preview-mode-tag">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>LIVE 75% ANSI KEYMAP // 84 PHYSICAL SWITCHES + ROTARY ENCODER</span>
+            </div>
+            <span class="preview-hint-tag">CLICK KEYS TO SELECT &amp; AUDITION • HARDWARE AUDIO SYNTHESIS ACTIVE</span>
+          </div>
+
+          <!-- True 75% Mechanical Keyboard Physical Chassis -->
+          <div class="k75-chassis-stage">
+            <div class="k75-chassis-bezel" id="k75ChassisBezel">
+              <!-- Row 0: F-Row & Knob (16 items, includes test classes) -->
+              <div class="k75-key-row row-f cfg-preview-row" data-row="0">
+                <button type="button" class="cfg-key cfg-key-esc keycap key-accent-lime" data-code="Escape" data-label="ESC" aria-label="Escape key">ESC</button>
+                <button type="button" class="cfg-key keycap" data-code="F1" data-label="F1" aria-label="F1 key">F1</button>
+                <button type="button" class="cfg-key keycap" data-code="F2" data-label="F2" aria-label="F2 key">F2</button>
+                <button type="button" class="cfg-key keycap" data-code="F3" data-label="F3" aria-label="F3 key">F3</button>
+                <button type="button" class="cfg-key keycap" data-code="F4" data-label="F4" aria-label="F4 key">F4</button>
+                <button type="button" class="cfg-key keycap" data-code="F5" data-label="F5" aria-label="F5 key">F5</button>
+                <button type="button" class="cfg-key keycap" data-code="F6" data-label="F6" aria-label="F6 key">F6</button>
+                <button type="button" class="cfg-key keycap" data-code="F7" data-label="F7" aria-label="F7 key">F7</button>
+                <button type="button" class="cfg-key keycap" data-code="F8" data-label="F8" aria-label="F8 key">F8</button>
+                <button type="button" class="cfg-key keycap" data-code="F9" data-label="F9" aria-label="F9 key">F9</button>
+                <button type="button" class="cfg-key keycap" data-code="F10" data-label="F10" aria-label="F10 key">F10</button>
+                <button type="button" class="cfg-key keycap" data-code="F11" data-label="F11" aria-label="F11 key">F11</button>
+                <button type="button" class="cfg-key keycap" data-code="F12" data-label="F12" aria-label="F12 key">F12</button>
+                <button type="button" class="cfg-key keycap key-nav" data-code="PrintScreen" data-label="PRT" aria-label="Print Screen key">PRT</button>
+                <button type="button" class="cfg-key keycap key-nav" data-code="Delete" data-label="DEL" aria-label="Delete key">DEL</button>
+                <!-- Rotary Encoder Knob (Brass Accent) -->
+                <button type="button" class="k75-rotary-knob" id="k75RotaryKnob" data-code="Knob" data-label="KNOB" aria-label="Brass rotary volume knob">
+                  <span class="knob-marker" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <!-- Row 1: Number Row (15 items) -->
+              <div class="k75-key-row row-num" data-row="1">
+                <button type="button" class="keycap key-mod" data-code="Backquote" data-label="~">~</button>
+                <button type="button" class="keycap" data-code="Digit1" data-label="1">1</button>
+                <button type="button" class="keycap" data-code="Digit2" data-label="2">2</button>
+                <button type="button" class="keycap" data-code="Digit3" data-label="3">3</button>
+                <button type="button" class="keycap" data-code="Digit4" data-label="4">4</button>
+                <button type="button" class="keycap" data-code="Digit5" data-label="5">5</button>
+                <button type="button" class="keycap" data-code="Digit6" data-label="6">6</button>
+                <button type="button" class="keycap" data-code="Digit7" data-label="7">7</button>
+                <button type="button" class="keycap" data-code="Digit8" data-label="8">8</button>
+                <button type="button" class="keycap" data-code="Digit9" data-label="9">9</button>
+                <button type="button" class="keycap" data-code="Digit0" data-label="0">0</button>
+                <button type="button" class="keycap" data-code="Minus" data-label="-">-</button>
+                <button type="button" class="keycap" data-code="Equal" data-label="=">=</button>
+                <button type="button" class="keycap key-w-20 key-mod" data-code="Backspace" data-label="BACK">BACK</button>
+                <button type="button" class="keycap key-nav" data-code="Home" data-label="HOME">HOME</button>
+              </div>
+
+              <!-- Row 2: QWERTY Row (15 items) -->
+              <div class="k75-key-row row-qwerty" data-row="2">
+                <button type="button" class="keycap key-w-15 key-mod" data-code="Tab" data-label="TAB">TAB</button>
+                <button type="button" class="keycap" data-code="KeyQ" data-label="Q">Q</button>
+                <button type="button" class="keycap" data-code="KeyW" data-label="W">W</button>
+                <button type="button" class="keycap" data-code="KeyE" data-label="E">E</button>
+                <button type="button" class="keycap" data-code="KeyR" data-label="R">R</button>
+                <button type="button" class="keycap" data-code="KeyT" data-label="T">T</button>
+                <button type="button" class="keycap" data-code="KeyY" data-label="Y">Y</button>
+                <button type="button" class="keycap" data-code="KeyU" data-label="U">U</button>
+                <button type="button" class="keycap" data-code="KeyI" data-label="I">I</button>
+                <button type="button" class="keycap" data-code="KeyO" data-label="O">O</button>
+                <button type="button" class="keycap" data-code="KeyP" data-label="P">P</button>
+                <button type="button" class="keycap" data-code="BracketLeft" data-label="[">[</button>
+                <button type="button" class="keycap" data-code="BracketRight" data-label="]">]</button>
+                <button type="button" class="keycap key-w-15 key-mod" data-code="Backslash" data-label="\">\</button>
+                <button type="button" class="keycap key-nav" data-code="PageUp" data-label="PGUP">PGUP</button>
+              </div>
+
+              <!-- Row 3: ASDF / Home Row (14 items) -->
+              <div class="k75-key-row row-asdf" data-row="3">
+                <button type="button" class="keycap key-w-175 key-mod" data-code="CapsLock" data-label="CAPS">CAPS</button>
+                <button type="button" class="keycap" data-code="KeyA" data-label="A">A</button>
+                <button type="button" class="keycap" data-code="KeyS" data-label="S">S</button>
+                <button type="button" class="keycap" data-code="KeyD" data-label="D">D</button>
+                <button type="button" class="keycap" data-code="KeyF" data-label="F">F</button>
+                <button type="button" class="keycap" data-code="KeyG" data-label="G">G</button>
+                <button type="button" class="keycap" data-code="KeyH" data-label="H">H</button>
+                <button type="button" class="keycap" data-code="KeyJ" data-label="J">J</button>
+                <button type="button" class="keycap" data-code="KeyK" data-label="K">K</button>
+                <button type="button" class="keycap" data-code="KeyL" data-label="L">L</button>
+                <button type="button" class="keycap" data-code="Semicolon" data-label=";">;</button>
+                <button type="button" class="keycap" data-code="Quote" data-label="'">'</button>
+                <button type="button" class="keycap key-w-225 key-enter key-mod" data-code="Enter" data-label="ENTER">ENTER</button>
+                <button type="button" class="keycap key-nav" data-code="PageDown" data-label="PGDN">PGDN</button>
+              </div>
+
+              <!-- Row 4: ZXCV / Shift Row (14 items) -->
+              <div class="k75-key-row row-zxcv" data-row="4">
+                <button type="button" class="keycap key-w-225 key-mod" data-code="ShiftLeft" data-label="SHIFT">SHIFT</button>
+                <button type="button" class="keycap" data-code="KeyZ" data-label="Z">Z</button>
+                <button type="button" class="keycap" data-code="KeyX" data-label="X">X</button>
+                <button type="button" class="keycap" data-code="KeyC" data-label="C">C</button>
+                <button type="button" class="keycap" data-code="KeyV" data-label="V">V</button>
+                <button type="button" class="keycap" data-code="KeyB" data-label="B">B</button>
+                <button type="button" class="keycap" data-code="KeyN" data-label="N">N</button>
+                <button type="button" class="keycap" data-code="KeyM" data-label="M">M</button>
+                <button type="button" class="keycap" data-code="Comma" data-label=",">,</button>
+                <button type="button" class="keycap" data-code="Period" data-label=".">.</button>
+                <button type="button" class="keycap" data-code="Slash" data-label="/">/</button>
+                <button type="button" class="keycap key-w-175 key-mod" data-code="ShiftRight" data-label="SHIFT">SHIFT</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowUp" data-label="▲">▲</button>
+                <button type="button" class="keycap key-nav" data-code="End" data-label="END">END</button>
+              </div>
+
+              <!-- Row 5: Modifier / Spacebar Row (9 items) -->
+              <div class="k75-key-row row-mods" data-row="5">
+                <button type="button" class="keycap key-w-125 key-mod" data-code="ControlLeft" data-label="CTRL">CTRL</button>
+                <button type="button" class="keycap key-w-125 key-mod cfg-key-opt" data-code="AltLeft" data-label="OPT">OPT</button>
+                <button type="button" class="keycap key-w-125 key-mod cfg-key-cmd" data-code="MetaLeft" data-label="CMD">CMD</button>
+                <!-- Spacebar (Cream Accent) -->
+                <button type="button" class="keycap key-spacebar key-accent-cream" data-code="Space" data-label="SPACE" aria-label="Spacebar">SPACE</button>
+                <button type="button" class="keycap key-mod" data-code="MetaRight" data-label="CMD">CMD</button>
+                <button type="button" class="keycap key-mod" data-code="Fn" data-label="FN">FN</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowLeft" data-label="◀">◀</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowDown" data-label="▼">▼</button>
+                <button type="button" class="keycap key-nav key-arrow" data-code="ArrowRight" data-label="▶">▶</button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       WARRANTY POLICY MODAL
+       ========================================================================== -->
+  <div class="warranty-modal-backdrop" aria-hidden="true">
+    <div class="warranty-dialog" role="dialog" aria-modal="true" aria-labelledby="warranty-modal-title">
+      <button type="button" class="btn-close-modal btn-close-warranty" aria-label="Close warranty modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <span class="tag-label" style="background: var(--card-blue-bg); color: var(--card-blue-text); padding: 0.25rem 0.65rem; border-radius: 999px;">OFFICIAL COMMITMENT</span>
+      <h2 id="warranty-modal-title" style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; margin: 0.75rem 0 0.5rem;">
+        3-YEAR ZERO-HASSLE WARRANTY
+      </h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Designed to be maintained, repaired, and enjoyed for decades.
+      </p>
+
+      <div class="warranty-content-list" style="text-align: left; display: flex; flex-direction: column; gap: 1rem; font-size: 0.88rem; line-height: 1.45; background: var(--bg-secondary); padding: 1.25rem; border-radius: 14px;">
+        <div>
+          <strong style="display: block; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;">01 // 36-Month Full Component Coverage</strong>
+          <span style="color: var(--text-muted);">Covers main PCB, rotary encoder, Nordic tri-mode wireless bridge, and battery capacity retention over 80%.</span>
+        </div>
+        <div>
+          <strong style="display: block; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;">02 // Free Switch &amp; Stabilizer Replacements</strong>
+          <span style="color: var(--text-muted);">Experiencing key chatter or friction? Request a free 10-pack of authentic switches via courier with zero return shipping fees.</span>
+        </div>
+        <div>
+          <strong style="display: block; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;">03 // Right to Mod &amp; Repair</strong>
+          <span style="color: var(--text-muted);">Opening the chassis, installing aftermarket gaskets, tape-modding, or lubing switches does NOT void your warranty.</span>
+        </div>
+        <div>
+          <strong style="display: block; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;">04 // 30-Day Risk-Free Desktop Trial</strong>
+          <span style="color: var(--text-muted);">Test the gear on your actual desk. If the tactile weight and acoustic profile don't fit your workflow, return for a 100% refund.</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-hero-cta btn-close-warranty" style="margin-top: 1.5rem; width: 100%; justify-content: center;">
+        UNDERSTOOD &amp; CLOSE ↗
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       TOAST NOTIFICATION CONTAINER
+       ========================================================================== -->
+  <div class="toast-container" aria-live="polite"></div>
+
+  <!-- Lenis Inertial Scroll -->
+  <script src="lenis.min.js"></script>
+  <!-- Master JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>

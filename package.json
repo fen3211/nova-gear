@@ -1,11 +1,13 @@
 {
-  "name": "nova-gear-verification",
-  "version": "1.0.0",
-  "description": "Playwright TypeScript Verification Suite for NOVA Gear Premium Editorial DTC",
+  "name": "nova-gear",
+  "version": "2.4.0",
+  "description": "Architectural Hardware & Interactive 3D Showcase",
   "scripts": {
+    "start": "npx serve .",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "record": "node scripts/record_hero_cinematic.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.0",
