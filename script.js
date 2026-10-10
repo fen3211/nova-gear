@@ -1924,6 +1924,19 @@
     // Initial render
     renderFrame(0);
     updateScrollBreakdown();
+
+    // Global helper for deterministic frame rendering and headless capture
+    window.__novaStoryBreakdown = {
+      renderFrame,
+      updatePhaseBadge,
+      setProgress: (p) => {
+        const clamped = Math.max(0, Math.min(1, p));
+        canvas.dataset.progress = clamped.toFixed(3);
+        updatePhaseBadge(clamped);
+        const targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(clamped * (TOTAL_FRAMES - 1))));
+        renderFrame(targetFrame);
+      }
+    };
   }
 
   /* --------------------------------------------------------------------------
