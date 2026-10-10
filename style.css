@@ -20,7 +20,7 @@ html {
 
 body {
   min-height: 100vh;
-  background-color: var(--bg);
+  background-color: var(--bg-current);
   color: var(--text);
   font-family: var(--font-body);
   font-weight: 400;
@@ -29,6 +29,7 @@ body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 450ms var(--ease-snappy);
 }
 
 img {
@@ -104,19 +105,25 @@ ul, ol {
   --dark-muted: #9E9E9E;
   --dark-border: rgba(243, 240, 231, 0.14);
 
+  /* Dynamic theme background */
+  --bg-current: #F3F0E7;
+
   /* Typography */
   --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Grotesk', ui-monospace, 'JetBrains Mono', SFMono-Regular, monospace;
 
   /* Layout */
   --container-max: 1560px;
   --header-height: 80px;
 
-  /* Snappy Motion Curves */
+  /* Snappy Motion Curves & Spring Physics */
   --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --trans-fast: 160ms var(--ease-snappy);
   --trans-base: 280ms var(--ease-snappy);
   --trans-slow: 450ms var(--ease-snappy);
+  --trans-reveal: 750ms var(--ease-snappy);
 }
 
 /* --------------------------------------------------------------------------
@@ -3848,3 +3855,414 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* ==========================================================================
+   24. EDITORIAL MOTION DESIGN, TACTILE MICRO-INTERACTIONS & CREATIVE CURSOR
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   24.1 SCROLL-TRIGGERED REVEAL SYSTEM (STAGGER & CLIP-PATH)
+   -------------------------------------------------------------------------- */
+.reveal-heading {
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  transform: translateY(24px);
+  opacity: 0;
+  transition: clip-path 780ms var(--ease-snappy), transform 780ms var(--ease-snappy), opacity 780ms var(--ease-snappy);
+  will-change: clip-path, transform, opacity;
+}
+
+.reveal-heading.is-revealed {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.reveal-fade-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 720ms var(--ease-snappy), transform 720ms var(--ease-snappy);
+  transition-delay: calc(var(--stagger-idx, 0) * 85ms);
+  will-change: opacity, transform;
+}
+
+.reveal-fade-up.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   24.2 CATALOG CARDS CASCADE REVEAL & BESPOKE HOVER LEVITATION
+   -------------------------------------------------------------------------- */
+.product-card {
+  opacity: 0;
+  transition: opacity 600ms var(--ease-snappy), transform 340ms var(--ease-snappy), box-shadow 340ms var(--ease-snappy), border-color 340ms var(--ease-snappy);
+  will-change: opacity, transform;
+}
+
+.product-card.card-revealed {
+  opacity: 1;
+}
+
+.product-card.card-revealed:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px rgba(17, 17, 17, 0.08);
+}
+
+.card-theme-pulse.card-revealed:hover,
+.card-theme-beam.card-revealed:hover {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Card Visual Stage Micro-Levitation (Product & Shadow stay 100% synchronized) */
+.card-visual-stage {
+  transition: transform 420ms var(--ease-snappy) !important;
+  will-change: transform;
+}
+
+.product-card:hover .card-visual-stage {
+  transform: scale(1.03) rotate(0.8deg) translateY(-4px) !important;
+}
+
+/* Quick Add button elevation within card */
+.product-card .btn-add-cart {
+  transition: transform 220ms var(--ease-spring), background-color 220ms var(--ease-snappy), box-shadow 220ms var(--ease-snappy);
+}
+
+.product-card:hover .btn-add-cart {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.16);
+}
+
+/* --------------------------------------------------------------------------
+   24.3 TACTILE BUTTONS & SPRING PHYSICAL CLICK FEEDBACK
+   -------------------------------------------------------------------------- */
+.btn-primary,
+.btn-hero-cta,
+.btn-shop-cta,
+.btn-add-cart,
+.btn-quick-view,
+.btn-statement-cta,
+.btn-hero-studio-cta,
+.catalog-filter-btn,
+.btn-checkout,
+.btn-header-action,
+.btn-audio-toggle,
+.btn-support-action,
+.keycap {
+  position: relative;
+  transition: transform 180ms var(--ease-spring), box-shadow 220ms var(--ease-snappy), border-color 220ms var(--ease-snappy), background-color 220ms var(--ease-snappy);
+  will-change: transform;
+}
+
+.btn-primary:active,
+.btn-hero-cta:active,
+.btn-shop-cta:active,
+.btn-add-cart:active,
+.btn-quick-view:active,
+.btn-statement-cta:active,
+.btn-hero-studio-cta:active,
+.catalog-filter-btn:active,
+.btn-checkout:active,
+.btn-header-action:active,
+.btn-audio-toggle:active,
+.btn-support-action:active,
+.keycap:active {
+  transform: scale(0.96) !important;
+  transition: transform 70ms ease-out !important;
+}
+
+/* Arrow micro-shift on hover (2px up-right) */
+.btn-shop-cta span[aria-hidden="true"],
+.btn-add-cart span[aria-hidden="true"],
+.btn-statement-cta span[aria-hidden="true"],
+.btn-hero-cta span[aria-hidden="true"],
+.btn-support-action span[aria-hidden="true"],
+.btn-configurator-add-cart span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 200ms var(--ease-snappy);
+}
+
+.btn-shop-cta:hover span[aria-hidden="true"],
+.btn-add-cart:hover span[aria-hidden="true"],
+.btn-statement-cta:hover span[aria-hidden="true"],
+.btn-hero-cta:hover span[aria-hidden="true"],
+.btn-support-action:hover span[aria-hidden="true"],
+.btn-configurator-add-cart:hover span[aria-hidden="true"] {
+  transform: translate(2px, -2px);
+}
+
+/* --------------------------------------------------------------------------
+   24.4 SOUND DESIGN TOGGLE BUTTON
+   -------------------------------------------------------------------------- */
+.btn-audio-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text);
+  transition: all 200ms var(--ease-snappy);
+}
+
+.btn-audio-toggle:hover {
+  border-color: var(--text);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.btn-audio-toggle.audio-active {
+  background: var(--accent-green);
+  border-color: #111111;
+  color: #111111;
+  box-shadow: 0 2px 10px rgba(199, 255, 61, 0.35);
+}
+
+.btn-audio-toggle .audio-icon {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+@media (max-width: 640px) {
+  .btn-audio-toggle {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   24.5 CREATIVE CUSTOM CURSOR (DESKTOP FINE POINTER)
+   -------------------------------------------------------------------------- */
+.custom-cursor-dot,
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 250ms var(--ease-snappy);
+  opacity: 0;
+}
+
+.custom-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #151515;
+  transition: width 200ms var(--ease-snappy), height 200ms var(--ease-snappy), background-color 200ms var(--ease-snappy);
+}
+
+.custom-cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(21, 21, 21, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 260ms var(--ease-snappy), height 260ms var(--ease-snappy), border-color 260ms var(--ease-snappy), background-color 260ms var(--ease-snappy);
+}
+
+.cursor-label {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #111111;
+  text-transform: uppercase;
+}
+
+/* Inverted / Difference ring on interactive elements */
+body.cursor-interactive .custom-cursor-dot {
+  opacity: 0;
+}
+
+body.cursor-interactive .custom-cursor-ring {
+  width: 44px;
+  height: 44px;
+  background-color: #FFFFFF;
+  border-color: transparent;
+  mix-blend-mode: difference;
+}
+
+/* 3D Canvas circular pill */
+body.cursor-3d .custom-cursor-dot {
+  opacity: 0;
+}
+
+body.cursor-3d .custom-cursor-ring {
+  width: 64px;
+  height: 64px;
+  background-color: var(--accent-green);
+  border: 2px solid #111111;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+body.cursor-3d .cursor-label {
+  display: block;
+}
+
+/* Strictly disabled on touch devices and reduced-motion */
+@media (pointer: coarse), (hover: none), (prefers-reduced-motion: reduce) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   24.6 CART DRAWER BLUR & STAGGERED ITEMS
+   -------------------------------------------------------------------------- */
+.cart-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.cart-drawer.open .cart-item {
+  animation: cartItemSlideIn 320ms var(--ease-snappy) backwards;
+}
+
+@keyframes cartItemSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cart-counter.bump {
+  animation: badgeSpringBounce 340ms var(--ease-spring) !important;
+}
+
+@keyframes badgeSpringBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35) rotate(-4deg); background-color: var(--accent-green); color: #111111; }
+  75% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   24.7 MOBILE FLOATING BOTTOM ACTION BAR (<= 768px)
+   -------------------------------------------------------------------------- */
+.mobile-bottom-bar {
+  display: none;
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  background: rgba(17, 18, 22, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 6px 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.40);
+  justify-content: space-around;
+  align-items: center;
+  transition: transform 300ms var(--ease-snappy), opacity 300ms var(--ease-snappy);
+}
+
+.mob-bottom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  min-height: 44px;
+  color: rgba(244, 241, 233, 0.75);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  gap: 3px;
+  position: relative;
+  transition: color 180ms ease, transform 180ms var(--ease-spring);
+}
+
+.mob-bottom-item:active {
+  transform: scale(0.92);
+  color: var(--accent-green);
+}
+
+.mob-bottom-cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  background: var(--accent-green);
+  color: #111111;
+  font-size: 0.6rem;
+  font-weight: 800;
+  border-radius: 999px;
+  min-width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-bar {
+    display: flex;
+  }
+  body.modal-open .mobile-bottom-bar,
+  body.cart-open .mobile-bottom-bar {
+    transform: translate(-50%, 80px);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   24.8 MONOSPACE EDITORIAL TECH LABELS
+   -------------------------------------------------------------------------- */
+.tag-label,
+.journal-date,
+.journal-tag,
+.card-specs-list,
+.pill-status-text,
+.pill-name,
+.hero-super-badge,
+.hero-super-sub,
+.legend-title,
+.spec-label,
+.feature-num,
+.phase-text,
+.phase-percent {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   24.9 PREFERS-REDUCED-MOTION OVERRIDES
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-heading,
+  .reveal-fade-up,
+  .product-card {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .card-visual-stage {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

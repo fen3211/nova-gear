@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -37,6 +37,10 @@
 
       <!-- Header Actions -->
       <div class="header-actions">
+        <button type="button" class="btn-header-action btn-audio-toggle" id="audioToggleBtn" aria-label="Toggle Sound Effects" title="Sound Effects: OFF">
+          <svg class="audio-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+          <span class="audio-status-label">SOUND [OFF]</span>
+        </button>
         <button type="button" class="btn-header-action" data-action="open-search" aria-label="Search catalog">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           SEARCH
@@ -193,7 +197,7 @@
         <div class="section-header-row">
           <div>
             <span class="tag-label">SYSTEM ARCHITECTURE</span>
-            <h2 class="title-section">CURATED RELEASES</h2>
+            <h2 class="title-section reveal-heading">CURATED RELEASES</h2>
           </div>
           <p class="section-subtitle">
             Every physical surface is developed as part of an integrated workstation interface. High tactile feedback, zero unnecessary decoration.
@@ -401,13 +405,13 @@
     <!-- BRAND STATEMENT SECTION -->
     <section id="statement" class="statement-section" aria-label="Brand Philosophy">
       <div class="editorial-container">
-        <h2 class="title-mega statement-headline">
+        <h2 class="title-mega statement-headline reveal-heading">
           WE MAKE<br />
           EVERYDAY THINGS<br />
           FEEL BETTER.
         </h2>
         <div class="statement-footer-row">
-          <p class="statement-lead">
+          <p class="statement-lead reveal-fade-up">
             Keyboards, audio and desk essentials designed around the way you actually work. Built with zero compromise on mechanical feel, physical tolerances, or tactile longevity.
           </p>
           <a href="#story" class="btn-statement-cta">
@@ -421,17 +425,17 @@
     <section class="features-section" aria-label="Core Engineering Principles">
       <div class="editorial-container">
         <div class="features-grid">
-          <div class="feature-col">
+          <div class="feature-col reveal-fade-up" style="--stagger-idx: 0;">
             <span class="feature-num">01</span>
             <h3 class="feature-title">BUILT TO LAST</h3>
             <p class="feature-desc">Solid 6063 aerospace-grade aluminum blocks CNC milled to 0.02mm tolerances for years of heavy daily typing.</p>
           </div>
-          <div class="feature-col">
+          <div class="feature-col reveal-fade-up" style="--stagger-idx: 1;">
             <span class="feature-num">02</span>
             <h3 class="feature-title">MADE TO FEEL GOOD</h3>
             <p class="feature-desc">Every interaction is considered — from tactile spring curve resistance to bead-blasted satin matte surface grip.</p>
           </div>
-          <div class="feature-col">
+          <div class="feature-col reveal-fade-up" style="--stagger-idx: 2;">
             <span class="feature-num">03</span>
             <h3 class="feature-title">DESIGNED WITH PURPOSE</h3>
             <p class="feature-desc">Less visual noise. Superior acoustic resonance. Nothing unnecessary invading your creative line of sight.</p>
@@ -449,7 +453,7 @@
           <div class="editorial-container story-sticky-content">
             <div class="story-header">
               <span class="tag-label" style="color: var(--accent-green);">INTERNAL ARCHITECTURE</span>
-              <h2 class="title-mega" style="color: #F3F0E7;">
+              <h2 class="title-mega reveal-heading" style="color: #F3F0E7;">
                 OBSESSIVE<br />
                 BY DESIGN.
               </h2>
@@ -569,7 +573,7 @@
         <div class="section-header-row">
           <div>
             <span class="tag-label">DESIGN DISPATCHES</span>
-            <h2 class="title-section">THE JOURNAL</h2>
+            <h2 class="title-section reveal-heading">THE JOURNAL</h2>
           </div>
           <p class="section-subtitle">
             Insights from our industrial engineering and acoustic tuning lab in Berlin.
@@ -577,7 +581,7 @@
         </div>
 
         <div class="journal-grid">
-          <article class="journal-card">
+          <article class="journal-card reveal-fade-up" style="--stagger-idx: 0;">
             <div>
               <span class="journal-tag">ACOUSTICS</span>
               <h3 class="journal-title">Why Poron Foam Changes Typing Resonance</h3>
@@ -586,7 +590,7 @@
             <span class="journal-date">OCTOBER 2026 // ISSUE 14</span>
           </article>
 
-          <article class="journal-card">
+          <article class="journal-card reveal-fade-up" style="--stagger-idx: 1;">
             <div>
               <span class="journal-tag">FIRMWARE</span>
               <h3 class="journal-title">The Real Impact of 8,000Hz Wireless Polling</h3>
@@ -595,7 +599,7 @@
             <span class="journal-date">SEPTEMBER 2026 // ISSUE 13</span>
           </article>
 
-          <article class="journal-card">
+          <article class="journal-card reveal-fade-up" style="--stagger-idx: 2;">
             <div>
               <span class="journal-tag">MATERIALS</span>
               <h3 class="journal-title">Anodizing 6063 Aluminum: The Matte Finish</h3>
@@ -613,7 +617,7 @@
         <div class="section-header-row">
           <div>
             <span class="tag-label">DEDICATED SERVICE</span>
-            <h2 class="title-section">CARE & SUPPORT</h2>
+            <h2 class="title-section reveal-heading">CARE & SUPPORT</h2>
           </div>
           <p class="section-subtitle">
             Long-term ownership commitments. We stock replacement parts and provide open-source firmware mappings for every release.
@@ -621,13 +625,13 @@
         </div>
 
         <div class="support-grid">
-          <div class="support-card">
+          <div class="support-card reveal-fade-up" style="--stagger-idx: 0;">
             <h3 class="support-card-title">Firmware & Web Configurator</h3>
             <p class="support-card-text">Remap keys, configure rotary knobs, and flash QMK/VIA compatible profiles straight in your browser.</p>
             <button type="button" class="btn-support-action" data-action="open-configurator">LAUNCH CONFIGURATOR ↗</button>
           </div>
 
-          <div class="support-card">
+          <div class="support-card reveal-fade-up" style="--stagger-idx: 1;">
             <h3 class="support-card-title">3-Year Hardware Warranty</h3>
             <p class="support-card-text">Every gear item is backed by a 36-month zero-hassle replacement guarantee covering switches, PCB, and battery cells.</p>
             <button type="button" class="btn-support-action" data-action="open-warranty">READ WARRANTY POLICY ↗</button>
@@ -1221,6 +1225,37 @@
       </button>
     </div>
   </div>
+
+  <!-- ==========================================================================
+       CREATIVE CUSTOM CURSOR (DESKTOP FINE POINTER)
+       ========================================================================== -->
+  <div class="custom-cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="custom-cursor-ring" id="cursorRing" aria-hidden="true">
+    <span class="cursor-label" id="cursorLabel"></span>
+  </div>
+
+  <!-- ==========================================================================
+       MOBILE FLOATING BOTTOM ACTION BAR (<= 768px)
+       ========================================================================== -->
+  <nav class="mobile-bottom-bar" id="mobileBottomBar" aria-label="Quick Actions">
+    <a href="#products" class="mob-bottom-item" aria-label="Catalog Store">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>SHOP</span>
+    </a>
+    <a href="#hero" class="mob-bottom-item" aria-label="3D Hero Spotlight">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>3D HERO</span>
+    </a>
+    <button type="button" class="mob-bottom-item btn-open-studio-bottom" data-action="open-studio" aria-label="Open Keyboard Studio">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>STUDIO</span>
+    </button>
+    <button type="button" class="mob-bottom-item" data-action="open-cart" aria-label="Open Cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      <span>CART</span>
+      <span class="mob-bottom-cart-badge mob-cart-count">0</span>
+    </button>
+  </nav>
 
   <!-- ==========================================================================
        TOAST NOTIFICATION CONTAINER

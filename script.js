@@ -407,6 +407,10 @@
       void cartCounter.offsetWidth; // Trigger reflow for snappy animation
       cartCounter.classList.add('bump');
     }
+    const mobCartCount = document.querySelector('.mob-cart-count');
+    if (mobCartCount) {
+      mobCartCount.textContent = totalCount;
+    }
 
     // Update Subtotal
     if (subtotalEl) {
@@ -949,8 +953,233 @@
      13. SMOOTH PARALLAX VIA REQUESTANIMATIONFRAME
      -------------------------------------------------------------------------- */
   function initParallax() {
-    // Parallax and perspective tilt are unified into initHeroCinematicInteraction
-    // to eliminate conflicting transforms on hero elements.
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const targets = document.querySelectorAll('.feature-num, .statement-headline, .hero-super-badge');
+    if (!targets.length) return;
+
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const vh = window.innerHeight;
+          targets.forEach((el, idx) => {
+            const factor = 0.04 + (idx % 3) * 0.015;
+            const rect = el.getBoundingClientRect();
+            if (rect.top < vh && rect.bottom > 0) {
+              const shift = (rect.top - vh / 2) * factor;
+              el.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0)`;
+            }
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    if (window.__lenis) {
+      window.__lenis.on('scroll', onScroll);
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     13.1 SMOOTH THEME BACKGROUND TRANSITIONS (--bg-current)
+     -------------------------------------------------------------------------- */
+  function initThemeTransitions() {
+    const darkSections = document.querySelectorAll('#story, #reviews, #journal, #support, .newsletter-section, .site-footer');
+    if (!darkSections.length || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      let isDark = false;
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          isDark = true;
+        }
+      });
+      if (isDark) {
+        document.documentElement.style.setProperty('--bg-current', '#111215');
+        document.body.classList.add('in-dark-section');
+      } else {
+        document.documentElement.style.setProperty('--bg-current', '#F3F0E7');
+        document.body.classList.remove('in-dark-section');
+      }
+    }, { threshold: 0.15 });
+
+    darkSections.forEach(sec => observer.observe(sec));
+  }
+
+  /* --------------------------------------------------------------------------
+     13.2 MAGNETIC BUTTON MICRO-INTERACTIONS (DESKTOP)
+     -------------------------------------------------------------------------- */
+  function initMagneticButtons() {
+    if (!window.matchMedia || !window.matchMedia('(pointer: fine)').matches) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const magneticBtns = document.querySelectorAll('.btn-hero-cta, .btn-shop-cta, .btn-statement-cta, .btn-hero-studio-cta');
+    magneticBtns.forEach((btn) => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const pullX = Math.max(-6, Math.min(6, x * 0.22));
+        const pullY = Math.max(-6, Math.min(6, y * 0.22));
+        btn.style.transform = `translate(${pullX}px, ${pullY}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     13.3 CREATIVE CUSTOM CURSOR (60/120 FPS TRAILING DOT & RING)
+     -------------------------------------------------------------------------- */
+  function initCreativeCursor() {
+    if (!window.matchMedia || !window.matchMedia('(pointer: fine)').matches) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    const label = document.getElementById('cursorLabel');
+    if (!dot || !ring) return;
+
+    let mouseX = -100, mouseY = -100;
+    let ringX = -100, ringY = -100;
+    let isVisible = false;
+
+    window.addEventListener('pointermove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!isVisible) {
+        isVisible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      }
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    }, { passive: true });
+
+    window.addEventListener('pointerleave', () => {
+      isVisible = false;
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    }, { passive: true });
+
+    function renderCursorRing() {
+      if (isVisible) {
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        ring.style.transform = `translate3d(${ringX.toFixed(2)}px, ${ringY.toFixed(2)}px, 0) translate(-50%, -50%)`;
+      }
+      requestAnimationFrame(renderCursorRing);
+    }
+    requestAnimationFrame(renderCursorRing);
+
+    document.addEventListener('mouseover', (e) => {
+      const target = e.target;
+      if (!target) return;
+      if (target.closest('#heroVisualStage, #heroScrubCanvas, .hero-canvas-frame')) {
+        document.body.classList.add('cursor-3d');
+        document.body.classList.remove('cursor-interactive');
+        if (label) label.textContent = 'SCROLL';
+      } else if (target.closest('button, a, input, select, textarea, .product-card, .keycap, .tab-btn, .catalog-filter-btn, .journal-card, .support-card')) {
+        document.body.classList.add('cursor-interactive');
+        document.body.classList.remove('cursor-3d');
+      } else {
+        document.body.classList.remove('cursor-interactive', 'cursor-3d');
+      }
+    }, { passive: true });
+  }
+
+  /* --------------------------------------------------------------------------
+     13.4 SOUND DESIGN (WEB AUDIO API MECHANICAL SWITCH SYNTHESIZER)
+     -------------------------------------------------------------------------- */
+  function initAudioFeedback() {
+    const toggleBtn = document.getElementById('audioToggleBtn');
+    let audioCtx = null;
+    let isAudioEnabled = false;
+
+    function playMechanicalClick(type = 'default') {
+      if (!isAudioEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(type === 'confirm' ? 1800 : 1200, now);
+        filter.Q.setValueAtTime(3.0, now);
+
+        osc.type = 'sine';
+        const startFreq = type === 'confirm' ? 880 : 640;
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.038);
+
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.038);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.040);
+      } catch (e) {
+        // Audio fallback silent
+      }
+    }
+
+    window.__novaPlayClick = playMechanicalClick;
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        isAudioEnabled = !isAudioEnabled;
+        toggleBtn.classList.toggle('audio-active', isAudioEnabled);
+        const label = toggleBtn.querySelector('.audio-status-label');
+        if (label) {
+          label.textContent = isAudioEnabled ? 'SOUND [ON]' : 'SOUND [OFF]';
+        }
+        toggleBtn.setAttribute('title', isAudioEnabled ? 'Sound Effects: ON' : 'Sound Effects: OFF');
+        toggleBtn.setAttribute('aria-label', `Toggle Sound Effects: Currently ${isAudioEnabled ? 'ON' : 'OFF'}`);
+        if (isAudioEnabled) {
+          playMechanicalClick('confirm');
+        }
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!isAudioEnabled) return;
+      const btn = e.target.closest('button, a, .keycap, .tab-btn');
+      if (btn && btn !== toggleBtn) {
+        const isCart = btn.classList.contains('btn-add-cart') || btn.classList.contains('btn-checkout');
+        playMechanicalClick(isCart ? 'confirm' : 'default');
+      }
+    }, { passive: true });
+  }
+
+  /* --------------------------------------------------------------------------
+     13.5 MOBILE BOTTOM BAR INTEGRATION
+     -------------------------------------------------------------------------- */
+  function initMobileBottomBar() {
+    const studioBtn = document.querySelector('.btn-open-studio-bottom');
+    if (studioBtn) {
+      studioBtn.addEventListener('click', () => {
+        const heroStudioBtn = document.querySelector('.btn-hero-studio-cta');
+        if (heroStudioBtn) heroStudioBtn.click();
+      });
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -1759,33 +1988,64 @@
   }
 
   /* --------------------------------------------------------------------------
-     13. UNIFIED MOTION: CARD SCROLL REVEALS
+     13. UNIFIED MOTION: SCROLL REVEALS (CARDS, HEADINGS, PARAGRAPHS)
      -------------------------------------------------------------------------- */
   function initCardScrollReveals() {
     const cards = document.querySelectorAll('.product-card');
-    if (!cards.length) return;
+    const headings = document.querySelectorAll('.reveal-heading');
+    const fadeUps = document.querySelectorAll('.reveal-fade-up');
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     if (prefersReducedMotion) {
       cards.forEach(c => c.classList.add('card-revealed'));
+      headings.forEach(h => h.classList.add('is-revealed'));
+      fadeUps.forEach(f => f.classList.add('is-revealed'));
       return;
     }
 
     if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
+      // 1. Observe Product Cards with cascade stagger
+      const cardObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('card-revealed');
-            observer.unobserve(entry.target);
+            cardObserver.unobserve(entry.target);
           }
         });
       }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
       cards.forEach((card, idx) => {
-        card.style.transitionDelay = `${(idx % 2) * 80}ms`;
-        observer.observe(card);
+        card.style.transitionDelay = `${(idx % 2) * 90}ms`;
+        cardObserver.observe(card);
       });
+
+      // 2. Observe Headings (clip-path reveal)
+      const headingObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            headingObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -20px 0px' });
+
+      headings.forEach(h => headingObserver.observe(h));
+
+      // 3. Observe Stagger Fade-Up Elements
+      const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            fadeObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.10, rootMargin: '0px 0px -20px 0px' });
+
+      fadeUps.forEach(f => fadeObserver.observe(f));
     } else {
       cards.forEach(c => c.classList.add('card-revealed'));
+      headings.forEach(h => h.classList.add('is-revealed'));
+      fadeUps.forEach(f => f.classList.add('is-revealed'));
     }
   }
 
@@ -1953,6 +2213,11 @@
     initReviewsSlider();
     initNewsletter();
     initParallax();
+    initThemeTransitions();
+    initMagneticButtons();
+    initCreativeCursor();
+    initAudioFeedback();
+    initMobileBottomBar();
     initHeroCinematicInteraction();
     initCardScrollReveals();
     initK75ScrollBreakdown();
