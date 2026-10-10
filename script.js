@@ -1,4 +1,4 @@
-﻿/**
+/**
  * NOVA GEAR — Master Production Client Script (AFTER)
  * Fully Accessible, Zero-Dependency, State-Driven Vanilla JavaScript
  */
@@ -1729,6 +1729,26 @@
     // Initial paint of frame 0 and chassis pin
     drawFrame(0);
     updateTelemetryPins(0);
+
+    // Global helper for deterministic frame rendering and headless capture
+    window.__novaHero = {
+      drawFrame,
+      updateTelemetryPins,
+      setFrame: (idx) => {
+        isIntroPlaying = false;
+        isIntroCompleted = true;
+        currentFrame = idx;
+        targetFrame = idx;
+        const rounded = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(idx)));
+        drawFrame(rounded);
+        updateTelemetryPins(rounded);
+      },
+      seekProgress: (p) => {
+        const clamped = Math.max(0, Math.min(1, p));
+        const f = INTRO_TARGET_FRAME + clamped * (TOTAL_HERO_FRAMES - 1 - INTRO_TARGET_FRAME);
+        window.__novaHero.setFrame(f);
+      }
+    };
   }
 
   /* --------------------------------------------------------------------------
