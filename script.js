@@ -1609,6 +1609,10 @@
 
     // Unified Momentum Physics Loop
     function physicsTick(now) {
+      if (window.__novaHeroManualMode) {
+        isPhysicsLoopRunning = false;
+        return;
+      }
       if (isIntroPlaying) {
         const elapsed = now - introStartTime;
         const progress = Math.min(1, elapsed / INTRO_DURATION_MS);
@@ -1640,6 +1644,7 @@
     }
 
     function ensurePhysicsLoop() {
+      if (window.__novaHeroManualMode) return;
       if (!isPhysicsLoopRunning) {
         isPhysicsLoopRunning = true;
         requestAnimationFrame(physicsTick);
@@ -1735,8 +1740,10 @@
       drawFrame,
       updateTelemetryPins,
       setFrame: (idx) => {
+        window.__novaHeroManualMode = true;
         isIntroPlaying = false;
         isIntroCompleted = true;
+        isPhysicsLoopRunning = false;
         currentFrame = idx;
         targetFrame = idx;
         const rounded = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(idx)));
