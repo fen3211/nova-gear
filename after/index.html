@@ -64,69 +64,104 @@
     <section class="hero-section hero-cinematic-stage" id="hero" aria-label="Hero Spotlight">
       <div class="hero-sticky-track" id="heroScrollTrack">
         <div class="hero-sticky-viewport">
-          <div class="editorial-container hero-poster-canvas">
-            <div class="hero-super-badge-row">
-              <span class="hero-super-badge">NOVA K75 // ARCHITECTURAL 75% WIRELESS</span>
-              <span class="hero-super-sub">ENGINEERED TO FEEL DIFFERENT</span>
-            </div>
-            <h1 class="title-mega hero-headline">
-              <span class="line-break"><span class="line-inner">BETTER GEAR.</span></span>
-              <span class="line-break"><span class="line-inner">BETTER DAYS.</span></span>
-            </h1>
+          <div class="editorial-container hero-asymmetric-grid">
+            <!-- Left Column: Editorial Data (max 44-46% width) -->
+            <div class="hero-editorial-col">
+              <div class="hero-super-badge-row">
+                <span class="hero-super-badge">NOVA K75 // ARCHITECTURAL 75% WIRELESS</span>
+                <span class="hero-super-sub">ENGINEERED TO FEEL DIFFERENT</span>
+              </div>
+              <h1 class="title-mega hero-headline">
+                <span class="line-break"><span class="line-inner">BETTER GEAR.</span></span>
+                <span class="line-break"><span class="line-inner">BETTER DAYS.</span></span>
+              </h1>
 
-            <!-- High-End 3D Studio Product Stage with Real 3D Scrub Sequence -->
-            <div class="hero-visual-stage" id="heroVisualStage" aria-hidden="true">
-              <div class="hero-cinematic-glow" aria-hidden="true"></div>
-              <div class="hero-canvas-frame">
-                <canvas id="heroScrubCanvas" class="hero-scrub-canvas" width="1200" height="800" data-frame-index="0" data-progress="0.000"></canvas>
-                <div class="hero-parallax-wrapper" id="heroParallaxWrapper">
-                  <img src="../assets/images/keyboard-k75-shadow.webp" alt="" class="hero-shadow-img" aria-hidden="true" />
-                  <img src="../assets/images/keyboard-k75.png" alt="NOVA K75 75% Mechanical Keyboard 3D Render" class="hero-3d-img" fetchpriority="high" width="1200" height="800" />
+              <p class="hero-lead-text">
+                Premium tactile tools engineered to eliminate friction from everyday interaction. Solid CNC 6063 aerospace alloys, custom-dampened acoustics, effortless workflow.
+              </p>
+
+              <!-- Decomposed Inventory & Price Tag (In Left Column) -->
+              <div class="hero-editorial-inventory">
+                <div class="pill-badge-row">
+                  <span class="pill-status-dot" aria-hidden="true"></span>
+                  <span class="pill-status-text">IN STOCK • SHIPS IN 24H</span>
+                </div>
+                <div class="hero-editorial-price-row">
+                  <span class="pill-name">NOVA K75 // 75% WIRELESS</span>
+                  <span class="pill-price">$129</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Precision Highlight Chips (Realtime Telemetry Callouts) -->
-              <div class="hero-feature-tags" id="heroFeatureTags">
-                <div class="hero-tag-pill tag-knob active" data-phase="knob">
-                  <span class="tag-dot"></span>
-                  <span class="tag-text">BRASS ROTARY ENCODER</span>
+            <!-- Right Column: 3D Stage (54-56% width) with guaranteed >= 40px horizontal gap -->
+            <div class="hero-stage-col">
+              <div class="hero-visual-stage" id="heroVisualStage" aria-hidden="true">
+                <div class="hero-cinematic-glow" aria-hidden="true"></div>
+                <div class="hero-canvas-frame">
+                  <canvas id="heroScrubCanvas" class="hero-scrub-canvas" width="1200" height="800" data-frame-index="0" data-progress="0.000"></canvas>
+                  <div class="hero-parallax-wrapper" id="heroParallaxWrapper">
+                    <img src="../assets/images/keyboard-k75-shadow.webp" alt="" class="hero-shadow-img" aria-hidden="true" />
+                    <img src="../assets/images/keyboard-k75.png" alt="NOVA K75 75% Mechanical Keyboard 3D Render" class="hero-3d-img" fetchpriority="high" width="1200" height="800" />
+                  </div>
                 </div>
-                <div class="hero-tag-pill tag-chassis" data-phase="chassis">
-                  <span class="tag-dot"></span>
-                  <span class="tag-text">CNC 6063 ANODIZED</span>
-                </div>
-                <div class="hero-tag-pill tag-gasket" data-phase="gasket">
-                  <span class="tag-dot"></span>
-                  <span class="tag-text">FR4 GASKET ACOUSTICS</span>
-                </div>
-                <div class="hero-tag-pill tag-switches" data-phase="switches">
-                  <span class="tag-dot"></span>
-                  <span class="tag-text">TTC LINEAR 45G // 3.8MM</span>
+
+                <!-- SVG Leader Lines connecting pins to hardware nodes -->
+                <svg class="hero-leader-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                  <!-- Leader 1: Brass Rotary Encoder -->
+                  <g class="leader-group leader-knob active" data-phase="knob">
+                    <path class="leader-line" d="M 880 185 L 980 185 L 1092 485" />
+                    <circle class="leader-dot-target" cx="1092" cy="485" r="4.5" />
+                  </g>
+                  <!-- Leader 2: Linear 45g Switches -->
+                  <g class="leader-group leader-switches" data-phase="switches">
+                    <path class="leader-line" d="M 380 115 L 460 115 L 580 340" />
+                    <circle class="leader-dot-target" cx="580" cy="340" r="4.5" />
+                  </g>
+                  <!-- Leader 3: CNC 6063 Anodized Chassis -->
+                  <g class="leader-group leader-chassis" data-phase="chassis">
+                    <path class="leader-line" d="M 120 620 L 210 620 L 290 560" />
+                    <circle class="leader-dot-target" cx="290" cy="560" r="4.5" />
+                  </g>
+                  <!-- Leader 4: FR4 Gasket Acoustics -->
+                  <g class="leader-group leader-gasket" data-phase="gasket">
+                    <path class="leader-line" d="M 680 750 L 760 750 L 840 710" />
+                    <circle class="leader-dot-target" cx="840" cy="710" r="4.5" />
+                  </g>
+                </svg>
+
+                <!-- Precision Highlight Chips (Realtime Telemetry Callouts) -->
+                <div class="hero-feature-tags" id="heroFeatureTags">
+                  <div class="hero-tag-pill tag-knob active" data-phase="knob">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">BRASS ROTARY ENCODER</span>
+                  </div>
+                  <div class="hero-tag-pill tag-switches" data-phase="switches">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">LINEAR 45G // 3.8MM</span>
+                  </div>
+                  <div class="hero-tag-pill tag-chassis" data-phase="chassis">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">CNC 6063 ANODIZED</span>
+                  </div>
+                  <div class="hero-tag-pill tag-gasket" data-phase="gasket">
+                    <span class="tag-dot" aria-hidden="true"></span>
+                    <span class="tag-text">FR4 GASKET ACOUSTICS</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- Bottom Floating Meta / CTA Bar -->
           <div class="editorial-container">
             <div class="hero-meta-bar">
               <div class="hero-meta-left">
-                <p class="hero-lead-text">
-                  Premium tactile tools engineered to eliminate friction from everyday interaction. Solid CNC 6063 aerospace alloys, custom-dampened acoustics, effortless workflow.
-                </p>
                 <a href="#story" class="hero-scroll-indicator" aria-label="Scroll down to explore architecture">
                   <span class="scroll-arrow" aria-hidden="true">↓</span>
-                  <span class="scroll-label">SCROLL TO EXPLORE ARCHITECTURE</span>
+                  <span class="scroll-label">SCROLL TO EXPLORE ARCHITECTURE ↗</span>
                 </a>
               </div>
               <div class="hero-meta-right">
-                <div class="hero-product-pill">
-                  <div class="pill-badge-row">
-                    <span class="pill-status-dot"></span>
-                    <span class="pill-status-text">IN STOCK • SHIPS IN 24H</span>
-                  </div>
-                  <div class="pill-name">NOVA K75 // 75% WIRELESS</div>
-                  <div class="pill-price">$129</div>
-                </div>
                 <div class="hero-cta-group">
                   <button type="button" class="btn-hero-add-cart" data-id="k75" aria-label="Add NovaKeys K75 to cart">
                     QUICK ADD <span aria-hidden="true">+</span>
@@ -134,9 +169,6 @@
                   <button type="button" class="btn-hero-studio-cta" data-action="open-configurator" aria-label="Open NOVA Keyboard Studio">
                     HARDWARE STUDIO ⚙
                   </button>
-                  <a href="#products" class="btn-hero-cta">
-                    EXPLORE CATALOG <span aria-hidden="true">↗</span>
-                  </a>
                 </div>
               </div>
             </div>

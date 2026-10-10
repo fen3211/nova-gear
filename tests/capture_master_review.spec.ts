@@ -23,28 +23,49 @@ test('Capture Master DTC Editorial Screenshots', async ({ page }) => {
     fullPage: true
   });
 
-  // Hero Section Phase A (Top / Frame 0)
+  // Hero Section Phase A (Top / Frame 14 after intro fly-in)
   const heroViewport = page.locator('.hero-sticky-viewport');
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(300);
+  await page.locator('body.hero-intro-ready').waitFor({ timeout: 4000 });
+  await page.waitForTimeout(400);
+
+  // 1. Initial Hero after intro animation
+  await heroViewport.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_desktop_initial.png')
+  });
   await heroViewport.screenshot({
     path: path.join(REVIEW_DIR, '02_hero_phase_a_intro.png')
   });
 
-  // Hero Section Phase B/C (Mid scrub)
+  // 2. Collision check (headline vs 3D stage)
+  const heroGrid = page.locator('.hero-asymmetric-grid');
+  await heroGrid.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_collision_check_1440.png')
+  });
+
+  // 3. Telemetry contrast closeup with SVG leader lines
+  const visualStage = page.locator('.hero-visual-stage');
+  await visualStage.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_telemetry_contrast.png')
+  });
+
+  // Hero Section Phase B/C (Mid scrub 50%)
   const heroTrack = page.locator('#heroScrollTrack');
   const trackBox = await heroTrack.boundingBox();
   if (trackBox) {
     const scrollTravel = trackBox.height - 900;
-    await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.45);
-    await page.waitForTimeout(350);
+    await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.50);
+    await page.waitForTimeout(450);
+    await heroViewport.screenshot({
+      path: path.join(REVIEW_DIR, 'hero_desktop_scrub_mid.png')
+    });
     await heroViewport.screenshot({
       path: path.join(REVIEW_DIR, '02_hero_phase_bc_orbit.png')
     });
 
     // Hero Section Phase D (Final reveal)
     await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.95);
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(450);
     await heroViewport.screenshot({
       path: path.join(REVIEW_DIR, '02_hero_phase_d_reveal.png')
     });
@@ -103,7 +124,10 @@ test('Capture Master DTC Editorial Screenshots', async ({ page }) => {
     fullPage: true
   });
 
-  // Hero mobile
+  // Hero mobile 390px
+  await heroViewport.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_mobile_390.png')
+  });
   await heroViewport.screenshot({
     path: path.join(REVIEW_DIR, '11_hero_mobile_390.png')
   });
@@ -141,6 +165,11 @@ test('Capture Master DTC Editorial Screenshots', async ({ page }) => {
   await page.goto(AFTER_URL);
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(400);
+
+  // Hero mobile 320px
+  await heroViewport.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_mobile_320.png')
+  });
 
   await page.screenshot({
     path: path.join(REVIEW_DIR, '15_mobile_320_fullpage.png'),

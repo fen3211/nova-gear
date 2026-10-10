@@ -1456,6 +1456,7 @@
     const studioCtaBtn = document.querySelector('.btn-hero-studio-cta');
     const scrollIndicator = document.querySelector('.hero-scroll-indicator');
     const featureTags = document.querySelectorAll('.hero-tag-pill');
+    const leaderGroups = document.querySelectorAll('.hero-leader-svg .leader-group');
 
     // Quick Add button for NovaKeys K75
     if (heroAddBtn) {
@@ -1494,13 +1495,37 @@
     if (!ctx) return;
 
     const TOTAL_HERO_FRAMES = 56;
+    const INTRO_TARGET_FRAME = 14; // Initial isometric hero resting frame
+    const INTRO_DURATION_MS = 950; // 900-1000ms easing duration
+    const LERP_FACTOR = 0.14;       // Damped lerp dampening factor
+
     const frames = [];
-    let currentFrameIndex = -1;
-    let targetFrameIndex = 0;
-    let ticking = false;
+    let currentFrame = 0;           // Floating interpolated frame position
+    let targetFrame = 0;            // Target frame index
+    let renderedFrameIndex = -1;    // Integer frame drawn on canvas
+
+    let isIntroActive = false;
+    let isIntroCompleted = false;
+    let introStartTime = 0;
+    let introRafId = null;
+    let scrubRafId = null;
+    let isScrubLoopActive = false;
+    let userHasInteracted = false;
 
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+
+    // Retina High-DPI setup: physical pixel scaling
+    function setupRetinaCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(1200 * dpr);
+      canvas.height = Math.round(800 * dpr);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      if (renderedFrameIndex >= 0) {
+        drawFrame(renderedFrameIndex);
+      }
+    }
+    setupRetinaCanvas();
 
     function getNearestLoadedFrameIndex(targetIdx) {
       if (frames[targetIdx] && frames[targetIdx].complete && frames[targetIdx].naturalWidth > 0) {
@@ -1519,15 +1544,14 @@
       return -1;
     }
 
-    function renderFrame(index) {
+    function drawFrame(index) {
       if (index < 0 || index >= TOTAL_HERO_FRAMES) return;
-      targetFrameIndex = index;
       const frameToDraw = getNearestLoadedFrameIndex(index);
       if (frameToDraw >= 0) {
         const img = frames[frameToDraw];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        currentFrameIndex = frameToDraw;
+        ctx.clearRect(0, 0, 1200, 800);
+        ctx.drawImage(img, 0, 0, 1200, 800);
+        renderedFrameIndex = frameToDraw;
         canvas.dataset.frameIndex = String(frameToDraw);
         if (canvasFrame && !canvasFrame.classList.contains('canvas-ready')) {
           canvasFrame.classList.add('canvas-ready');
@@ -1537,11 +1561,11 @@
 
     function updateTelemetryPills(progress) {
       let activePhase = 'knob';
-      if (progress >= 0.75) {
+      if (progress >= 0.72) {
         activePhase = 'switches';
-      } else if (progress >= 0.50) {
+      } else if (progress >= 0.48) {
         activePhase = 'gasket';
-      } else if (progress >= 0.25) {
+      } else if (progress >= 0.22) {
         activePhase = 'chassis';
       }
 
@@ -1550,27 +1574,85 @@
         const isActive = (phase === activePhase);
         pill.classList.toggle('active', isActive);
       });
+
+      leaderGroups.forEach(group => {
+        const phase = group.getAttribute('data-phase');
+        const isActive = (phase === activePhase);
+        group.classList.toggle('active', isActive);
+      });
     }
 
-    // Preload all 56 high-resolution WebP hero orbit frames
-    for (let i = 0; i < TOTAL_HERO_FRAMES; i++) {
-      const img = new Image();
-      const padIndex = String(i).padStart(2, '0');
-      img.src = `../assets/frames_hero/k75_hero_${padIndex}.webp`;
-      img.onload = () => {
-        if (i === 0 && currentFrameIndex === -1) {
-          renderFrame(0);
-        } else if (i === targetFrameIndex && currentFrameIndex !== targetFrameIndex) {
-          renderFrame(targetFrameIndex);
+    function markIntroReady() {
+      document.body.classList.add('hero-intro-ready');
+    }
+
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    // Cinematic Intro Fly-in (Frames 0 -> 14)
+    function startCinematicIntro() {
+      if (isIntroCompleted || userHasInteracted) return;
+      isIntroActive = true;
+      introStartTime = performance.now();
+      currentFrame = 0;
+      targetFrame = INTRO_TARGET_FRAME;
+
+      function introLoop(now) {
+        if (!isIntroActive) return; // Interrupted by user action!
+        const elapsed = now - introStartTime;
+        const progress = Math.min(1, elapsed / INTRO_DURATION_MS);
+        const eased = easeOutCubic(progress);
+
+        currentFrame = eased * INTRO_TARGET_FRAME;
+        drawFrame(Math.round(currentFrame));
+
+        if (progress < 1) {
+          introRafId = requestAnimationFrame(introLoop);
+        } else {
+          currentFrame = INTRO_TARGET_FRAME;
+          targetFrame = INTRO_TARGET_FRAME;
+          drawFrame(INTRO_TARGET_FRAME);
+          finishIntro();
         }
-      };
-      frames.push(img);
+      }
+
+      introRafId = requestAnimationFrame(introLoop);
     }
 
-    function updateHeroScrub() {
+    function finishIntro() {
+      isIntroActive = false;
+      isIntroCompleted = true;
+      markIntroReady();
+      startScrubLoop();
+    }
+
+    // Zero-Latency Interrupt on scroll, wheel, or touch
+    function interruptIntro() {
+      if (isIntroActive) {
+        isIntroActive = false;
+        if (introRafId) {
+          cancelAnimationFrame(introRafId);
+          introRafId = null;
+        }
+      }
+      userHasInteracted = true;
+      markIntroReady();
+      startScrubLoop();
+    }
+
+    window.addEventListener('wheel', interruptIntro, { passive: true, once: true });
+    window.addEventListener('touchstart', interruptIntro, { passive: true, once: true });
+    window.addEventListener('touchmove', interruptIntro, { passive: true, once: true });
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'ArrowUp', 'Space', 'PageDown', 'PageUp'].includes(e.code)) {
+        interruptIntro();
+      }
+    }, { passive: true });
+
+    // Calculate target frame from scroll progress
+    function calculateScrollTargetFrame() {
       const trackRect = track.getBoundingClientRect();
       const scrollHeight = trackRect.height - window.innerHeight;
-      if (scrollHeight <= 0) return;
+      if (scrollHeight <= 0) return INTRO_TARGET_FRAME;
 
       const rawProgress = -trackRect.top / scrollHeight;
       const progress = Math.max(0, Math.min(1, rawProgress));
@@ -1578,30 +1660,97 @@
 
       updateTelemetryPills(progress);
 
-      const targetFrame = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(progress * (TOTAL_HERO_FRAMES - 1))));
-      if (targetFrame !== currentFrameIndex) {
-        renderFrame(targetFrame);
+      // Maps scroll progress [0..1] across [INTRO_TARGET_FRAME..TOTAL_HERO_FRAMES - 1]
+      const mapped = INTRO_TARGET_FRAME + progress * (TOTAL_HERO_FRAMES - 1 - INTRO_TARGET_FRAME);
+      return Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, mapped));
+    }
+
+    // Continuous Damped Lerp Scrub Loop
+    function scrubTick() {
+      if (isIntroActive) return; // Intro loop has exclusive control until finished or interrupted
+
+      targetFrame = calculateScrollTargetFrame();
+      const diff = targetFrame - currentFrame;
+
+      if (Math.abs(diff) > 0.01) {
+        currentFrame += diff * LERP_FACTOR;
+        drawFrame(Math.round(currentFrame));
+        scrubRafId = requestAnimationFrame(scrubTick);
+      } else {
+        currentFrame = targetFrame;
+        drawFrame(Math.round(currentFrame));
+        isScrubLoopActive = false;
+        scrubRafId = null;
+      }
+    }
+
+    function startScrubLoop() {
+      if (!isScrubLoopActive && !isIntroActive) {
+        isScrubLoopActive = true;
+        scrubRafId = requestAnimationFrame(scrubTick);
       }
     }
 
     function onScrollOrResize() {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          updateHeroScrub();
-          ticking = false;
-        });
-        ticking = true;
-      }
+      interruptIntro();
+      startScrubLoop();
     }
 
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
-    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', () => {
+      setupRetinaCanvas();
+      onScrollOrResize();
+    }, { passive: true });
     if (window.__lenis) {
       window.__lenis.on('scroll', onScrollOrResize);
     }
 
-    renderFrame(0);
-    updateHeroScrub();
+    // Progressive Preload:
+    // 1. Instantiate image objects for all 56 frames
+    for (let i = 0; i < TOTAL_HERO_FRAMES; i++) {
+      const img = new Image();
+      const padIndex = String(i).padStart(2, '0');
+      img.src = `../assets/frames_hero/k75_hero_${padIndex}.webp`;
+      img.onload = () => {
+        if (i === 0 && renderedFrameIndex === -1) {
+          drawFrame(0);
+        }
+      };
+      frames.push(img);
+    }
+
+    // 2. Decode initial frame immediately
+    if (frames[0].decode) {
+      frames[0].decode().then(() => {
+        if (renderedFrameIndex === -1 && !userHasInteracted) {
+          drawFrame(0);
+        }
+      }).catch(() => {});
+    }
+
+    // 3. Progressive Preload of initial intro batch (frames 0 to 14) via img.decode()
+    if (prefersReducedMotion) {
+      drawFrame(INTRO_TARGET_FRAME);
+      markIntroReady();
+    } else {
+      const initialBatch = [];
+      for (let i = 0; i <= INTRO_TARGET_FRAME; i++) {
+        if (frames[i].decode) {
+          initialBatch.push(frames[i].decode().catch(() => {}));
+        }
+      }
+      Promise.all(initialBatch).then(() => {
+        if (!userHasInteracted && window.scrollY < 10) {
+          startCinematicIntro();
+        } else {
+          markIntroReady();
+          startScrubLoop();
+        }
+      });
+    }
+
+    // Initial paint of frame 0 if already cached
+    drawFrame(0);
   }
 
   /* --------------------------------------------------------------------------

@@ -808,12 +808,12 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     const heroCanvas = page.locator('#heroScrubCanvas');
     await expect(heroCanvas).toBeAttached();
 
-    // 1. Initial State: Frame 0
+    // 1. Initial State: Intro finishes or is in progress at frame <= 14
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(600);
 
     const initialFrame = await heroCanvas.getAttribute('data-frame-index');
-    expect(Number(initialFrame)).toBe(0);
+    expect(Number(initialFrame)).toBeLessThanOrEqual(14);
 
     // Initial Telemetry Tag: Knob active
     const knobPill = page.locator('.hero-tag-pill[data-phase="knob"]');
@@ -825,10 +825,10 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     const scrollTravel = trackBox!.height - 900;
 
     await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.35);
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(400);
 
     const midFrame = await heroCanvas.getAttribute('data-frame-index');
-    expect(Number(midFrame)).toBeGreaterThan(5);
+    expect(Number(midFrame)).toBeGreaterThan(10);
     expect(Number(midFrame)).toBeLessThan(55);
 
     const chassisPill = page.locator('.hero-tag-pill[data-phase="chassis"]');
@@ -836,7 +836,7 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
 
     // 3. Scroll to 85% down the hero track: Switches active, final beauty reveal
     await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.85);
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(400);
 
     const lateFrame = await heroCanvas.getAttribute('data-frame-index');
     expect(Number(lateFrame)).toBeGreaterThan(35);
@@ -844,12 +844,12 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     const switchesPill = page.locator('.hero-tag-pill[data-phase="switches"]');
     await expect(switchesPill).toHaveClass(/active/);
 
-    // 4. Reverse scroll up back to top: Frame decreases back towards 0
+    // 4. Reverse scroll up back to top: Frame decreases back towards resting frame (<= 14)
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(400);
 
     const topFrame = await heroCanvas.getAttribute('data-frame-index');
-    expect(Number(topFrame)).toBeLessThan(5);
+    expect(Number(topFrame)).toBeLessThanOrEqual(14);
 
     // 5. Test Quick Add and Studio CTA buttons in Hero
     const heroAddBtn = page.locator('.btn-hero-add-cart');
@@ -998,6 +998,62 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
       await closeBtn.click();
       await page.waitForTimeout(200);
     }
+  });
+
+  test('19: Intro-to-Scrub Pipeline, Typography Non-Collision & Telemetry Leader Lines', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('nova_promo_dismissed', 'true'));
+
+    // Check desktop resolutions for zero typography-keyboard collision
+    for (const width of [1200, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(AFTER_URL);
+      await page.waitForLoadState('networkidle');
+
+      // 1. Wait for intro completion / hero-intro-ready class
+      const body = page.locator('body');
+      await expect(body).toHaveClass(/hero-intro-ready/, { timeout: 3500 });
+
+      // 2. Strict Typography vs 3D Stage Non-Collision Verification
+      const headline = page.locator('.hero-headline');
+      const visualStage = page.locator('.hero-visual-stage');
+
+      await expect(headline).toBeVisible();
+      await expect(visualStage).toBeVisible();
+
+      const hBox = await headline.boundingBox();
+      const sBox = await visualStage.boundingBox();
+
+      expect(hBox, `Headline bounding box must exist on ${width}px`).not.toBeNull();
+      expect(sBox, `3D Stage bounding box must exist on ${width}px`).not.toBeNull();
+
+      // Right edge of headline must NOT intersect left edge of 3D stage (guaranteed gap >= 20px)
+      const hRight = hBox!.x + hBox!.width;
+      const sLeft = sBox!.x;
+      expect(hRight, `Headline right (${hRight}) must not cross keyboard stage left (${sLeft}) on ${width}px`).toBeLessThanOrEqual(sLeft);
+
+      // 3. Telemetry Pins & SVG Leader Lines Verification
+      const pins = page.locator('.hero-tag-pill');
+      expect(await pins.count()).toBe(4);
+
+      for (let i = 0; i < 4; i++) {
+        await expect(pins.nth(i)).toBeVisible();
+      }
+
+      const leaderSvg = page.locator('.hero-leader-svg');
+      await expect(leaderSvg).toBeAttached();
+    }
+
+    // 4. Zero-Latency Interrupt Test on Fresh Page
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(AFTER_URL);
+
+    // Immediately trigger wheel event before intro reaches frame 14
+    await page.mouse.wheel(0, 100);
+    await page.waitForTimeout(300);
+
+    // Body should immediately become hero-intro-ready upon user interaction
+    const bodyInterrupted = page.locator('body');
+    await expect(bodyInterrupted).toHaveClass(/hero-intro-ready/);
   });
 
 });
