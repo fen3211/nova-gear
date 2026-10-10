@@ -380,7 +380,8 @@ ul, ol {
   justify-content: space-between;
   padding-top: clamp(1.5rem, 3vw, 2.5rem);
   padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   border-bottom: 1px solid var(--border);
   box-sizing: border-box;
 }
@@ -525,21 +526,16 @@ ul, ol {
 
 .hero-cinematic-glow {
   position: absolute;
-  top: 15%;
-  left: 10%;
-  width: 80%;
-  height: 70%;
+  top: 18%;
+  left: 12%;
+  width: 76%;
+  height: 64%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(30, 32, 38, 0.28) 0%, rgba(30, 32, 38, 0) 70%);
-  filter: blur(28px);
+  background: radial-gradient(ellipse at center, rgba(30, 32, 38, 0.2) 0%, rgba(30, 32, 38, 0) 70%);
+  filter: blur(32px);
   pointer-events: none;
   z-index: 0;
-  animation: heroGlowPulse 4s ease-in-out infinite alternate;
-}
-
-@keyframes heroGlowPulse {
-  from { opacity: 0.6; transform: scale(0.95); }
-  to { opacity: 1.0; transform: scale(1.05); }
+  opacity: 0.85;
 }
 
 .hero-canvas-frame {
@@ -554,10 +550,18 @@ ul, ol {
   grid-area: 1 / 1;
   width: 100%;
   height: 100%;
+  min-height: 580px;
   object-fit: contain;
   display: block;
+  pointer-events: none;
   z-index: 2;
   filter: drop-shadow(0 28px 42px rgba(17, 17, 17, 0.16));
+}
+
+@media (max-width: 768px) {
+  .hero-scrub-canvas {
+    min-height: 280px;
+  }
 }
 
 .hero-canvas-frame .hero-parallax-wrapper {
@@ -566,6 +570,7 @@ ul, ol {
   display: grid;
   place-items: center;
   width: 100%;
+  transform: scale(0.82);
   transform-style: preserve-3d;
   will-change: transform;
   transition: opacity 0.4s ease, transform 180ms ease-out;
@@ -609,7 +614,7 @@ ul, ol {
   }
 }
 
-/* SVG Leader Lines */
+/* SVG Leader Lines (1px, 4px target dot #C7FF3D) */
 .hero-leader-svg {
   position: absolute;
   inset: 0;
@@ -621,44 +626,29 @@ ul, ol {
 
 .leader-group {
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body.hero-intro-ready .leader-group {
-  opacity: 0.55;
-}
-
-body.hero-intro-ready .leader-group.active {
+.leader-group.active {
   opacity: 1;
 }
 
 .leader-line {
-  stroke: rgba(21, 21, 21, 0.38);
+  stroke: rgba(21, 21, 21, 0.4);
   stroke-width: 1px;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.3s ease, stroke-width 0.3s ease;
-}
-
-.leader-group.active .leader-line {
-  stroke: #151515;
-  stroke-width: 1.25px;
 }
 
 .leader-dot-target {
   fill: #C7FF3D;
   stroke: #151515;
-  stroke-width: 1.5px;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  stroke-width: 1px;
 }
 
-.leader-group.active .leader-dot-target {
-  transform: scale(1.2);
-  transform-origin: center;
-}
-
-/* Precision Highlight Chips (Realtime Telemetry Callouts) */
+/* Precision Highlight Chips (Realtime Anatomical Telemetry Callouts) */
 .hero-feature-tags {
   position: absolute;
   inset: 0;
@@ -670,70 +660,64 @@ body.hero-intro-ready .leader-group.active {
   position: absolute;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  gap: 0.45rem;
+  padding: 0.32rem 0.65rem;
   background: #151515;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
   color: #F4F1E9;
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
-  pointer-events: auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
   opacity: 0;
-  transform: scale(0.85);
+  transform: translateY(8px);
   transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.25s ease,
               background 0.25s ease,
               box-shadow 0.25s ease;
 }
 
-body.hero-intro-ready .hero-tag-pill {
-  opacity: 0.82;
-  transform: scale(1);
-}
-
-body.hero-intro-ready .hero-tag-pill.active {
+.hero-tag-pill.active {
   opacity: 1;
-  border-color: #C7FF3D;
-  background: #151515;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 12px rgba(199, 255, 61, 0.3);
-  transform: scale(1.02);
+  pointer-events: auto;
+  transform: translateY(0);
+  border-color: rgba(199, 255, 61, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32), 0 0 8px rgba(199, 255, 61, 0.18);
 }
 
 .hero-tag-pill .tag-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #C7FF3D;
-  box-shadow: 0 0 6px rgba(199, 255, 61, 0.8);
   flex-shrink: 0;
 }
 
-/* Specific pin positions matching SVG leader paths */
+/* Specific pin positions matching SVG leader paths (SAFE_SCALE = 0.82) */
 .tag-knob {
-  top: 19%;
-  right: 18%;
+  top: 23%;
+  left: 64%;
 }
 
 .tag-switches {
-  top: 11%;
-  left: 20%;
+  top: 14%;
+  left: 17%;
 }
 
 .tag-chassis {
-  bottom: 20%;
-  left: 3%;
+  top: 70%;
+  left: 4%;
 }
 
 .tag-gasket {
-  bottom: 3%;
-  right: 28%;
+  top: 88%;
+  left: 48%;
 }
 
 .hero-meta-bar {
@@ -3636,6 +3620,29 @@ body.hero-intro-ready .hero-tag-pill.active {
     max-width: 540px;
     margin: 1.5rem auto 1rem;
   }
+  .tag-knob {
+    top: 20%;
+    left: auto;
+    right: 4%;
+  }
+  .tag-switches {
+    top: 12%;
+    left: 4%;
+  }
+  .tag-chassis {
+    top: 68%;
+    left: 4%;
+  }
+  .tag-gasket {
+    top: 86%;
+    left: auto;
+    right: 4%;
+  }
+  .hero-tag-pill {
+    max-width: calc(100vw - 32px);
+    font-size: 0.65rem;
+    padding: 0.28rem 0.5rem;
+  }
 
   .hero-meta-bar {
     flex-direction: column;
@@ -3802,7 +3809,7 @@ body.hero-intro-ready .hero-tag-pill.active {
     transform: none !important;
   }
 
-  .hero-tag-pill {
+  .hero-tag-pill.active {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

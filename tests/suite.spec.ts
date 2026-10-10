@@ -819,7 +819,7 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     const knobPill = page.locator('.hero-tag-pill[data-phase="knob"]');
     await expect(knobPill).toHaveClass(/active/);
 
-    // 2. Scroll 30% down the hero track: Chassis active
+    // 2. Scroll 35% down the hero track: Gasket & Switches active (frame ~28)
     const trackBox = await heroTrack.boundingBox();
     expect(trackBox).not.toBeNull();
     const scrollTravel = trackBox!.height - 900;
@@ -831,25 +831,26 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
     expect(Number(midFrame)).toBeGreaterThan(10);
     expect(Number(midFrame)).toBeLessThan(55);
 
-    const chassisPill = page.locator('.hero-tag-pill[data-phase="chassis"]');
-    await expect(chassisPill).toHaveClass(/active/);
+    const gasketPill = page.locator('.hero-tag-pill[data-phase="gasket"]');
+    await expect(gasketPill).toHaveClass(/active/);
 
-    // 3. Scroll to 85% down the hero track: Switches active, final beauty reveal
+    // 3. Scroll to 85% down the hero track: Clean beauty reveal (frame > 42, callouts fade out)
     await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.85);
     await page.waitForTimeout(400);
 
     const lateFrame = await heroCanvas.getAttribute('data-frame-index');
     expect(Number(lateFrame)).toBeGreaterThan(35);
 
-    const switchesPill = page.locator('.hero-tag-pill[data-phase="switches"]');
-    await expect(switchesPill).toHaveClass(/active/);
+    // In beauty reveal (frame > 42), callout has smoothly faded out
+    await expect(gasketPill).not.toHaveClass(/active/);
 
     // 4. Reverse scroll up back to top: Frame decreases back towards resting frame (<= 14)
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(750);
 
     const topFrame = await heroCanvas.getAttribute('data-frame-index');
     expect(Number(topFrame)).toBeLessThanOrEqual(14);
+    await expect(knobPill).toHaveClass(/active/);
 
     // 5. Test Quick Add and Studio CTA buttons in Hero
     const heroAddBtn = page.locator('.btn-hero-add-cart');
@@ -1035,9 +1036,10 @@ test.describe('NOVA GEAR Master DTC Verification Suite', () => {
       const pins = page.locator('.hero-tag-pill');
       expect(await pins.count()).toBe(4);
 
-      for (let i = 0; i < 4; i++) {
-        await expect(pins.nth(i)).toBeVisible();
-      }
+      // At resting frame 14, knob, chassis, and switches are in-range and visible
+      await expect(page.locator('.hero-tag-pill[data-phase="knob"]')).toBeVisible();
+      await expect(page.locator('.hero-tag-pill[data-phase="chassis"]')).toBeVisible();
+      await expect(page.locator('.hero-tag-pill[data-phase="switches"]')).toBeVisible();
 
       const leaderSvg = page.locator('.hero-leader-svg');
       await expect(leaderSvg).toBeAttached();

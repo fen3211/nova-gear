@@ -105,33 +105,33 @@
                   </div>
                 </div>
 
-                <!-- SVG Leader Lines connecting pins to hardware nodes -->
+                <!-- SVG Leader Lines connecting pins to hardware nodes (SAFE_SCALE = 0.82) -->
                 <svg class="hero-leader-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                  <!-- Leader 1: Brass Rotary Encoder -->
-                  <g class="leader-group leader-knob active" data-phase="knob">
-                    <path class="leader-line" d="M 880 185 L 980 185 L 1092 485" />
-                    <circle class="leader-dot-target" cx="1092" cy="485" r="4.5" />
+                  <!-- Leader 1: Brass Rotary Encoder (frames 10-26) -->
+                  <g class="leader-group leader-knob" data-phase="knob">
+                    <path class="leader-line" d="M 850 200 L 930 200 L 1003 466" />
+                    <circle class="leader-dot-target" cx="1003" cy="466" r="4" />
                   </g>
-                  <!-- Leader 2: Linear 45g Switches -->
+                  <!-- Leader 2: Linear 45g Switches (frames 12-30) -->
                   <g class="leader-group leader-switches" data-phase="switches">
-                    <path class="leader-line" d="M 380 115 L 460 115 L 580 340" />
-                    <circle class="leader-dot-target" cx="580" cy="340" r="4.5" />
+                    <path class="leader-line" d="M 360 130 L 450 130 L 584 351" />
+                    <circle class="leader-dot-target" cx="584" cy="351" r="4" />
                   </g>
-                  <!-- Leader 3: CNC 6063 Anodized Chassis -->
-                  <g class="leader-group leader-chassis" data-phase="chassis">
-                    <path class="leader-line" d="M 120 620 L 210 620 L 290 560" />
-                    <circle class="leader-dot-target" cx="290" cy="560" r="4.5" />
+                  <!-- Leader 3: CNC 6063 Anodized Chassis (frames 0-18) -->
+                  <g class="leader-group leader-chassis active" data-phase="chassis">
+                    <path class="leader-line" d="M 150 580 L 240 580 L 346 531" />
+                    <circle class="leader-dot-target" cx="346" cy="531" r="4" />
                   </g>
-                  <!-- Leader 4: FR4 Gasket Acoustics -->
+                  <!-- Leader 4: FR4 Gasket Acoustics (frames 24-42) -->
                   <g class="leader-group leader-gasket" data-phase="gasket">
-                    <path class="leader-line" d="M 680 750 L 760 750 L 840 710" />
-                    <circle class="leader-dot-target" cx="840" cy="710" r="4.5" />
+                    <path class="leader-line" d="M 650 725 L 730 725 L 797 654" />
+                    <circle class="leader-dot-target" cx="797" cy="654" r="4" />
                   </g>
                 </svg>
 
                 <!-- Precision Highlight Chips (Realtime Telemetry Callouts) -->
                 <div class="hero-feature-tags" id="heroFeatureTags">
-                  <div class="hero-tag-pill tag-knob active" data-phase="knob">
+                  <div class="hero-tag-pill tag-knob" data-phase="knob">
                     <span class="tag-dot" aria-hidden="true"></span>
                     <span class="tag-text">BRASS ROTARY ENCODER</span>
                   </div>
@@ -139,7 +139,7 @@
                     <span class="tag-dot" aria-hidden="true"></span>
                     <span class="tag-text">LINEAR 45G // 3.8MM</span>
                   </div>
-                  <div class="hero-tag-pill tag-chassis" data-phase="chassis">
+                  <div class="hero-tag-pill tag-chassis active" data-phase="chassis">
                     <span class="tag-dot" aria-hidden="true"></span>
                     <span class="tag-text">CNC 6063 ANODIZED</span>
                   </div>

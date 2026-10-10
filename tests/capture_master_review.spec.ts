@@ -29,9 +29,12 @@ test('Capture Master DTC Editorial Screenshots', async ({ page }) => {
   await page.locator('body.hero-intro-ready').waitFor({ timeout: 4000 });
   await page.waitForTimeout(400);
 
-  // 1. Initial Hero after intro animation
+  // 1. Initial Hero after intro animation (Smooth unified momentum)
   await heroViewport.screenshot({
     path: path.join(REVIEW_DIR, 'hero_desktop_initial.png')
+  });
+  await heroViewport.screenshot({
+    path: path.join(REVIEW_DIR, 'hero_intro_smooth.png')
   });
   await heroViewport.screenshot({
     path: path.join(REVIEW_DIR, '02_hero_phase_a_intro.png')
@@ -49,13 +52,16 @@ test('Capture Master DTC Editorial Screenshots', async ({ page }) => {
     path: path.join(REVIEW_DIR, 'hero_telemetry_contrast.png')
   });
 
-  // Hero Section Phase B/C (Mid scrub 50%)
+  // Hero Section Phase B/C (Mid scrub 50% - zero clipping rotation check)
   const heroTrack = page.locator('#heroScrollTrack');
   const trackBox = await heroTrack.boundingBox();
   if (trackBox) {
     const scrollTravel = trackBox.height - 900;
     await page.evaluate((y) => window.scrollTo(0, y), scrollTravel * 0.50);
     await page.waitForTimeout(450);
+    await heroViewport.screenshot({
+      path: path.join(REVIEW_DIR, 'hero_no_clipping_rotation.png')
+    });
     await heroViewport.screenshot({
       path: path.join(REVIEW_DIR, 'hero_desktop_scrub_mid.png')
     });

@@ -1495,26 +1495,39 @@
     if (!ctx) return;
 
     const TOTAL_HERO_FRAMES = 56;
-    const INTRO_TARGET_FRAME = 14; // Initial isometric hero resting frame
-    const INTRO_DURATION_MS = 950; // 900-1000ms easing duration
-    const LERP_FACTOR = 0.14;       // Damped lerp dampening factor
+    const INTRO_TARGET_FRAME = 14;  // Resting isometric hero frame
+    const INTRO_DURATION_MS = 1100; // Unified intro impulse curve
+    const LERP_FACTOR = 0.08;       // Smooth momentum physics dampening factor
+    const SAFE_SCALE = 0.82;        // Zero-clipping safe margin (18% margin)
+
+    const SCALED_W = Math.round(1200 * SAFE_SCALE);      // 984
+    const SCALED_H = Math.round(800 * SAFE_SCALE);       // 656
+    const OFFSET_X = Math.round((1200 - SCALED_W) / 2);  // 108
+    const OFFSET_Y = Math.round((800 - SCALED_H) / 2);   // 72
+
+    // Anatomical Telemetry Frame Visibility Ranges
+    const PIN_RANGES = {
+      chassis: { min: 0, max: 18 },
+      knob: { min: 10, max: 26 },
+      switches: { min: 12, max: 30 },
+      gasket: { min: 24, max: 42 }
+    };
 
     const frames = [];
     let currentFrame = 0;           // Floating interpolated frame position
     let targetFrame = 0;            // Target frame index
     let renderedFrameIndex = -1;    // Integer frame drawn on canvas
 
-    let isIntroActive = false;
+    let isIntroPlaying = false;
     let isIntroCompleted = false;
     let introStartTime = 0;
-    let introRafId = null;
-    let scrubRafId = null;
-    let isScrubLoopActive = false;
+    let isPhysicsLoopRunning = false;
     let userHasInteracted = false;
 
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
 
-    // Retina High-DPI setup: physical pixel scaling
+    // High-DPI Retina setup
     function setupRetinaCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(1200 * dpr);
@@ -1550,7 +1563,7 @@
       if (frameToDraw >= 0) {
         const img = frames[frameToDraw];
         ctx.clearRect(0, 0, 1200, 800);
-        ctx.drawImage(img, 0, 0, 1200, 800);
+        ctx.drawImage(img, OFFSET_X, OFFSET_Y, SCALED_W, SCALED_H);
         renderedFrameIndex = frameToDraw;
         canvas.dataset.frameIndex = String(frameToDraw);
         if (canvasFrame && !canvasFrame.classList.contains('canvas-ready')) {
@@ -1559,25 +1572,18 @@
       }
     }
 
-    function updateTelemetryPills(progress) {
-      let activePhase = 'knob';
-      if (progress >= 0.72) {
-        activePhase = 'switches';
-      } else if (progress >= 0.48) {
-        activePhase = 'gasket';
-      } else if (progress >= 0.22) {
-        activePhase = 'chassis';
-      }
-
+    function updateTelemetryPins(frame) {
       featureTags.forEach(pill => {
         const phase = pill.getAttribute('data-phase');
-        const isActive = (phase === activePhase);
+        const range = PIN_RANGES[phase];
+        const isActive = range ? (frame >= range.min && frame <= range.max) : false;
         pill.classList.toggle('active', isActive);
       });
 
       leaderGroups.forEach(group => {
         const phase = group.getAttribute('data-phase');
-        const isActive = (phase === activePhase);
+        const range = PIN_RANGES[phase];
+        const isActive = range ? (frame >= range.min && frame <= range.max) : false;
         group.classList.toggle('active', isActive);
       });
     }
@@ -1586,69 +1592,7 @@
       document.body.classList.add('hero-intro-ready');
     }
 
-    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-    // Cinematic Intro Fly-in (Frames 0 -> 14)
-    function startCinematicIntro() {
-      if (isIntroCompleted || userHasInteracted) return;
-      isIntroActive = true;
-      introStartTime = performance.now();
-      currentFrame = 0;
-      targetFrame = INTRO_TARGET_FRAME;
-
-      function introLoop(now) {
-        if (!isIntroActive) return; // Interrupted by user action!
-        const elapsed = now - introStartTime;
-        const progress = Math.min(1, elapsed / INTRO_DURATION_MS);
-        const eased = easeOutCubic(progress);
-
-        currentFrame = eased * INTRO_TARGET_FRAME;
-        drawFrame(Math.round(currentFrame));
-
-        if (progress < 1) {
-          introRafId = requestAnimationFrame(introLoop);
-        } else {
-          currentFrame = INTRO_TARGET_FRAME;
-          targetFrame = INTRO_TARGET_FRAME;
-          drawFrame(INTRO_TARGET_FRAME);
-          finishIntro();
-        }
-      }
-
-      introRafId = requestAnimationFrame(introLoop);
-    }
-
-    function finishIntro() {
-      isIntroActive = false;
-      isIntroCompleted = true;
-      markIntroReady();
-      startScrubLoop();
-    }
-
-    // Zero-Latency Interrupt on scroll, wheel, or touch
-    function interruptIntro() {
-      if (isIntroActive) {
-        isIntroActive = false;
-        if (introRafId) {
-          cancelAnimationFrame(introRafId);
-          introRafId = null;
-        }
-      }
-      userHasInteracted = true;
-      markIntroReady();
-      startScrubLoop();
-    }
-
-    window.addEventListener('wheel', interruptIntro, { passive: true, once: true });
-    window.addEventListener('touchstart', interruptIntro, { passive: true, once: true });
-    window.addEventListener('touchmove', interruptIntro, { passive: true, once: true });
-    window.addEventListener('keydown', (e) => {
-      if (['ArrowDown', 'ArrowUp', 'Space', 'PageDown', 'PageUp'].includes(e.code)) {
-        interruptIntro();
-      }
-    }, { passive: true });
-
-    // Calculate target frame from scroll progress
+    // Calculate target frame from track scroll position
     function calculateScrollTargetFrame() {
       const trackRect = track.getBoundingClientRect();
       const scrollHeight = trackRect.height - window.innerHeight;
@@ -1658,55 +1602,79 @@
       const progress = Math.max(0, Math.min(1, rawProgress));
       canvas.dataset.progress = progress.toFixed(3);
 
-      updateTelemetryPills(progress);
-
       // Maps scroll progress [0..1] across [INTRO_TARGET_FRAME..TOTAL_HERO_FRAMES - 1]
       const mapped = INTRO_TARGET_FRAME + progress * (TOTAL_HERO_FRAMES - 1 - INTRO_TARGET_FRAME);
       return Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, mapped));
     }
 
-    // Continuous Damped Lerp Scrub Loop
-    function scrubTick() {
-      if (isIntroActive) return; // Intro loop has exclusive control until finished or interrupted
+    // Unified Momentum Physics Loop
+    function physicsTick(now) {
+      if (isIntroPlaying) {
+        const elapsed = now - introStartTime;
+        const progress = Math.min(1, elapsed / INTRO_DURATION_MS);
+        targetFrame = easeOutQuart(progress) * INTRO_TARGET_FRAME;
+        if (progress >= 1) {
+          isIntroPlaying = false;
+          isIntroCompleted = true;
+          markIntroReady();
+        }
+      } else {
+        targetFrame = calculateScrollTargetFrame();
+      }
 
-      targetFrame = calculateScrollTargetFrame();
       const diff = targetFrame - currentFrame;
 
-      if (Math.abs(diff) > 0.01) {
+      if (Math.abs(diff) > 0.005 || isIntroPlaying) {
         currentFrame += diff * LERP_FACTOR;
-        drawFrame(Math.round(currentFrame));
-        scrubRafId = requestAnimationFrame(scrubTick);
+        const rounded = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(currentFrame)));
+        drawFrame(rounded);
+        updateTelemetryPins(rounded);
+        requestAnimationFrame(physicsTick);
       } else {
         currentFrame = targetFrame;
-        drawFrame(Math.round(currentFrame));
-        isScrubLoopActive = false;
-        scrubRafId = null;
+        const rounded = Math.min(TOTAL_HERO_FRAMES - 1, Math.max(0, Math.round(currentFrame)));
+        drawFrame(rounded);
+        updateTelemetryPins(rounded);
+        isPhysicsLoopRunning = false;
       }
     }
 
-    function startScrubLoop() {
-      if (!isScrubLoopActive && !isIntroActive) {
-        isScrubLoopActive = true;
-        scrubRafId = requestAnimationFrame(scrubTick);
+    function ensurePhysicsLoop() {
+      if (!isPhysicsLoopRunning) {
+        isPhysicsLoopRunning = true;
+        requestAnimationFrame(physicsTick);
       }
     }
 
-    function onScrollOrResize() {
-      interruptIntro();
-      startScrubLoop();
+    // Zero-Latency Seamless Takeover on User Interaction
+    function handleUserInteraction() {
+      if (isIntroPlaying) {
+        isIntroPlaying = false;
+        isIntroCompleted = true;
+        markIntroReady();
+      }
+      userHasInteracted = true;
+      ensurePhysicsLoop();
     }
 
-    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('wheel', handleUserInteraction, { passive: true });
+    window.addEventListener('touchstart', handleUserInteraction, { passive: true });
+    window.addEventListener('touchmove', handleUserInteraction, { passive: true });
+    window.addEventListener('scroll', handleUserInteraction, { passive: true });
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'ArrowUp', 'Space', 'PageDown', 'PageUp'].includes(e.code)) {
+        handleUserInteraction();
+      }
+    }, { passive: true });
     window.addEventListener('resize', () => {
       setupRetinaCanvas();
-      onScrollOrResize();
+      handleUserInteraction();
     }, { passive: true });
     if (window.__lenis) {
-      window.__lenis.on('scroll', onScrollOrResize);
+      window.__lenis.on('scroll', handleUserInteraction);
     }
 
-    // Progressive Preload:
-    // 1. Instantiate image objects for all 56 frames
+    // Progressive Preload of all 56 frames with priority on first batch
     for (let i = 0; i < TOTAL_HERO_FRAMES; i++) {
       const img = new Image();
       const padIndex = String(i).padStart(2, '0');
@@ -1714,23 +1682,28 @@
       img.onload = () => {
         if (i === 0 && renderedFrameIndex === -1) {
           drawFrame(0);
+          updateTelemetryPins(0);
         }
       };
       frames.push(img);
     }
 
-    // 2. Decode initial frame immediately
+    // Decode initial frame 0 immediately
     if (frames[0].decode) {
       frames[0].decode().then(() => {
         if (renderedFrameIndex === -1 && !userHasInteracted) {
           drawFrame(0);
+          updateTelemetryPins(0);
         }
       }).catch(() => {});
     }
 
-    // 3. Progressive Preload of initial intro batch (frames 0 to 14) via img.decode()
+    // Progressive Preload of initial intro batch (frames 0 to 14)
     if (prefersReducedMotion) {
+      currentFrame = INTRO_TARGET_FRAME;
+      targetFrame = INTRO_TARGET_FRAME;
       drawFrame(INTRO_TARGET_FRAME);
+      updateTelemetryPins(INTRO_TARGET_FRAME);
       markIntroReady();
     } else {
       const initialBatch = [];
@@ -1741,16 +1714,21 @@
       }
       Promise.all(initialBatch).then(() => {
         if (!userHasInteracted && window.scrollY < 10) {
-          startCinematicIntro();
+          isIntroPlaying = true;
+          introStartTime = performance.now();
+          currentFrame = 0;
+          targetFrame = 0;
+          ensurePhysicsLoop();
         } else {
           markIntroReady();
-          startScrubLoop();
+          ensurePhysicsLoop();
         }
       });
     }
 
-    // Initial paint of frame 0 if already cached
+    // Initial paint of frame 0 and chassis pin
     drawFrame(0);
+    updateTelemetryPins(0);
   }
 
   /* --------------------------------------------------------------------------
